@@ -53,14 +53,14 @@
 
   <!-- CONFIGURACIÓN DE LINKS -->
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyOCkoYWJ44abs2fuw5-yPgkMC2bCkHaDiYg1dHX_9oLiDlwrBVA_wpKEGZlXDJNl9X/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbyOCkoYWJ44abs2fuw5-yPgkMC2bCkHaDiYg1dHX_9oLiDlwrBVA_wpKEGZlXDJNl9X/exec";
     const LOGO_URL = "logo.png"; // Ruta de tu logo en el repositorio
     
     // Silueta elegante de reemplazo en formato SVG si la foto no carga
     const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1' d='M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z'/></svg>";
   </script>
 
-  <!-- NAVBAR / MENÚ SUPERIOR (Discreto y elegante) -->
+  <!-- NAVBAR / MENÚ SUPERIOR -->
   <header class="bg-slate-900/80 backdrop-blur border-b border-slate-800/60 px-6 py-4 flex justify-between items-center shadow-lg z-10">
     <div class="flex items-center space-x-3">
       <img id="nav-logo" src="" alt="Logo" class="h-8 w-auto object-contain">
@@ -79,33 +79,33 @@
   <!-- CONTENEDOR PRINCIPAL -->
   <main class="flex-grow flex items-center justify-center p-6 relative">
     
-    <!-- ================= VISTA DE REGISTRO (PANTALLA DE ESPERA) ================= -->
-    <section id="section-registro" class="w-full max-w-md flex flex-col items-center z-10 transition-all duration-300">
+    <!-- ================= VISTA DE REGISTRO (PANTALLA DE ESPERA AMPLIADA) ================= -->
+    <section id="section-registro" class="w-full max-w-xl flex flex-col items-center z-10 transition-all duration-300">
       
-      <!-- Contenedor del Input de DNI -->
-      <div class="w-full bg-slate-900/95 border border-slate-800 p-8 rounded-3xl shadow-2xl text-center backdrop-blur-md">
-        <!-- Logo estático pequeño sobre el input -->
-        <img id="form-logo" src="" alt="Gym Logo" class="h-28 mx-auto mb-8 object-contain">
+      <!-- Contenedor del Input de DNI con padding incrementado -->
+      <div class="w-full bg-slate-900/95 border border-slate-800 p-12 rounded-3xl shadow-2xl text-center backdrop-blur-md">
+        <!-- Logo estático más grande -->
+        <img id="form-logo" src="" alt="Gym Logo" class="h-36 mx-auto mb-10 object-contain">
         
-        <h2 class="text-sm font-bold tracking-[0.2em] text-slate-400 uppercase mb-4">Control de Acceso</h2>
+        <h2 class="text-sm font-bold tracking-[0.25em] text-slate-400 uppercase mb-5">Control de Acceso</h2>
         <form onsubmit="registrarAsistencia(event)" class="relative">
           <input 
-  type="text" 
-  id="input-dni" 
-  placeholder="COLOQUE SU DNI" 
-  maxlength="9"
-  inputmode="numeric"
-  oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-  autofocus
-  required
-  autocomplete="off"
-  class="w-full bg-slate-950 text-white placeholder-slate-700 border-2 border-slate-800 focus:border-emerald-500 rounded-2xl px-6 py-5 text-center text-3xl font-black tracking-widest outline-none transition duration-300 shadow-inner"
->
-          <button type="submit" class="absolute right-3 top-3.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 w-12 h-12 rounded-xl flex items-center justify-center font-bold transition">
-            <i class="fa-solid fa-arrow-right text-lg"></i>
+            type="text" 
+            id="input-dni" 
+            placeholder="COLOQUE SU DNI" 
+            maxlength="9"
+            inputmode="numeric"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+            autofocus
+            required
+            autocomplete="off"
+            class="w-full bg-slate-950 text-white placeholder-slate-700 border-2 border-slate-800 focus:border-emerald-500 rounded-2xl pl-6 pr-20 py-5 text-center text-2xl font-black tracking-wide outline-none transition duration-300 shadow-inner"
+          >
+          <button type="submit" class="absolute right-3 top-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 w-14 h-14 rounded-xl flex items-center justify-center font-bold transition shadow-lg">
+            <i class="fa-solid fa-arrow-right text-xl"></i>
           </button>
         </form>
-        <p class="text-[10px] text-slate-500 mt-4 uppercase tracking-[0.2em]">Alinee su código o digite manualmente</p>
+        <p class="text-[10px] text-slate-500 mt-5 uppercase tracking-[0.2em]">Alinee su código o digite manualmente</p>
       </div>
 
     </section>
@@ -129,7 +129,7 @@
         
         <!-- Lado Izquierdo: Foto Gigante con Marco Neón -->
         <div class="flex-shrink-0 scale-up">
-          <div id="neon-photo-border" class="w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 shadow-[0_0_60px_rgba(16,185,129,0.25)] transition-all duration-500 flex items-center justify-center">
+          <div id="neon-photo-border" class="w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-emerald-500 shadow-[0_0_60px_rgba(16,185,129,0.25)] flex items-center justify-center transition-all">
             <img id="giant-photo" src="" alt="Miembro" class="w-full h-full object-cover" onerror="this.onerror=null; this.src=DEFAULT_AVATAR;">
           </div>
         </div>
@@ -140,14 +140,14 @@
             <span id="giant-status-badge" class="px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-md">
               ACCESO AUTORIZADO
             </span>
-            <!-- Name with capitalization and increased line-height -->
+            <!-- Nombre capitalizado -->
             <h1 id="giant-name" class="text-4xl md:text-5xl lg:text-6xl font-black mt-6 tracking-wide leading-snug text-white capitalize">
               aaron ivan carrillo marchan
             </h1>
           </div>
 
-          <!-- Bloques de datos técnicos con más aire -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
+          <!-- Bloques de datos técnicos simplificados a 2 columnas (Sin celular) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
             <div class="bg-slate-900/90 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-md shadow-lg">
               <span class="text-xs text-slate-500 block uppercase font-bold tracking-widest">Plan Contratado</span>
               <span id="giant-plan" class="text-xl font-extrabold text-white uppercase mt-2 block">VIP TRIMESTRAL</span>
@@ -155,10 +155,6 @@
             <div class="bg-slate-900/90 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-md shadow-lg">
               <span class="text-xs text-slate-500 block uppercase font-bold tracking-widest">Vence el Día</span>
               <span id="giant-expiry" class="text-xl font-extrabold text-slate-200 mt-2 block">24/12/2026</span>
-            </div>
-            <div class="bg-slate-900/90 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-md shadow-lg">
-              <span class="text-xs text-slate-500 block uppercase font-bold tracking-widest">Celular</span>
-              <span id="giant-phone" class="text-xl font-extrabold text-slate-200 mt-2 block">987654321</span>
             </div>
           </div>
 
@@ -243,7 +239,6 @@
       const regBtn = document.getElementById("tab-registro-btn");
       const adminBtn = document.getElementById("tab-admin-btn");
 
-      // Resetear vista de bienvenida si cambia de pestaña
       document.getElementById("pantalla-gigante").classList.add("hidden");
 
       if (tab === "registro") {
@@ -306,7 +301,6 @@
       const pantallaGigante = document.getElementById("pantalla-gigante");
       const sectionRegistro = document.getElementById("section-registro");
       
-      // Ocultamos el formulario del fondo para evitar traslapes visuales
       sectionRegistro.classList.add("hidden");
       loader.classList.remove("hidden");
       pantallaGigante.classList.add("hidden");
@@ -316,7 +310,7 @@
       fetch(requestUrl)
         .then(response => response.json())
         .then(res => {
-          loader.classList.add("hidden"); // Ocultar loader 3D
+          loader.classList.add("hidden"); 
           dniInput.value = ""; 
 
           if (res.success) {
@@ -333,7 +327,7 @@
         });
     }
 
-    // 4. Presentar Datos de Usuario en Pantalla Gigante Organizada
+    // 4. Presentar Datos de Usuario en Pantalla Gigante Organizada (Sin celular)
     function presentarPantallaGigante(usuario, status) {
       const modal = document.getElementById("pantalla-gigante");
       const bg = document.getElementById("glow-bg");
@@ -341,18 +335,15 @@
       const badge = document.getElementById("giant-status-badge");
       const motivationalBox = document.getElementById("giant-message").parentNode;
 
-      // Inyectar Datos y resetear manejador onerror por si acaso
       const imgElem = document.getElementById("giant-photo");
       imgElem.src = usuario.foto || "";
       
       document.getElementById("giant-name").textContent = usuario.nombre;
       document.getElementById("giant-plan").textContent = usuario.plan;
       document.getElementById("giant-expiry").textContent = usuario.fechaVencimiento;
-      document.getElementById("giant-phone").textContent = usuario.celular || "---";
       document.getElementById("giant-message").textContent = usuario.message || usuario.mensaje;
 
       if (status === "activo") {
-        // Estilos para acceso Permitido (Verde Radial)
         bg.style.background = "radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(2,6,23,1) 80%)";
         border.className = "w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-emerald-500 shadow-[0_0_60px_rgba(16,185,129,0.35)] flex items-center justify-center transition-all";
         badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-md";
@@ -360,7 +351,6 @@
         motivationalBox.className = "bg-slate-900/70 p-6 rounded-2xl border-l-8 border-emerald-500 italic text-slate-200 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4";
         playSound("success");
       } else {
-        // Estilos para acceso Denegado/Vencido (Rojo Radial)
         bg.style.background = "radial-gradient(circle, rgba(239,68,68,0.2) 0%, rgba(2,6,23,1) 80%)";
         border.className = "w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-rose-500 shadow-[0_0_60px_rgba(239,68,68,0.35)] flex items-center justify-center transition-all";
         badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-md";
@@ -371,7 +361,6 @@
 
       modal.classList.remove("hidden");
 
-      // Auto-retorno a la pantalla de DNI tras 5 segundos
       hideScreenTimer = setTimeout(() => {
         modal.classList.add("hidden");
         document.getElementById("section-registro").classList.remove("hidden");
@@ -379,7 +368,7 @@
       }, 5000);
     }
 
-    // 5. Presentar Alertas o Errores en Pantalla Gigante
+    // 5. Presentar Alertas o Errores en Pantalla Gigante (Sin celular)
     function presentarErrorPantallaGigante(mensaje) {
       const modal = document.getElementById("pantalla-gigante");
       const bg = document.getElementById("glow-bg");
@@ -391,10 +380,8 @@
       document.getElementById("giant-name").textContent = "ACCESO RECHAZADO";
       document.getElementById("giant-plan").textContent = "REGISTRO INVÁLIDO";
       document.getElementById("giant-expiry").textContent = "---";
-      document.getElementById("giant-phone").textContent = "---";
       document.getElementById("giant-message").textContent = mensaje;
 
-      // Alerta Roja Radial
       bg.style.background = "radial-gradient(circle, rgba(239,68,68,0.2) 0%, rgba(2,6,23,1) 80%)";
       border.className = "w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-rose-500 shadow-[0_0_60px_rgba(239,68,68,0.35)] flex items-center justify-center transition-all";
       badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-md";
