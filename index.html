@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gimnasio - Control de Acceso</title>
+  <title>Control de Acceso Premium</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome para Iconos -->
@@ -11,125 +11,166 @@
   <!-- Chart.js para los gráficos del administrador -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* Estilos personalizados y animaciones suaves */
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&display=swap');
     body {
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Montserrat', sans-serif;
     }
-    .fade-in {
-      animation: fadeIn 0.4s ease-out forwards;
+
+    /* Animación del Logo en 3D sobre el eje Y */
+    .logo-container-3d {
+      perspective: 1200px;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
+    .logo-3d {
+      width: 160px;
+      height: 160px;
+      transform-style: preserve-3d;
+      animation: spin3D 2.2s infinite linear;
+    }
+    @keyframes spin3D {
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
+    }
+
+    /* Transición de aparición suave para la pantalla de bienvenida */
+    .slide-in-right {
+      animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .scale-up {
+      animation: scaleUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes scaleUp {
+      from { opacity: 0; transform: scale(0.9); }
       to { opacity: 1; transform: scale(1); }
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between overflow-hidden">
 
-  <!-- CONFIGURACIÓN: REEMPLAZA ESTA URL CON LA DE TU WEB APP DE APPS SCRIPT -->
+  <!-- CONFIGURACIÓN DE LINKS -->
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyOCkoYWJ44abs2fuw5-yPgkMC2bCkHaDiYg1dHX_9oLiDlwrBVA_wpKEGZlXDJNl9X/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyOCkoYWJ44abs2fuw5-yPgkMC2bCkHaDiYg1dHX_9oLiDlwrBVA_wpKEGZlXDJNl9X/exec"; 
+    const LOGO_URL = "logo.png"; // Ruta de tu logo en el repositorio
   </script>
 
-  <!-- NAVBAR / MENÚ SUPERIOR -->
-  <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex justify-between items-center shadow-lg">
+  <!-- NAVBAR / MENÚ SUPERIOR (Discreto y elegante) -->
+  <header class="bg-slate-900/80 backdrop-blur border-b border-slate-800/60 px-6 py-4 flex justify-between items-center shadow-lg z-10">
     <div class="flex items-center space-x-3">
-      <div class="bg-emerald-500 text-slate-950 p-2 rounded-lg font-bold text-xl tracking-wider">FIT</div>
-      <span class="text-lg font-extrabold uppercase tracking-widest text-emerald-400">VIBRAFITNESS</span>
+      <img id="nav-logo" src="" alt="Logo" class="h-8 w-auto object-contain">
+      <span class="text-sm font-extrabold uppercase tracking-widest text-slate-400">FITNESS CLUB</span>
     </div>
     <nav class="flex space-x-2">
-      <button onclick="switchTab('registro')" id="tab-registro-btn" class="px-4 py-2 rounded-lg font-semibold bg-emerald-500 text-slate-950 transition duration-300">
+      <button onclick="switchTab('registro')" id="tab-registro-btn" class="px-4 py-2 rounded-lg font-bold text-xs uppercase bg-emerald-500 text-slate-950 transition duration-300">
         <i class="fa-solid fa-id-card mr-2"></i>Asistencia
       </button>
-      <button onclick="switchTab('admin')" id="tab-admin-btn" class="px-4 py-2 rounded-lg font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition duration-300">
-        <i class="fa-solid fa-lock mr-2"></i>Administración
+      <button onclick="switchTab('admin')" id="tab-admin-btn" class="px-4 py-2 rounded-lg font-bold text-xs uppercase bg-slate-800 text-slate-300 hover:bg-slate-700 transition duration-300">
+        <i class="fa-solid fa-lock mr-2"></i>Admin
       </button>
     </nav>
   </header>
 
   <!-- CONTENEDOR PRINCIPAL -->
-  <main class="flex-grow flex items-center justify-center p-4">
+  <main class="flex-grow flex items-center justify-center p-4 relative">
     
-    <!-- ================= VISTA DE REGISTRO DE ASISTENCIA ================= -->
-    <section id="section-registro" class="w-full max-w-4xl flex flex-col items-center">
+    <!-- ================= VISTA DE REGISTRO (PANTALLA DE ESPERA) ================= -->
+    <section id="section-registro" class="w-full max-w-md flex flex-col items-center z-10">
       
-      <!-- Entrada del DNI -->
-      <div class="w-full max-w-md bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-2xl text-center mb-6">
-        <h2 class="text-xl font-bold text-slate-300 mb-4">Ingrese su DNI de Miembro</h2>
+      <!-- Contenedor del Input de DNI -->
+      <div class="w-full bg-slate-900/90 border border-slate-800 p-8 rounded-3xl shadow-2xl text-center backdrop-blur-md">
+        <!-- Logo estático pequeño sobre el input -->
+        <img id="form-logo" src="" alt="Gym Logo" class="h-24 mx-auto mb-6 object-contain">
+        
+        <h2 class="text-lg font-semibold tracking-wider text-slate-400 uppercase mb-4">Control de Acceso</h2>
         <form onsubmit="registrarAsistencia(event)" class="relative">
           <input 
             type="text" 
             id="input-dni" 
-            placeholder="Ej. 12345678" 
+            placeholder="COLOQUE SU DNI" 
             autofocus
             required
-            class="w-full bg-slate-950 text-white placeholder-slate-600 border border-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl px-5 py-4 text-center text-2xl font-bold tracking-widest outline-none transition duration-300"
+            autocomplete="off"
+            class="w-full bg-slate-950 text-white placeholder-slate-700 border-2 border-slate-800 focus:border-emerald-500 rounded-2xl px-5 py-5 text-center text-3xl font-black tracking-widest outline-none transition duration-300 shadow-inner"
           >
-          <button type="submit" class="absolute right-3 top-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 px-4 py-2 rounded-lg font-bold transition">
-            <i class="fa-solid fa-right-to-bracket"></i>
+          <button type="submit" class="absolute right-3 top-3.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 w-12 h-12 rounded-xl flex items-center justify-center font-bold transition">
+            <i class="fa-solid fa-arrow-right text-lg"></i>
           </button>
         </form>
-        <p class="text-xs text-slate-500 mt-3">Coloque el cursor o use un lector de barra/QR para ingresar.</p>
-      </div>
-
-      <!-- Estado de Cargando (Loader) -->
-      <div id="loader" class="hidden flex flex-col items-center space-y-3 my-8">
-        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
-        <p class="text-emerald-400 font-semibold animate-pulse">Procesando membresía...</p>
-      </div>
-
-      <!-- Tarjeta de Bienvenida Dinámica (Se oculta por defecto) -->
-      <div id="tarjeta-bienvenida" class="hidden w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl fade-in">
-        <div id="status-banner" class="bg-emerald-500 text-slate-950 text-center py-3 font-bold text-lg tracking-widest uppercase">
-          ACCESO PERMITIDO
-        </div>
-        
-        <div class="p-8 flex flex-col md:flex-row items-center md:items-start gap-8">
-          <!-- Foto del Usuario -->
-          <div class="relative flex-shrink-0">
-            <div id="status-border" class="w-48 h-48 rounded-2xl overflow-hidden border-4 border-emerald-500 shadow-xl">
-              <img id="user-photo" src="https://via.placeholder.com/150" alt="Foto del miembro" class="w-full h-full object-cover">
-            </div>
-          </div>
-          
-          <!-- Datos del Usuario -->
-          <div class="flex-grow text-center md:text-left space-y-4">
-            <div>
-              <span id="user-plan" class="text-xs font-bold uppercase tracking-wider bg-slate-800 text-emerald-400 px-3 py-1 rounded-full">PLAN ANUAL</span>
-              <h1 id="user-name" class="text-3xl font-extrabold text-white mt-2">Juan Pérez</h1>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-4 pt-2">
-              <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                <span class="text-xs text-slate-500 block uppercase font-semibold">Vencimiento</span>
-                <span id="user-expiry" class="text-sm font-bold text-slate-300">15/09/2026</span>
-              </div>
-              <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                <span class="text-xs text-slate-500 block uppercase font-semibold">Celular</span>
-                <span id="user-phone" class="text-sm font-bold text-slate-300">987654321</span>
-              </div>
-            </div>
-            
-            <!-- Frase Motivacional -->
-            <div class="bg-slate-950/50 p-4 rounded-xl border-l-4 border-emerald-500 italic text-slate-300 text-lg">
-              "<span id="user-message">¡A dar el 100% hoy!</span>"
-            </div>
-          </div>
-        </div>
+        <p class="text-xs text-slate-600 mt-4 uppercase tracking-widest">Alinee su código o digite manualmente</p>
       </div>
 
     </section>
 
+    <!-- ================= PANTALLA COMPLETA DE LOADER (LOGO 3D) ================= -->
+    <div id="loader-overlay" class="hidden fixed inset-0 bg-slate-950 flex flex-col items-center justify-center z-50">
+      <div class="logo-container-3d mb-8">
+        <img id="loader-logo" src="" alt="Cargando..." class="logo-3d object-contain">
+      </div>
+      <p class="text-slate-400 text-lg uppercase tracking-[0.3em] font-semibold animate-pulse">Procesando Membresía</p>
+    </div>
+
+    <!-- ================= PANTALLA GIGANTE DE BIENVENIDA (MODAL FULLSCREEN) ================= -->
+    <div id="pantalla-gigante" class="hidden fixed inset-0 z-40 flex items-center justify-center transition-all duration-500">
+      
+      <!-- Capa de fondo con desfoque y brillo dinámico (verde o rojo) -->
+      <div id="glow-bg" class="absolute inset-0 transition-all duration-700 bg-radial"></div>
+      
+      <!-- Contenido de Pantalla Gigante -->
+      <div class="relative w-full max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12 z-10">
+        
+        <!-- Lado Izquierdo: Foto Gigante con Marco Neón -->
+        <div class="flex-shrink-0 scale-up">
+          <div id="neon-photo-border" class="w-72 h-72 md:w-96 md:h-96 rounded-3xl overflow-hidden border-8 shadow-[0_0_50px_rgba(16,185,129,0.3)] transition-all duration-500">
+            <img id="giant-photo" src="" alt="Miembro" class="w-full h-full object-cover">
+          </div>
+        </div>
+
+        <!-- Lado Derecho: Textos Informativos -->
+        <div class="flex-grow text-center md:text-left text-white space-y-6 slide-in-right">
+          <div>
+            <span id="giant-status-badge" class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              ACCESO AUTORIZADO
+            </span>
+            <h1 id="giant-name" class="text-5xl md:text-7xl font-black mt-4 tracking-tight leading-tight">JUAN PÉREZ RAMÍREZ</h1>
+          </div>
+
+          <!-- Bloques de datos técnicos -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+            <div class="bg-slate-950/80 border border-slate-800/80 p-4 rounded-2xl backdrop-blur">
+              <span class="text-xs text-slate-500 block uppercase font-bold tracking-wider">Plan Contratado</span>
+              <span id="giant-plan" class="text-xl font-bold text-white uppercase mt-1 block">VIP TRIMESTRAL</span>
+            </div>
+            <div class="bg-slate-950/80 border border-slate-800/80 p-4 rounded-2xl backdrop-blur">
+              <span class="text-xs text-slate-500 block uppercase font-bold tracking-wider">Vence el Día</span>
+              <span id="giant-expiry" class="text-xl font-bold text-slate-300 mt-1 block">24/12/2026</span>
+            </div>
+            <div class="bg-slate-950/80 border border-slate-800/80 p-4 rounded-2xl backdrop-blur">
+              <span class="text-xs text-slate-500 block uppercase font-bold tracking-wider">Contacto</span>
+              <span id="giant-phone" class="text-xl font-bold text-slate-300 mt-1 block">987654321</span>
+            </div>
+          </div>
+
+          <!-- Mensaje Motivacional en Letra Grande -->
+          <div class="bg-slate-950/60 p-5 rounded-2xl border-l-8 border-emerald-500 italic text-slate-200 text-lg md:text-2xl backdrop-blur">
+            "<span id="giant-message">¡El único entrenamiento malo es el que no se hace!</span>"
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <!-- ================= VISTA DE ADMINISTRACIÓN ================= -->
-    <section id="section-admin" class="hidden w-full max-w-6xl">
+    <section id="section-admin" class="hidden w-full max-w-6xl z-10">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-6">
         <div class="flex justify-between items-center border-b border-slate-800 pb-4">
           <h2 class="text-2xl font-extrabold text-white"><i class="fa-solid fa-chart-line text-emerald-500 mr-2"></i>Panel de Control</h2>
           <span class="text-xs text-slate-500 uppercase tracking-widest font-semibold">Datos en tiempo real</span>
         </div>
 
-        <!-- Indicadores (KPIs) -->
+        <!-- KPIs -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="bg-slate-950 border border-slate-800 p-5 rounded-xl flex items-center space-x-4">
             <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-lg text-2xl"><i class="fa-solid fa-users"></i></div>
@@ -154,7 +195,7 @@
           </div>
         </div>
 
-        <!-- Gráficos del Gimnasio -->
+        <!-- Gráficos -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
             <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase">Horas Pico de Ingreso</h4>
@@ -163,7 +204,7 @@
             </div>
           </div>
           <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-            <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase">Asistencias por Día de la Semana</h4>
+            <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase">Asistencias por Día</h4>
             <div class="h-64 flex items-center justify-center">
               <canvas id="chartDays"></canvas>
             </div>
@@ -176,13 +217,17 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="bg-slate-900 border-t border-slate-800 px-6 py-4 text-center text-xs text-slate-500">
-    &copy; 2026 VIBRAFIRNESS. Todos los derechos reservados.
+  <footer class="bg-slate-900 border-t border-slate-800/50 px-6 py-4 text-center text-xs text-slate-500">
+    &copy; 2026 Fitness Club Control Hub. Todos los derechos reservados.
   </footer>
 
-  <!-- LÓGICA DE JAVASCRIPT -->
   <script>
-    // 1. Navegación entre pestañas
+    // Inyectar imágenes del logo guardadas localmente
+    document.getElementById("nav-logo").src = LOGO_URL;
+    document.getElementById("form-logo").src = LOGO_URL;
+    document.getElementById("loader-logo").src = LOGO_URL;
+
+    // 1. Navegación
     function switchTab(tab) {
       const regSection = document.getElementById("section-registro");
       const adminSection = document.getElementById("section-admin");
@@ -192,20 +237,19 @@
       if (tab === "registro") {
         regSection.classList.remove("hidden");
         adminSection.classList.add("hidden");
-        regBtn.className = "px-4 py-2 rounded-lg font-semibold bg-emerald-500 text-slate-950 transition duration-300";
-        adminBtn.className = "px-4 py-2 rounded-lg font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition duration-300";
-        // Autodevolver foco al DNI al regresar
+        regBtn.className = "px-4 py-2 rounded-lg font-bold text-xs uppercase bg-emerald-500 text-slate-950 transition duration-300";
+        adminBtn.className = "px-4 py-2 rounded-lg font-bold text-xs uppercase bg-slate-800 text-slate-300 hover:bg-slate-700 transition duration-300";
         document.getElementById("input-dni").focus();
       } else {
         regSection.classList.add("hidden");
         adminSection.classList.remove("hidden");
-        adminBtn.className = "px-4 py-2 rounded-lg font-semibold bg-emerald-500 text-slate-950 transition duration-300";
-        regBtn.className = "px-4 py-2 rounded-lg font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition duration-300";
+        adminBtn.className = "px-4 py-2 rounded-lg font-bold text-xs uppercase bg-emerald-500 text-slate-950 transition duration-300";
+        regBtn.className = "px-4 py-2 rounded-lg font-bold text-xs uppercase bg-slate-800 text-slate-300 hover:bg-slate-700 transition duration-300";
         inicializarGraficos();
       }
     }
 
-    // 2. Generador de Sonidos Sintetizados (Evita cargar archivos .mp3 lentos)
+    // 2. Sintetizador de Sonidos instantáneos
     function playSound(type) {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -215,31 +259,28 @@
         gainNode.connect(audioCtx.destination);
 
         if (type === "success") {
-          // Sonido agradable, un "Bip" alto y rápido
           oscillator.type = "sine";
-          oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // Nota A5 (La)
+          oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
           gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
-          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
           oscillator.start();
-          oscillator.stop(audioCtx.currentTime + 0.3);
+          oscillator.stop(audioCtx.currentTime + 0.35);
         } else {
-          // Sonido de advertencia, un tono grave y distorsionado (buzzer)
           oscillator.type = "sawtooth";
-          oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
+          oscillator.frequency.setValueAtTime(140, audioCtx.currentTime);
           gainNode.gain.setValueAtTime(0.25, audioCtx.currentTime);
           gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
           oscillator.start();
           oscillator.stop(audioCtx.currentTime + 0.6);
         }
       } catch (e) {
-        console.warn("La reproducción de sonido falló (interacción del usuario requerida): ", e);
+        console.warn("Audio interactivo silenciado por políticas de navegador.", e);
       }
     }
 
-    // Timer para resetear la pantalla
-    let clearTimer;
+    let hideScreenTimer;
 
-    // 3. Procesamiento del Registro de Asistencia
+    // 3. Petición y Registro
     function registrarAsistencia(event) {
       event.preventDefault();
       
@@ -247,113 +288,118 @@
       const dni = dniInput.value.trim();
       if (!dni) return;
 
-      // Limpiar temporizadores anteriores
-      clearTimeout(clearTimer);
+      clearTimeout(hideScreenTimer);
 
-      const loader = document.getElementById("loader");
-      const tarjeta = document.getElementById("tarjeta-bienvenida");
+      const loader = document.getElementById("loader-overlay");
+      const pantallaGigante = document.getElementById("pantalla-gigante");
       
-      // Mostrar cargando
+      // Mostrar Loader con Logo 3D girando en pantalla completa
       loader.classList.remove("hidden");
-      tarjeta.classList.add("hidden");
+      pantallaGigante.classList.add("hidden");
 
-      // Construcción de la URL de consulta hacia Google Apps Script
       const requestUrl = `${API_URL}?action=registrarAsistencia&dni=${encodeURIComponent(dni)}`;
 
       fetch(requestUrl)
         .then(response => response.json())
         .then(res => {
-          loader.classList.add("hidden");
-          dniInput.value = ""; // Limpiar el input para el siguiente
+          loader.classList.add("hidden"); // Ocultar loader 3D
+          dniInput.value = ""; 
 
           if (res.success) {
-            mostrarTarjeta(res.data, res.status);
+            presentarPantallaGigante(res.data, res.status);
           } else {
-            // Manejar errores de usuario no encontrado o vencimiento
-            mostrarError(res.message || "Error al verificar el DNI");
+            presentarErrorPantallaGigante(res.message || "Usuario no encontrado");
           }
         })
         .catch(error => {
           loader.classList.add("hidden");
           dniInput.value = "";
-          mostrarError("Error de conexión con el servidor de base de datos.");
+          presentarErrorPantallaGigante("Error de conexión con la base de datos.");
           console.error(error);
         })
         .finally(() => {
-          // Devolver el cursor siempre al input de DNI
           dniInput.focus();
         });
     }
 
-    // 4. Mostrar Tarjeta del Usuario Encontrado
-    function mostrarTarjeta(usuario, status) {
-      const tarjeta = document.getElementById("tarjeta-bienvenida");
-      const banner = document.getElementById("status-banner");
-      const border = document.getElementById("status-border");
+    // 4. Mostrar Pantalla Gigante en caso de Éxito o Vencido
+    function presentarPantallaGigante(usuario, status) {
+      const modal = document.getElementById("pantalla-gigante");
+      const bg = document.getElementById("glow-bg");
+      const border = document.getElementById("neon-photo-border");
+      const badge = document.getElementById("giant-status-badge");
+      const motivationalBox = usuario.mensaje ? document.getElementById("giant-message").parentNode : null;
 
-      // Inyectar datos
-      document.getElementById("user-photo").src = usuario.foto;
-      document.getElementById("user-name").textContent = usuario.nombre;
-      document.getElementById("user-plan").textContent = usuario.plan;
-      document.getElementById("user-expiry").textContent = usuario.fechaVencimiento;
-      document.getElementById("user-phone").textContent = usuario.celular || "No asignado";
-      document.getElementById("user-message").textContent = usuario.mensaje;
+      // Inyectar Datos
+      document.getElementById("giant-photo").src = usuario.foto;
+      document.getElementById("giant-name").textContent = usuario.nombre;
+      document.getElementById("giant-plan").textContent = usuario.plan;
+      document.getElementById("giant-expiry").textContent = usuario.fechaVencimiento;
+      document.getElementById("giant-phone").textContent = usuario.celular || "No asignado";
+      document.getElementById("giant-message").textContent = usuario.mensaje;
 
-      // Ajustes visuales según el estado
       if (status === "activo") {
-        banner.className = "bg-emerald-500 text-slate-950 text-center py-3 font-bold text-lg tracking-widest uppercase";
-        banner.textContent = "ACCESO PERMITIDO";
-        border.className = "w-48 h-48 rounded-2xl overflow-hidden border-4 border-emerald-500 shadow-xl";
+        // Estilos para acceso Permitido (Verde)
+        bg.style.background = "radial-gradient(circle, rgba(16,185,129,0.25) 0%, rgba(2,6,23,1) 75%)";
+        border.className = "w-72 h-72 md:w-96 md:h-96 rounded-3xl overflow-hidden border-8 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.4)]";
+        badge.className = "px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest bg-emerald-500/15 text-emerald-400 border border-emerald-500/30";
+        badge.textContent = "ACCESO AUTORIZADO";
+        if (motivationalBox) motivationalBox.className = "bg-slate-950/60 p-5 rounded-2xl border-l-8 border-emerald-500 italic text-slate-200 text-lg md:text-2xl backdrop-blur";
         playSound("success");
       } else {
-        banner.className = "bg-rose-500 text-white text-center py-3 font-bold text-lg tracking-widest uppercase";
-        banner.textContent = "MEMBRESÍA VENCIDA";
-        border.className = "w-48 h-48 rounded-2xl overflow-hidden border-4 border-rose-500 shadow-xl";
+        // Estilos para acceso Denegado por Vencimiento (Rojo)
+        bg.style.background = "radial-gradient(circle, rgba(239,68,68,0.25) 0%, rgba(2,6,23,1) 75%)";
+        border.className = "w-72 h-72 md:w-96 md:h-96 rounded-3xl overflow-hidden border-8 border-rose-500 shadow-[0_0_50px_rgba(239,68,68,0.4)]";
+        badge.className = "px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest bg-rose-500/15 text-rose-400 border border-rose-500/30";
+        badge.textContent = "MEMBRESÍA VENCIDA - CONSULTE CONTROL";
+        if (motivationalBox) motivationalBox.className = "bg-slate-950/60 p-5 rounded-2xl border-l-8 border-rose-500 italic text-slate-200 text-lg md:text-2xl backdrop-blur";
         playSound("error");
       }
 
-      // Mostrar la tarjeta
-      tarjeta.classList.remove("hidden");
+      modal.classList.remove("hidden");
 
-      // Ocultar la tarjeta automáticamente después de 4.5 segundos
-      clearTimer = setTimeout(() => {
-        tarjeta.classList.add("hidden");
-      }, 4500);
-    }
-
-    // 5. Mostrar Error o Alerta
-    function mostrarError(mensaje) {
-      const tarjeta = document.getElementById("tarjeta-bienvenida");
-      const banner = document.getElementById("status-banner");
-      const border = document.getElementById("status-border");
-
-      document.getElementById("user-photo").src = "https://via.placeholder.com/150?text=ALERTA";
-      document.getElementById("user-name").textContent = "Ingreso Bloqueado";
-      document.getElementById("user-plan").textContent = "SOPORTE";
-      document.getElementById("user-expiry").textContent = "---";
-      document.getElementById("user-phone").textContent = "---";
-      document.getElementById("user-message").textContent = mensaje;
-
-      banner.className = "bg-rose-500 text-white text-center py-3 font-bold text-lg tracking-widest uppercase";
-      banner.textContent = "ACCESO RECHAZADO";
-      border.className = "w-48 h-48 rounded-2xl overflow-hidden border-4 border-rose-500 shadow-xl";
-      
-      playSound("error");
-      tarjeta.classList.remove("hidden");
-
-      clearTimer = setTimeout(() => {
-        tarjeta.classList.add("hidden");
+      // Ocultar automáticamente en 5 segundos
+      hideScreenTimer = setTimeout(() => {
+        modal.classList.add("hidden");
       }, 5000);
     }
 
-    // 6. Configurar Gráficos Estáticos de Prueba en Administración (Paso Posterior)
+    // 5. Mostrar Pantalla Gigante en caso de Error
+    function presentarErrorPantallaGigante(mensaje) {
+      const modal = document.getElementById("pantalla-gigante");
+      const bg = document.getElementById("glow-bg");
+      const border = document.getElementById("neon-photo-border");
+      const badge = document.getElementById("giant-status-badge");
+      const motivationalBox = document.getElementById("giant-message").parentNode;
+
+      document.getElementById("giant-photo").src = "https://via.placeholder.com/150?text=S.O.S";
+      document.getElementById("giant-name").textContent = "ACCESO RECHAZADO";
+      document.getElementById("giant-plan").textContent = "DNI NO RECONOCIDO";
+      document.getElementById("giant-expiry").textContent = "---";
+      document.getElementById("giant-phone").textContent = "---";
+      document.getElementById("giant-message").textContent = mensaje;
+
+      // Estilo de Alerta en Rojo
+      bg.style.background = "radial-gradient(circle, rgba(239,68,68,0.25) 0%, rgba(2,6,23,1) 75%)";
+      border.className = "w-72 h-72 md:w-96 md:h-96 rounded-3xl overflow-hidden border-8 border-rose-500 shadow-[0_0_50px_rgba(239,68,68,0.4)]";
+      badge.className = "px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest bg-rose-500/15 text-rose-400 border border-rose-500/30";
+      badge.textContent = "ALERTA DE REGISTRO";
+      motivationalBox.className = "bg-slate-950/60 p-5 rounded-2xl border-l-8 border-rose-500 italic text-slate-200 text-lg md:text-2xl backdrop-blur";
+
+      playSound("error");
+      modal.classList.remove("hidden");
+
+      hideScreenTimer = setTimeout(() => {
+        modal.classList.add("hidden");
+      }, 5000);
+    }
+
+    // 6. Configuración de Gráficos del Administrador
     let myChartHours, myChartDays;
     function inicializarGraficos() {
-      // Destruir instancias anteriores para evitar bugs de hover en Chart.js
       if (myChartHours) myChartHours.destroy();
       if (myChartDays) myChartDays.destroy();
 
-      // Configuración Gráfico Horas (Prueba)
       const ctxHours = document.getElementById('chartHours').getContext('2d');
       myChartHours = new Chart(ctxHours, {
         type: 'line',
@@ -380,7 +426,6 @@
         }
       });
 
-      // Configuración Gráfico Días (Prueba)
       const ctxDays = document.getElementById('chartDays').getContext('2d');
       myChartDays = new Chart(ctxDays, {
         type: 'bar',
