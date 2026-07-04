@@ -90,14 +90,17 @@
         <h2 class="text-sm font-bold tracking-[0.2em] text-slate-400 uppercase mb-4">Control de Acceso</h2>
         <form onsubmit="registrarAsistencia(event)" class="relative">
           <input 
-            type="text" 
-            id="input-dni" 
-            placeholder="COLOQUE SU DNI" 
-            autofocus
-            required
-            autocomplete="off"
-            class="w-full bg-slate-950 text-white placeholder-slate-700 border-2 border-slate-800 focus:border-emerald-500 rounded-2xl px-6 py-5 text-center text-3xl font-black tracking-widest outline-none transition duration-300 shadow-inner"
-          >
+  type="text" 
+  id="input-dni" 
+  placeholder="COLOQUE SU DNI" 
+  maxlength="9"
+  inputmode="numeric"
+  oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+  autofocus
+  required
+  autocomplete="off"
+  class="w-full bg-slate-950 text-white placeholder-slate-700 border-2 border-slate-800 focus:border-emerald-500 rounded-2xl px-6 py-5 text-center text-3xl font-black tracking-widest outline-none transition duration-300 shadow-inner"
+>
           <button type="submit" class="absolute right-3 top-3.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 w-12 h-12 rounded-xl flex items-center justify-center font-bold transition">
             <i class="fa-solid fa-arrow-right text-lg"></i>
           </button>
