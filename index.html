@@ -11,7 +11,7 @@
   <!-- Chart.js para los gráficos del administrador -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
     body {
       font-family: 'Montserrat', sans-serif;
     }
@@ -21,8 +21,8 @@
       perspective: 1200px;
     }
     .logo-3d {
-      width: 160px;
-      height: 160px;
+      width: 180px;
+      height: 180px;
       transform-style: preserve-3d;
       animation: spin3D 2.2s infinite linear;
     }
@@ -33,15 +33,15 @@
 
     /* Transición de aparición suave para la pantalla de bienvenida */
     .slide-in-right {
-      animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: slideInRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     @keyframes slideInRight {
-      from { opacity: 0; transform: translateX(50px); }
+      from { opacity: 0; transform: translateX(60px); }
       to { opacity: 1; transform: translateX(0); }
     }
 
     .scale-up {
-      animation: scaleUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: scaleUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     @keyframes scaleUp {
       from { opacity: 0; transform: scale(0.9); }
@@ -53,8 +53,11 @@
 
   <!-- CONFIGURACIÓN DE LINKS -->
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyOCkoYWJ44abs2fuw5-yPgkMC2bCkHaDiYg1dHX_9oLiDlwrBVA_wpKEGZlXDJNl9X/exec"; 
+    const API_URL = "REEMPLAZA_CON_TU_URL_DE_APPS_SCRIPT_AQUI"; // URL de tu Google Apps Script
     const LOGO_URL = "logo.png"; // Ruta de tu logo en el repositorio
+    
+    // Silueta elegante de reemplazo en formato SVG si la foto no carga
+    const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1' d='M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z'/></svg>";
   </script>
 
   <!-- NAVBAR / MENÚ SUPERIOR (Discreto y elegante) -->
@@ -74,17 +77,17 @@
   </header>
 
   <!-- CONTENEDOR PRINCIPAL -->
-  <main class="flex-grow flex items-center justify-center p-4 relative">
+  <main class="flex-grow flex items-center justify-center p-6 relative">
     
     <!-- ================= VISTA DE REGISTRO (PANTALLA DE ESPERA) ================= -->
-    <section id="section-registro" class="w-full max-w-md flex flex-col items-center z-10">
+    <section id="section-registro" class="w-full max-w-md flex flex-col items-center z-10 transition-all duration-300">
       
       <!-- Contenedor del Input de DNI -->
-      <div class="w-full bg-slate-900/90 border border-slate-800 p-8 rounded-3xl shadow-2xl text-center backdrop-blur-md">
+      <div class="w-full bg-slate-900/95 border border-slate-800 p-8 rounded-3xl shadow-2xl text-center backdrop-blur-md">
         <!-- Logo estático pequeño sobre el input -->
-        <img id="form-logo" src="" alt="Gym Logo" class="h-24 mx-auto mb-6 object-contain">
+        <img id="form-logo" src="" alt="Gym Logo" class="h-28 mx-auto mb-8 object-contain">
         
-        <h2 class="text-lg font-semibold tracking-wider text-slate-400 uppercase mb-4">Control de Acceso</h2>
+        <h2 class="text-sm font-bold tracking-[0.2em] text-slate-400 uppercase mb-4">Control de Acceso</h2>
         <form onsubmit="registrarAsistencia(event)" class="relative">
           <input 
             type="text" 
@@ -93,68 +96,71 @@
             autofocus
             required
             autocomplete="off"
-            class="w-full bg-slate-950 text-white placeholder-slate-700 border-2 border-slate-800 focus:border-emerald-500 rounded-2xl px-5 py-5 text-center text-3xl font-black tracking-widest outline-none transition duration-300 shadow-inner"
+            class="w-full bg-slate-950 text-white placeholder-slate-700 border-2 border-slate-800 focus:border-emerald-500 rounded-2xl px-6 py-5 text-center text-3xl font-black tracking-widest outline-none transition duration-300 shadow-inner"
           >
           <button type="submit" class="absolute right-3 top-3.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 w-12 h-12 rounded-xl flex items-center justify-center font-bold transition">
             <i class="fa-solid fa-arrow-right text-lg"></i>
           </button>
         </form>
-        <p class="text-xs text-slate-600 mt-4 uppercase tracking-widest">Alinee su código o digite manualmente</p>
+        <p class="text-[10px] text-slate-500 mt-4 uppercase tracking-[0.2em]">Alinee su código o digite manualmente</p>
       </div>
 
     </section>
 
     <!-- ================= PANTALLA COMPLETA DE LOADER (LOGO 3D) ================= -->
     <div id="loader-overlay" class="hidden fixed inset-0 bg-slate-950 flex flex-col items-center justify-center z-50">
-      <div class="logo-container-3d mb-8">
+      <div class="logo-container-3d mb-10">
         <img id="loader-logo" src="" alt="Cargando..." class="logo-3d object-contain">
       </div>
-      <p class="text-slate-400 text-lg uppercase tracking-[0.3em] font-semibold animate-pulse">Procesando Membresía</p>
+      <p class="text-slate-400 text-lg uppercase tracking-[0.35em] font-semibold animate-pulse">Procesando Membresía</p>
     </div>
 
     <!-- ================= PANTALLA GIGANTE DE BIENVENIDA (MODAL FULLSCREEN) ================= -->
-    <div id="pantalla-gigante" class="hidden fixed inset-0 z-40 flex items-center justify-center transition-all duration-500">
+    <div id="pantalla-gigante" class="hidden fixed inset-0 z-40 flex items-center justify-center transition-all duration-500 bg-slate-950">
       
-      <!-- Capa de fondo con desfoque y brillo dinámico (verde o rojo) -->
-      <div id="glow-bg" class="absolute inset-0 transition-all duration-700 bg-radial"></div>
+      <!-- Capa de fondo con desfoque y brillo radial dinámico -->
+      <div id="glow-bg" class="absolute inset-0 transition-all duration-700 opacity-90"></div>
       
-      <!-- Contenido de Pantalla Gigante -->
-      <div class="relative w-full max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12 z-10">
+      <!-- Contenido de Pantalla Gigante Organizado -->
+      <div class="relative w-full max-w-6xl mx-auto px-10 py-12 flex flex-col lg:flex-row items-center justify-between gap-16 z-10">
         
         <!-- Lado Izquierdo: Foto Gigante con Marco Neón -->
         <div class="flex-shrink-0 scale-up">
-          <div id="neon-photo-border" class="w-72 h-72 md:w-96 md:h-96 rounded-3xl overflow-hidden border-8 shadow-[0_0_50px_rgba(16,185,129,0.3)] transition-all duration-500">
-            <img id="giant-photo" src="" alt="Miembro" class="w-full h-full object-cover">
+          <div id="neon-photo-border" class="w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 shadow-[0_0_60px_rgba(16,185,129,0.25)] transition-all duration-500 flex items-center justify-center">
+            <img id="giant-photo" src="" alt="Miembro" class="w-full h-full object-cover" onerror="this.onerror=null; this.src=DEFAULT_AVATAR;">
           </div>
         </div>
 
-        <!-- Lado Derecho: Textos Informativos -->
-        <div class="flex-grow text-center md:text-left text-white space-y-6 slide-in-right">
+        <!-- Lado Derecho: Textos Informativos Ampliados -->
+        <div class="flex-grow w-full text-center lg:text-left space-y-8 slide-in-right">
           <div>
-            <span id="giant-status-badge" class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span id="giant-status-badge" class="px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-md">
               ACCESO AUTORIZADO
             </span>
-            <h1 id="giant-name" class="text-5xl md:text-7xl font-black mt-4 tracking-tight leading-tight">JUAN PÉREZ RAMÍREZ</h1>
+            <!-- Name with capitalization and increased line-height -->
+            <h1 id="giant-name" class="text-4xl md:text-5xl lg:text-6xl font-black mt-6 tracking-wide leading-snug text-white capitalize">
+              aaron ivan carrillo marchan
+            </h1>
           </div>
 
-          <!-- Bloques de datos técnicos -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-            <div class="bg-slate-950/80 border border-slate-800/80 p-4 rounded-2xl backdrop-blur">
-              <span class="text-xs text-slate-500 block uppercase font-bold tracking-wider">Plan Contratado</span>
-              <span id="giant-plan" class="text-xl font-bold text-white uppercase mt-1 block">VIP TRIMESTRAL</span>
+          <!-- Bloques de datos técnicos con más aire -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
+            <div class="bg-slate-900/90 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-md shadow-lg">
+              <span class="text-xs text-slate-500 block uppercase font-bold tracking-widest">Plan Contratado</span>
+              <span id="giant-plan" class="text-xl font-extrabold text-white uppercase mt-2 block">VIP TRIMESTRAL</span>
             </div>
-            <div class="bg-slate-950/80 border border-slate-800/80 p-4 rounded-2xl backdrop-blur">
-              <span class="text-xs text-slate-500 block uppercase font-bold tracking-wider">Vence el Día</span>
-              <span id="giant-expiry" class="text-xl font-bold text-slate-300 mt-1 block">24/12/2026</span>
+            <div class="bg-slate-900/90 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-md shadow-lg">
+              <span class="text-xs text-slate-500 block uppercase font-bold tracking-widest">Vence el Día</span>
+              <span id="giant-expiry" class="text-xl font-extrabold text-slate-200 mt-2 block">24/12/2026</span>
             </div>
-            <div class="bg-slate-950/80 border border-slate-800/80 p-4 rounded-2xl backdrop-blur">
-              <span class="text-xs text-slate-500 block uppercase font-bold tracking-wider">Contacto</span>
-              <span id="giant-phone" class="text-xl font-bold text-slate-300 mt-1 block">987654321</span>
+            <div class="bg-slate-900/90 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-md shadow-lg">
+              <span class="text-xs text-slate-500 block uppercase font-bold tracking-widest">Celular</span>
+              <span id="giant-phone" class="text-xl font-extrabold text-slate-200 mt-2 block">987654321</span>
             </div>
           </div>
 
-          <!-- Mensaje Motivacional en Letra Grande -->
-          <div class="bg-slate-950/60 p-5 rounded-2xl border-l-8 border-emerald-500 italic text-slate-200 text-lg md:text-2xl backdrop-blur">
+          <!-- Mensaje Motivacional Ampliado -->
+          <div class="bg-slate-900/70 p-6 rounded-2xl border-l-8 border-emerald-500 italic text-slate-300 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4">
             "<span id="giant-message">¡El único entrenamiento malo es el que no se hace!</span>"
           </div>
         </div>
@@ -222,17 +228,20 @@
   </footer>
 
   <script>
-    // Inyectar imágenes del logo guardadas localmente
+    // Inyectar imágenes del logo
     document.getElementById("nav-logo").src = LOGO_URL;
     document.getElementById("form-logo").src = LOGO_URL;
     document.getElementById("loader-logo").src = LOGO_URL;
 
-    // 1. Navegación
+    // 1. Navegación entre pestañas
     function switchTab(tab) {
       const regSection = document.getElementById("section-registro");
       const adminSection = document.getElementById("section-admin");
       const regBtn = document.getElementById("tab-registro-btn");
       const adminBtn = document.getElementById("tab-admin-btn");
+
+      // Resetear vista de bienvenida si cambia de pestaña
+      document.getElementById("pantalla-gigante").classList.add("hidden");
 
       if (tab === "registro") {
         regSection.classList.remove("hidden");
@@ -249,7 +258,7 @@
       }
     }
 
-    // 2. Sintetizador de Sonidos instantáneos
+    // 2. Sintetizador de Sonidos
     function playSound(type) {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -274,7 +283,7 @@
           oscillator.stop(audioCtx.currentTime + 0.6);
         }
       } catch (e) {
-        console.warn("Audio interactivo silenciado por políticas de navegador.", e);
+        console.warn("Audio silenciado por políticas del navegador.", e);
       }
     }
 
@@ -292,8 +301,10 @@
 
       const loader = document.getElementById("loader-overlay");
       const pantallaGigante = document.getElementById("pantalla-gigante");
+      const sectionRegistro = document.getElementById("section-registro");
       
-      // Mostrar Loader con Logo 3D girando en pantalla completa
+      // Ocultamos el formulario del fondo para evitar traslapes visuales
+      sectionRegistro.classList.add("hidden");
       loader.classList.remove("hidden");
       pantallaGigante.classList.add("hidden");
 
@@ -308,63 +319,64 @@
           if (res.success) {
             presentarPantallaGigante(res.data, res.status);
           } else {
-            presentarErrorPantallaGigante(res.message || "Usuario no encontrado");
+            presentarErrorPantallaGigante(res.message || "Usuario no registrado");
           }
         })
         .catch(error => {
           loader.classList.add("hidden");
           dniInput.value = "";
-          presentarErrorPantallaGigante("Error de conexión con la base de datos.");
+          presentarErrorPantallaGigante("Error de red o conexión fallida.");
           console.error(error);
-        })
-        .finally(() => {
-          dniInput.focus();
         });
     }
 
-    // 4. Mostrar Pantalla Gigante en caso de Éxito o Vencido
+    // 4. Presentar Datos de Usuario en Pantalla Gigante Organizada
     function presentarPantallaGigante(usuario, status) {
       const modal = document.getElementById("pantalla-gigante");
       const bg = document.getElementById("glow-bg");
       const border = document.getElementById("neon-photo-border");
       const badge = document.getElementById("giant-status-badge");
-      const motivationalBox = usuario.mensaje ? document.getElementById("giant-message").parentNode : null;
+      const motivationalBox = document.getElementById("giant-message").parentNode;
 
-      // Inyectar Datos
-      document.getElementById("giant-photo").src = usuario.foto;
+      // Inyectar Datos y resetear manejador onerror por si acaso
+      const imgElem = document.getElementById("giant-photo");
+      imgElem.src = usuario.foto || "";
+      
       document.getElementById("giant-name").textContent = usuario.nombre;
       document.getElementById("giant-plan").textContent = usuario.plan;
       document.getElementById("giant-expiry").textContent = usuario.fechaVencimiento;
-      document.getElementById("giant-phone").textContent = usuario.celular || "No asignado";
-      document.getElementById("giant-message").textContent = usuario.mensaje;
+      document.getElementById("giant-phone").textContent = usuario.celular || "---";
+      document.getElementById("giant-message").textContent = usuario.message || usuario.mensaje;
 
       if (status === "activo") {
-        // Estilos para acceso Permitido (Verde)
-        bg.style.background = "radial-gradient(circle, rgba(16,185,129,0.25) 0%, rgba(2,6,23,1) 75%)";
-        border.className = "w-72 h-72 md:w-96 md:h-96 rounded-3xl overflow-hidden border-8 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.4)]";
-        badge.className = "px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest bg-emerald-500/15 text-emerald-400 border border-emerald-500/30";
+        // Estilos para acceso Permitido (Verde Radial)
+        bg.style.background = "radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(2,6,23,1) 80%)";
+        border.className = "w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-emerald-500 shadow-[0_0_60px_rgba(16,185,129,0.35)] flex items-center justify-center transition-all";
+        badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-md";
         badge.textContent = "ACCESO AUTORIZADO";
-        if (motivationalBox) motivationalBox.className = "bg-slate-950/60 p-5 rounded-2xl border-l-8 border-emerald-500 italic text-slate-200 text-lg md:text-2xl backdrop-blur";
+        motivationalBox.className = "bg-slate-900/70 p-6 rounded-2xl border-l-8 border-emerald-500 italic text-slate-200 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4";
         playSound("success");
       } else {
-        // Estilos para acceso Denegado por Vencimiento (Rojo)
-        bg.style.background = "radial-gradient(circle, rgba(239,68,68,0.25) 0%, rgba(2,6,23,1) 75%)";
-        border.className = "w-72 h-72 md:w-96 md:h-96 rounded-3xl overflow-hidden border-8 border-rose-500 shadow-[0_0_50px_rgba(239,68,68,0.4)]";
-        badge.className = "px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest bg-rose-500/15 text-rose-400 border border-rose-500/30";
-        badge.textContent = "MEMBRESÍA VENCIDA - CONSULTE CONTROL";
-        if (motivationalBox) motivationalBox.className = "bg-slate-950/60 p-5 rounded-2xl border-l-8 border-rose-500 italic text-slate-200 text-lg md:text-2xl backdrop-blur";
+        // Estilos para acceso Denegado/Vencido (Rojo Radial)
+        bg.style.background = "radial-gradient(circle, rgba(239,68,68,0.2) 0%, rgba(2,6,23,1) 80%)";
+        border.className = "w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-rose-500 shadow-[0_0_60px_rgba(239,68,68,0.35)] flex items-center justify-center transition-all";
+        badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-md";
+        badge.textContent = "MEMBRESÍA VENCIDA";
+        motivationalBox.className = "bg-slate-900/70 p-6 rounded-2xl border-l-8 border-rose-500 italic text-slate-200 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4";
         playSound("error");
       }
 
       modal.classList.remove("hidden");
 
-      // Ocultar automáticamente en 5 segundos
+      // Auto-retorno a la pantalla de DNI tras 5 segundos
       hideScreenTimer = setTimeout(() => {
         modal.classList.add("hidden");
+        document.getElementById("section-registro").classList.remove("hidden");
+        document.getElementById("input-dni").focus();
       }, 5000);
     }
 
-    // 5. Mostrar Pantalla Gigante en caso de Error
+    // 5. Presentar Alertas o Errores en Pantalla Gigante
     function presentarErrorPantallaGigante(mensaje) {
       const modal = document.getElementById("pantalla-gigante");
       const bg = document.getElementById("glow-bg");
@@ -372,25 +384,27 @@
       const badge = document.getElementById("giant-status-badge");
       const motivationalBox = document.getElementById("giant-message").parentNode;
 
-      document.getElementById("giant-photo").src = "https://via.placeholder.com/150?text=S.O.S";
+      document.getElementById("giant-photo").src = DEFAULT_AVATAR;
       document.getElementById("giant-name").textContent = "ACCESO RECHAZADO";
-      document.getElementById("giant-plan").textContent = "DNI NO RECONOCIDO";
+      document.getElementById("giant-plan").textContent = "REGISTRO INVÁLIDO";
       document.getElementById("giant-expiry").textContent = "---";
       document.getElementById("giant-phone").textContent = "---";
       document.getElementById("giant-message").textContent = mensaje;
 
-      // Estilo de Alerta en Rojo
-      bg.style.background = "radial-gradient(circle, rgba(239,68,68,0.25) 0%, rgba(2,6,23,1) 75%)";
-      border.className = "w-72 h-72 md:w-96 md:h-96 rounded-3xl overflow-hidden border-8 border-rose-500 shadow-[0_0_50px_rgba(239,68,68,0.4)]";
-      badge.className = "px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest bg-rose-500/15 text-rose-400 border border-rose-500/30";
-      badge.textContent = "ALERTA DE REGISTRO";
-      motivationalBox.className = "bg-slate-950/60 p-5 rounded-2xl border-l-8 border-rose-500 italic text-slate-200 text-lg md:text-2xl backdrop-blur";
+      // Alerta Roja Radial
+      bg.style.background = "radial-gradient(circle, rgba(239,68,68,0.2) 0%, rgba(2,6,23,1) 80%)";
+      border.className = "w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-rose-500 shadow-[0_0_60px_rgba(239,68,68,0.35)] flex items-center justify-center transition-all";
+      badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-md";
+      badge.textContent = "ALERTA EN ACCESO";
+      motivationalBox.className = "bg-slate-900/70 p-6 rounded-2xl border-l-8 border-rose-500 italic text-slate-200 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4";
 
       playSound("error");
       modal.classList.remove("hidden");
 
       hideScreenTimer = setTimeout(() => {
         modal.classList.add("hidden");
+        document.getElementById("section-registro").classList.remove("hidden");
+        document.getElementById("input-dni").focus();
       }, 5000);
     }
 
