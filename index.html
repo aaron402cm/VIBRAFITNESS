@@ -56,7 +56,11 @@
   <!-- CONFIGURACIÓN DE LINKS -->
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyOCkoYWJ44abs2fuw5-yPgkMC2bCkHaDiYg1dHX_9oLiDlwrBVA_wpKEGZlXDJNl9X/exec";
-    const LOGO_URL = "logo.png"; // Ruta de tu logo en el repositorio
+    // IMPORTANTE: "logo.png" solo funciona si ese archivo está subido en la MISMA carpeta
+    // que este index.html (mismo repositorio/hosting). Si el logo no aparece, sube logo.png
+    // junto a este archivo, o reemplaza esta línea por una URL pública absoluta
+    // (por ejemplo, un enlace directo de una imagen en Google Drive o GitHub).
+    const LOGO_URL = "logo.png";
     
     // Silueta de reemplazo en formato SVG si la foto no carga
     const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1' d='M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z'/></svg>";
@@ -65,7 +69,7 @@
   <!-- NAVBAR / MENÚ SUPERIOR -->
   <header class="bg-slate-900/80 backdrop-blur border-b border-slate-800/60 px-6 py-4 flex justify-between items-center shadow-lg z-10">
     <div class="flex items-center space-x-3">
-      <img id="nav-logo" src="" alt="Logo" class="h-8 w-auto object-contain">
+      <img id="nav-logo" src="" alt="Logo" class="h-8 w-auto object-contain" onerror="this.onerror=null; this.style.display='none';">
       <span class="text-sm font-extrabold uppercase tracking-widest text-slate-400">FITNESS CLUB</span>
     </div>
     <nav class="flex space-x-2">
@@ -87,7 +91,7 @@
       <!-- Contenedor del Input de DNI -->
       <div class="w-full bg-slate-900/95 border border-slate-800 p-12 rounded-3xl shadow-2xl text-center backdrop-blur-md">
         <!-- Logo estático -->
-        <img id="form-logo" src="" alt="Gym Logo" class="h-36 mx-auto mb-10 object-contain">
+        <img id="form-logo" src="" alt="Gym Logo" class="h-36 mx-auto mb-10 object-contain" onerror="this.onerror=null; this.style.display='none';">
         
         <h2 class="text-sm font-bold tracking-[0.25em] text-slate-400 uppercase mb-5">Control de Acceso</h2>
         <form onsubmit="registrarAsistencia(event)" class="relative">
@@ -115,7 +119,7 @@
     <!-- ================= PANTALLA COMPLETA DE LOADER (LOGO 3D) ================= -->
     <div id="loader-overlay" class="hidden fixed inset-0 bg-slate-950 flex flex-col items-center justify-center z-50">
       <div class="logo-container-3d mb-10">
-        <img id="loader-logo" src="" alt="Cargando..." class="logo-3d object-contain">
+        <img id="loader-logo" src="" alt="Cargando..." class="logo-3d object-contain" onerror="this.onerror=null; this.style.display='none';">
       </div>
       <p class="text-slate-400 text-lg uppercase tracking-[0.35em] font-semibold animate-pulse">Procesando Membresía</p>
     </div>
@@ -711,7 +715,19 @@
       var requestUrl = API_URL + "?action=getAdminDashboardData";
 
       fetch(requestUrl)
-        .then(function(res) { return res.json(); })
+        .then(function(res) {
+          return res.text().then(function(texto) {
+            try {
+              return JSON.parse(texto);
+            } catch (e) {
+              // Si el Apps Script no devuelve JSON, normalmente es porque el
+              // despliegue no está publicado como "Cualquier usuario" o la URL
+              // apunta a una versión vieja. Mostramos el detalle real en consola.
+              console.error("Respuesta no-JSON recibida del API_URL:", texto.substring(0, 300));
+              throw new Error("La API no devolvió datos válidos. Revisa el despliegue del Apps Script (Implementar > Administrar implementaciones > Acceso: Cualquier usuario).");
+            }
+          });
+        })
         .then(function(res) {
           if (!res.success) {
             alert("Error al cargar datos del panel: " + res.message);
@@ -810,6 +826,7 @@
           document.getElementById("kpi-hoy").textContent = "ERR";
           document.getElementById("kpi-dentro").textContent = "ERR";
           document.getElementById("kpi-vencidos").textContent = "ERR";
+          alert("No se pudo cargar el panel de administración.\n\n" + (err.message || err) + "\n\nRevisa la consola (F12) para más detalle.");
         });
     }
 
@@ -1147,10 +1164,10 @@
       myChartHours = new Chart(ctxHours, {
         type: 'line',
         data: {
-          labels: chartsData ? chartsData.horasLabels : ['6am', '8am', '10am', '12pm', '2pm', '4pm', '6pm', '8pm', '10pm'],
+          labels: chartsData ? chartsData.horasLabels : ['12am','1am','2am','3am','4am','5am','6am','7am','8am','9am','10am','11am','12pm','1pm','2pm','3pm','4pm','5pm','6pm','7pm','8pm','9pm','10pm','11pm'],
           datasets: [{
             label: 'Asistencias',
-            data: chartsData ? chartsData.horasValores : [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            data: chartsData ? chartsData.horasValores : new Array(24).fill(0),
             borderColor: '#10b981',
             backgroundColor: 'rgba(16, 185, 129, 0.1)',
             borderWidth: 3,
@@ -1196,4 +1213,3 @@
   </script>
 </body>
 </html>
---- END OF FILE Paste July 05, 2026 - 4:07AM ---
