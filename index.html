@@ -169,38 +169,99 @@
       </div>
     </div>
 
-    <!-- ================= VISTA DE ADMINISTRACIÓN ================= -->
-    <section id="section-admin" class="hidden w-full max-w-6xl z-10">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-6">
-        <div class="flex justify-between items-center border-b border-slate-800 pb-4">
-          <h2 class="text-2xl font-extrabold text-white"><i class="fa-solid fa-chart-line text-emerald-500 mr-2"></i>Panel de Control</h2>
-          <span class="text-xs text-slate-500 uppercase tracking-widest font-semibold">Datos en tiempo real</span>
+    <!-- ================= VISTA DE ADMINISTRACIÓN EN TIEMPO REAL ================= -->
+    <section id="section-admin" class="hidden w-full max-w-6xl z-10 transition-all duration-300">
+      <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-8 backdrop-blur-md">
+        
+        <div class="flex justify-between items-center border-b border-slate-800 pb-5">
+          <h2 class="text-2xl font-black text-white uppercase tracking-wider">
+            <i class="fa-solid fa-chart-line text-emerald-500 mr-2"></i>Consola de Recepción
+          </h2>
+          <span class="text-xs text-slate-500 uppercase tracking-widest font-bold">Monitoreo Operativo</span>
         </div>
 
-        <!-- KPIs -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="bg-slate-950 border border-slate-800 p-5 rounded-xl flex items-center space-x-4">
-            <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-lg text-2xl"><i class="fa-solid fa-users"></i></div>
+        <!-- KPIs Reales -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl flex items-center space-x-4 shadow-inner">
+            <div class="p-4 bg-emerald-500/10 text-emerald-400 rounded-xl text-2xl"><i class="fa-solid fa-users"></i></div>
             <div>
-              <p class="text-xs text-slate-500 font-semibold uppercase">Miembros Activos</p>
-              <h3 class="text-2xl font-bold">128</h3>
+              <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Miembros Activos</p>
+              <h3 id="kpi-activos" class="text-3xl font-black mt-1">...</h3>
             </div>
           </div>
-          <div class="bg-slate-950 border border-slate-800 p-5 rounded-xl flex items-center space-x-4">
-            <div class="p-3 bg-blue-500/10 text-blue-400 rounded-lg text-2xl"><i class="fa-solid fa-calendar-check"></i></div>
+          <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl flex items-center space-x-4 shadow-inner">
+            <div class="p-4 bg-blue-500/10 text-blue-400 rounded-xl text-2xl"><i class="fa-solid fa-calendar-check"></i></div>
             <div>
-              <p class="text-xs text-slate-500 font-semibold uppercase">Asistencias Hoy</p>
-              <h3 class="text-2xl font-bold">45</h3>
+              <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Asistencias Hoy</p>
+              <h3 id="kpi-hoy" class="text-3xl font-black mt-1">...</h3>
             </div>
           </div>
-          <div class="bg-slate-950 border border-slate-800 p-5 rounded-xl flex items-center space-x-4">
-            <div class="p-3 bg-rose-500/10 text-rose-400 rounded-lg text-2xl"><i class="fa-solid fa-circle-exclamation"></i></div>
+          <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl flex items-center space-x-4 shadow-inner">
+            <div class="p-4 bg-rose-500/10 text-rose-400 rounded-lg text-2xl"><i class="fa-solid fa-circle-exclamation"></i></div>
             <div>
-              <p class="text-xs text-slate-500 font-semibold uppercase">Vencidos/Alerta</p>
-              <h3 class="text-2xl font-bold">12</h3>
+              <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Membresías Vencidas</p>
+              <h3 id="kpi-vencidos" class="text-3xl font-black mt-1">...</h3>
             </div>
           </div>
         </div>
+
+        <!-- Gráficos Reales -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-lg">
+            <h4 class="text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider">Horas Pico de Ingreso</h4>
+            <div class="h-64">
+              <canvas id="chartHours"></canvas>
+            </div>
+          </div>
+          <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-lg">
+            <h4 class="text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider">Flujo por Día de la Semana</h4>
+            <div class="h-64">
+              <canvas id="chartDays"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN NUEVA: TABLAS DE CONTROL OPERATIVO PARA LA ASISTENTE -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          <!-- Tabla de Últimas Asistencias (2/3 de ancho) -->
+          <div class="lg:col-span-2 bg-slate-950 border border-slate-800 p-6 rounded-2xl shadow-lg space-y-4">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center">
+              <i class="fa-solid fa-clock-rotate-left text-emerald-400 mr-2"></i>Últimos Ingresos de Hoy
+            </h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="border-b border-slate-800 text-slate-500 text-xs font-bold uppercase tracking-wider">
+                    <th class="pb-3">Hora</th>
+                    <th class="pb-3">DNI</th>
+                    <th class="pb-3">Nombre Completo</th>
+                    <th class="pb-3 text-right">Movimiento</th>
+                  </tr>
+                </thead>
+                <tbody id="table-recent-body" class="divide-y divide-slate-900 text-slate-300">
+                  <tr>
+                    <td colspan="4" class="py-4 text-center text-slate-600">Consultando base de datos...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Alertas de Próximos Vencimientos (1/3 de ancho) -->
+          <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl shadow-lg space-y-4">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center">
+              <i class="fa-solid fa-bell text-orange-400 mr-2"></i>Membresías por vencer (7 días)
+            </h4>
+            <div id="list-alerts" class="space-y-3">
+              <p class="text-xs text-center text-slate-600 py-4">No hay alertas activas en este momento.</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
 
         <!-- Gráficos -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -425,60 +486,132 @@
       }, 5000);
     }
 
-    // 6. Configuración de Gráficos del Administrador
+    // 6. Obtener datos de administración reales desde el backend e inicializar gráficos
     let myChartHours, myChartDays;
+    
     function inicializarGraficos() {
-      if (myChartHours) myChartHours.destroy();
-      if (myChartDays) myChartDays.destroy();
+      // Mostrar estados de carga
+      document.getElementById("kpi-activos").textContent = "...";
+      document.getElementById("kpi-hoy").textContent = "...";
+      document.getElementById("kpi-vencidos").textContent = "...";
 
-      const ctxHours = document.getElementById('chartHours').getContext('2d');
-      myChartHours = new Chart(ctxHours, {
-        type: 'line',
-        data: {
-          labels: ['6am', '8am', '10am', '12pm', '2pm', '4pm', '6pm', '8pm', '10pm'],
-          datasets: [{
-            label: 'Asistencias',
-            data: [15, 32, 20, 10, 8, 22, 45, 50, 12],
-            borderColor: '#10b981',
-            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.3
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
-            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-          },
-          plugins: { legend: { display: false } }
-        }
-      });
+      fetch(`${API_URL}?action=getAdminDashboardData`)
+        .then(res => res.json())
+        .then(res => {
+          if (!res.success) {
+            alert("Error al cargar datos del panel: " + res.message);
+            return;
+          }
 
-      const ctxDays = document.getElementById('chartDays').getContext('2d');
-      myChartDays = new Chart(ctxDays, {
-        type: 'bar',
-        data: {
-          labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-          datasets: [{
-            label: 'Usuarios',
-            data: [45, 38, 42, 35, 48, 25],
-            backgroundColor: '#10b981',
-            borderRadius: 6
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
-            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-          },
-          plugins: { legend: { display: false } }
-        }
-      });
+          // 1. Cargar KPIs reales
+          document.getElementById("kpi-activos").textContent = res.kpis.miembrosActivos;
+          document.getElementById("kpi-hoy").textContent = res.kpis.asistenciasHoy;
+          document.getElementById("kpi-vencidos").textContent = res.kpis.vencidosAlerta;
+
+          // 2. Destruir gráficos anteriores si existen
+          if (myChartHours) myChartHours.destroy();
+          if (myChartDays) myChartDays.destroy();
+
+          // 3. Crear Gráfico Horas Pico
+          const ctxHours = document.getElementById('chartHours').getContext('2d');
+          myChartHours = new Chart(ctxHours, {
+            type: 'line',
+            data: {
+              labels: res.charts.horasLabels,
+              datasets: [{
+                label: 'Asistencias',
+                data: res.charts.horasValores,
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.3
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+                x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+              },
+              plugins: { legend: { display: false } }
+            }
+          });
+
+          // 4. Crear Gráfico Días Pico
+          const ctxDays = document.getElementById('chartDays').getContext('2d');
+          myChartDays = new Chart(ctxDays, {
+            type: 'bar',
+            data: {
+              labels: res.charts.diasLabels,
+              datasets: [{
+                label: 'Flujo',
+                data: res.charts.diasValores,
+                backgroundColor: '#10b981',
+                borderRadius: 6
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+                x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+              },
+              plugins: { legend: { display: false } }
+            }
+          });
+
+          // 5. Cargar Tabla de últimos ingresos de hoy
+          const recentBody = document.getElementById("table-recent-body");
+          recentBody.innerHTML = "";
+          if (res.ultimosIngresos.length === 0) {
+            recentBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-600">No se registran asistencias hoy.</td></tr>`;
+          } else {
+            res.ultimosIngresos.forEach(ingreso => {
+              const badgeColor = ingreso.movimiento === "IN" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-orange-500/10 text-orange-400 border border-orange-500/20";
+              recentBody.innerHTML += `
+                <tr class="hover:bg-slate-900/40 transition duration-150">
+                  <td class="py-3 font-semibold text-slate-400">${ingreso.hora}</td>
+                  <td class="py-3 font-semibold text-slate-400">${ingreso.dni}</td>
+                  <td class="py-3 font-extrabold capitalize text-white">${ingreso.nombre}</td>
+                  <td class="py-3 text-right">
+                    <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest ${badgeColor}">
+                      ${ingreso.movimiento}
+                    </span>
+                  </td>
+                </tr>
+              `;
+            });
+          }
+
+          // 6. Cargar Alertas de Vencimiento
+          const alertsContainer = document.getElementById("list-alerts");
+          alertsContainer.innerHTML = "";
+          if (res.proximosVencer.length === 0) {
+            alertsContainer.innerHTML = `<p class="text-xs text-center text-slate-600 py-4 uppercase tracking-wider">No hay avisos urgentes</p>`;
+          } else {
+            res.proximosVencer.forEach(alert => {
+              alertsContainer.innerHTML += `
+                <div class="bg-slate-900/80 border-l-4 border-orange-500 p-3 rounded-r-xl flex justify-between items-center transition">
+                  <div class="space-y-1">
+                    <h5 class="text-xs font-black text-white capitalize truncate max-w-[150px]">${alert.nombre}</h5>
+                    <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">${alert.plan} • Vence: ${alert.vencimiento}</p>
+                  </div>
+                  <span class="text-xs text-orange-400 font-black uppercase tracking-wider"><i class="fa-solid fa-bell animate-swing"></i></span>
+                </div>
+              `;
+            });
+          }
+
+        })
+        .catch(err => {
+          console.error("Fallo al consultar el API del Administrador: ", err);
+          document.getElementById("kpi-activos").textContent = "ERR";
+          document.getElementById("kpi-hoy").textContent = "ERR";
+          document.getElementById("kpi-vencidos").textContent = "ERR";
+        });
     }
 
     // Sintetizador de la melodía de Feliz Cumpleaños
