@@ -79,7 +79,7 @@
   </header>
 
   <!-- CONTENEDOR PRINCIPAL -->
-  <main class="flex-grow flex items-center justify-center p-6 relative">
+  <main class="flex-grow flex items-center justify-center p-4 lg:p-6 relative">
     
     <!-- ================= VISTA DE REGISTRO (PANTALLA DE ESPERA) ================= -->
     <section id="section-registro" class="w-full max-w-xl flex flex-col items-center z-10 transition-all duration-300">
@@ -169,11 +169,11 @@
       </div>
     </div>
 
-    <!-- ================= VISTA DE ADMINISTRACIÓN EN TIEMPO REAL (PANTALLA COMPLETA) ================= -->
-    <section id="section-admin" class="hidden w-full max-w-6xl z-10 transition-all duration-300">
-      <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 backdrop-blur-md max-h-[85vh] overflow-y-auto">
+    <!-- ================= VISTA DE ADMINISTRACIÓN EN TIEMPO REAL (DISEÑO PANORÁMICO) ================= -->
+    <section id="section-admin" class="hidden w-full max-w-[95%] lg:max-w-[90%] z-10 transition-all duration-300">
+      <div class="bg-slate-900/95 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 backdrop-blur-md max-h-[88vh] overflow-y-auto">
         
-        <!-- CABECERA PRINCIPAL DE KPIS (SIEMPRE VISIBLE EN ADMIN) -->
+        <!-- CABECERA PRINCIPAL DE KPIS (SIEMPRE VISIBLE EN EL ENCABEZADO) -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 pb-6 border-b border-slate-800">
           <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner">
             <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-lg text-lg"><i class="fa-solid fa-users"></i></div>
@@ -209,9 +209,9 @@
         <div class="flex flex-col md:flex-row gap-6 min-h-[480px]">
           
           <!-- MENÚ LATERAL IZQUIERDO (Botonera modular para la Asistente) -->
-          <div class="w-full md:w-1/4 flex flex-col gap-2 bg-slate-950/40 p-3 rounded-2xl border border-slate-800/40">
-            <button onclick="cambiarSeccionAdmin('buscador')" id="btn-sec-buscador" class="w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-emerald-500 text-slate-950 transition duration-150">
-              <i class="fa-solid fa-magnifying-glass mr-3 text-sm"></i>Buscador e Ingresos
+          <div class="w-full md:w-1/5 flex flex-col gap-2 bg-slate-950/40 p-3 rounded-2xl border border-slate-800/40">
+            <button onclick="cambiarSeccionAdmin('buscador')" id="btn-sec-buscador" class="w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-emerald-500 text-slate-950 transition duration-150 shadow-lg">
+              <i class="fa-solid fa-magnifying-glass mr-3 text-sm"></i>Buscador y Recientes
             </button>
             <button onclick="cambiarSeccionAdmin('graficas')" id="btn-sec-graficas" class="w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-slate-850 hover:bg-slate-800 text-slate-300 transition duration-150">
               <i class="fa-solid fa-chart-pie mr-3 text-sm"></i>Gráficas de Flujo
@@ -225,7 +225,7 @@
           </div>
 
           <!-- PANEL DE CONTENIDO DINÁMICO DERECHO (Con altura fija y scroll interno profesional) -->
-          <div class="w-full md:w-3/4 bg-slate-950/70 border border-slate-800 p-6 rounded-2xl shadow-inner relative max-h-[50vh] overflow-y-auto">
+          <div class="w-full md:w-4/5 bg-slate-950/70 border border-slate-800 p-6 rounded-2xl shadow-inner relative max-h-[50vh] overflow-y-auto">
             
             <!-- SUBSECCIÓN 1: BUSCADOR Y ÚLTIMOS INGRESOS (30 REGISTROS) -->
             <div id="sub-admin-buscador" class="space-y-6">
@@ -425,6 +425,7 @@
     let listadoCompletoPlanes = [];
     let streamEditor = null;
     let fotoBase64Editor = "";
+    let cachedChartsData = null; // Guardar datos para renderizado al vuelo
 
     // 1. Navegación entre pestañas principales
     function switchTab(tab) {
@@ -446,7 +447,9 @@
         adminSection.classList.remove("hidden");
         adminBtn.className = "px-4 py-2 rounded-lg font-bold text-xs uppercase bg-emerald-500 text-slate-950 transition duration-300";
         regBtn.className = "px-4 py-2 rounded-lg font-bold text-xs uppercase bg-slate-800 text-slate-300 hover:bg-slate-700 transition duration-300";
-        inicializarGraficos();
+        // Resetear a sub-sección buscador por defecto al entrar
+        cambiarSeccionAdmin('buscador');
+        consultarDatosAdmin();
       }
     }
 
@@ -460,12 +463,19 @@
         
         if (sec === seccion) {
           divSeccion.classList.remove("hidden");
-          btnSeccion.className = "w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-emerald-500 text-slate-950 transition duration-150";
+          btnSeccion.className = "w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-emerald-500 text-slate-950 transition duration-150 shadow-lg";
         } else {
           divSeccion.classList.add("hidden");
           btnSeccion.className = "w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-slate-850 hover:bg-slate-800 text-slate-300 transition duration-150";
         }
       });
+
+      // SOLUCIÓN RENDERIZADO: Crear las gráficas únicamente cuando la sección ya está visible
+      if (seccion === 'graficas' && cachedChartsData) {
+        setTimeout(() => {
+          inicializarGraficos(cachedChartsData);
+        }, 50); // Pequeña pausa para asegurar que el DOM quitó el hidden
+      }
     }
 
     // 3. Sintetizador de Sonidos
@@ -579,7 +589,6 @@
             badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-orange-500/15 text-orange-400 border border-orange-500/30 shadow-md";
             badge.textContent = "ACCESO AUTORIZADO • SALIDA (OUT)";
           } else {
-            // Estilo específico en caso de que un usuario con membresía vencida intente marcar
             badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-md animate-pulse";
             badge.textContent = "MEMBRESÍA VENCIDA";
           }
@@ -636,159 +645,6 @@
       }, 5000);
     }
 
-    // 6. Configuración de Gráficos del Administrador
-    let myChartHours, myChartDays;
-    function inicializarGraficos(chartsData) {
-      if (myChartHours) myChartHours.destroy();
-      if (myChartDays) myChartDays.destroy();
-
-      const ctxHours = document.getElementById('chartHours').getContext('2d');
-      myChartHours = new Chart(ctxHours, {
-        type: 'line',
-        data: {
-          labels: chartsData ? chartsData.horasLabels : ['6am', '8am', '10am', '12pm', '2pm', '4pm', '6pm', '8pm', '10pm'],
-          datasets: [{
-            label: 'Asistencias',
-            data: chartsData ? chartsData.horasValores : [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            borderColor: '#10b981',
-            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.3
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
-            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-          },
-          plugins: { legend: { display: false } }
-        }
-      });
-
-      const ctxDays = document.getElementById('chartDays').getContext('2d');
-      myChartDays = new Chart(ctxDays, {
-        type: 'bar',
-        data: {
-          labels: chartsData ? chartsData.diasLabels : ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-          datasets: [{
-            label: 'Flujo',
-            data: chartsData ? chartsData.diasValores : [0, 0, 0, 0, 0, 0],
-            backgroundColor: '#10b981',
-            borderRadius: 6
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
-            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-          },
-          plugins: { legend: { display: false } }
-        }
-      });
-    }
-
-    // Sintetizador de la melodía de Feliz Cumpleaños
-    function playBirthdayMelody() {
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const notas = [
-          {f: 261.63, d: 0.25}, 
-          {f: 261.63, d: 0.25}, 
-          {f: 293.66, d: 0.50}, 
-          {f: 261.63, d: 0.50}, 
-          {f: 349.23, d: 0.50}, 
-          {f: 329.63, d: 1.00}  
-        ];
-        let tiempo = audioCtx.currentTime;
-        notas.forEach(nota => {
-          const osc = audioCtx.createOscillator();
-          const gainNode = audioCtx.createGain();
-          
-          osc.connect(gainNode);
-          gainNode.connect(audioCtx.destination);
-          
-          osc.type = "triangle";
-          osc.frequency.setValueAtTime(nota.f, tiempo);
-          
-          gainNode.gain.setValueAtTime(0, tiempo);
-          gainNode.gain.linearRampToValueAtTime(0.15, tiempo + 0.02);
-          gainNode.gain.exponentialRampToValueAtTime(0.01, tiempo + nota.d - 0.02);
-          
-          osc.start(tiempo);
-          osc.stop(tiempo + nota.d);
-          tiempo += nota.d + 0.05; 
-        });
-      } catch (e) {
-        console.warn("Fallo de melodía: ", e);
-      }
-    }
-
-    // Explosión de Confeti continua en ráfagas
-    function lanzarExplosionConfeti() {
-      const duration = 4 * 1000;
-      const animationEnd = Date.now() + duration;
-      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
-
-      function randomInRange(min, max) {
-        return Math.random() * (max - min) + min;
-      }
-
-      const interval = setInterval(function() {
-        const timeLeft = animationEnd - Date.now();
-        if (timeLeft <= 0) return clearInterval(interval);
-
-        const particleCount = 50 * (timeLeft / duration);
-        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-      }, 250);
-    }
-
-    // Creación y elevación de Globos animada en 3D
-    function crearGlobosFlotantes() {
-      const container = document.createElement("div");
-      container.id = "birthday-balloons";
-      container.className = "fixed inset-0 pointer-events-none z-50 overflow-hidden";
-      document.body.appendChild(container);
-      
-      const colores = ["#ef4444", "#3b82f6", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6"];
-      
-      for (let i = 0; i < 20; i++) {
-        const globo = document.createElement("div");
-        const colorRandom = colores[Math.floor(Math.random() * colores.length)];
-        
-        globo.className = "absolute bottom-0 w-12 h-16 rounded-full opacity-85 shadow-[inset_-5px_-5px_0_rgba(0,0,0,0.15)] flex flex-col items-center justify-end";
-        globo.style.backgroundColor = colorRandom;
-        globo.style.left = Math.random() * 90 + "vw";
-        
-        const hilo = document.createElement("div");
-        hilo.className = "w-0.5 h-12 bg-slate-400 absolute top-full";
-        globo.appendChild(hilo);
-        
-        container.appendChild(globo);
-        
-        const velocidad = Math.random() * 4000 + 3000; 
-        const retardo = Math.random() * 1500;
-        
-        setTimeout(() => {
-          globo.animate([
-            { transform: "translateY(110vh) rotate(0deg)" },
-            { transform: `translateY(-120vh) rotate(${Math.random() * 40 - 20}deg)` }
-          ], {
-            duration: velocidad,
-            easing: "ease-in-out",
-            fill: "forwards"
-          });
-        }, retardo);
-      }
-      
-      setTimeout(() => container.remove(), 7500); 
-    }
-
     // 7. CONSULTA Y RENDERIZACIÓN DEL PANEL DE ADMINISTRACIÓN COMPLETO
     function consultarDatosAdmin() {
       document.getElementById("kpi-activos").textContent = "...";
@@ -810,13 +666,11 @@
           document.getElementById("kpi-dentro").textContent = res.kpis.personasDentro;
           document.getElementById("kpi-vencidos").textContent = res.kpis.vencidosAlerta;
 
-          // Guardar listado de clientes en memoria para el buscador
+          // Guardar listado de clientes y gráficos en memoria
           listadoCompletoClientes = res.clientesList || [];
+          cachedChartsData = res.charts; // Carga dinámica al abrir pestaña Gráficas
 
-          // Inicializar los gráficos con datos reales
-          inicializarGraficos(res.charts);
-
-          // Cargar Tabla de últimos ingresos
+          // Cargar Tabla de últimos 30 ingresos de hoy
           const recentBody = document.getElementById("table-recent-body");
           recentBody.innerHTML = "";
           if (res.ultimosIngresos.length === 0) {
@@ -866,14 +720,13 @@
             });
           }
 
-          // Cargar Tabla de Clientes Ausentes (>7 días) con integración directa de WhatsApp
+          // Cargar Tabla de Clientes Ausentes (>7 días)
           const inactivosBody = document.getElementById("table-inactivos-body");
           inactivosBody.innerHTML = "";
           if (!res.inactivosList || res.inactivosList.length === 0) {
             inactivosBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-600">No hay clientes ausentes de alta.</td></tr>`;
           } else {
             res.inactivosList.forEach(c => {
-              // Enlace directo de API de WhatsApp (asumiendo código de país +51 de Perú, modificable)
               const waLink = `https://wa.me/51${c.celular}?text=Hola%20${encodeURIComponent(c.nombre)}%2C%20te%20escribimos%20de%20VibraFitness.%20Notamos%20que%20no%20nos%20visitas%20hace%20${c.diasInactivo}%20d%C3%ADas.%20%C2%A1Te%20esperamos%20pronto%20para%20seguir%20entrenando!`;
               
               inactivosBody.innerHTML += `
