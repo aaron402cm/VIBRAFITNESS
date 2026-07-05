@@ -81,12 +81,12 @@
   <!-- CONTENEDOR PRINCIPAL -->
   <main class="flex-grow flex items-center justify-center p-6 relative">
     
-    <!-- ================= VISTA DE REGISTRO (PANTALLA DE ESPERA AMPLIADA) ================= -->
+    <!-- ================= VISTA DE REGISTRO (PANTALLA DE ESPERA) ================= -->
     <section id="section-registro" class="w-full max-w-xl flex flex-col items-center z-10 transition-all duration-300">
       
-      <!-- Contenedor del Input de DNI con padding incrementado -->
+      <!-- Contenedor del Input de DNI -->
       <div class="w-full bg-slate-900/95 border border-slate-800 p-12 rounded-3xl shadow-2xl text-center backdrop-blur-md">
-        <!-- Logo estático más grande -->
+        <!-- Logo estático -->
         <img id="form-logo" src="" alt="Gym Logo" class="h-36 mx-auto mb-10 object-contain">
         
         <h2 class="text-sm font-bold tracking-[0.25em] text-slate-400 uppercase mb-5">Control de Acceso</h2>
@@ -221,7 +221,7 @@
           </div>
         </div>
 
-        <!-- SECCIÓN NUEVA: TABLAS DE CONTROL OPERATIVO PARA LA ASISTENTE -->
+        <!-- TABLAS DE CONTROL OPERATIVO PARA LA ASISTENTE -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           <!-- Tabla de Últimas Asistencias (2/3 de ancho) -->
@@ -258,25 +258,6 @@
             </div>
           </div>
 
-        </div>
-
-      </div>
-    </section>
-
-        <!-- Gráficos -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-            <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase">Horas Pico de Ingreso</h4>
-            <div class="h-64 flex items-center justify-center">
-              <canvas id="chartHours"></canvas>
-            </div>
-          </div>
-          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-            <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase">Asistencias por Día</h4>
-            <div class="h-64 flex items-center justify-center">
-              <canvas id="chartDays"></canvas>
-            </div>
-          </div>
         </div>
 
       </div>
@@ -486,9 +467,8 @@
       }, 5000);
     }
 
-    // 6. Obtener datos de administración reales desde el backend e inicializar gráficos
+    // 6. Configuración de Gráficos del Administrador
     let myChartHours, myChartDays;
-    
     function inicializarGraficos() {
       // Mostrar estados de carga
       document.getElementById("kpi-activos").textContent = "...";
