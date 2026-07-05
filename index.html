@@ -426,12 +426,16 @@
     document.getElementById("form-logo").src = LOGO_URL;
     document.getElementById("loader-logo").src = LOGO_URL;
 
-    // Variables globales de administración
-    let listadoCompletoClientes = [];
-    let listadoCompletoPlanes = [];
-    let streamEditor = null;
-    let fotoBase64Editor = "";
-    let cachedChartsData = null; // Guardar datos para renderizado al vuelo
+    // 1. VARIABLES GLOBALES DE ADMINISTRACIÓN
+ var listadoCompletoClientes = [];
+ var listadoCompletoPlanes = [];
+ var listadoPersonasDentro = []; 
+ var streamEditor = null;
+ var fotoBase64Editor = "";
+ var cachedChartsData = null; 
+ var myChartHours = null;
+ var myChartDays = null;
+ var hideScreenTimer = null;
 
     // 1. Navegación entre pestañas principales
     function switchTab(tab) {
@@ -842,7 +846,8 @@
 
           // Guardar listado de clientes y gráficos en memoria
           listadoCompletoClientes = res.clientesList || [];
-          cachedChartsData = res.charts; 
+          listadoPersonasDentro = res.personasDentroList || []; // AGREGAR ESTA LÍNEA
+          cachedChartsData = res.charts;
 
           // Cargar Tabla de últimos ingresos
           const recentBody = document.getElementById("table-recent-body");
@@ -1155,13 +1160,90 @@
     }
 
     // Reescritura limpia del switchTab para jalar datos reales al abrir admin
-    const switchTabOriginal = switchTab;
-    switchTab = function(tab) {
+      const switchTabOriginal = switchTab;
+      switchTab = function(tab) {
       switchTabOriginal(tab);
       if (tab === 'admin') {
-        consultarDatosAdmin();
+     consultarDatosAdmin();
       }
-    };
+   };
+    // MODAL DE PERSONAS DENTRO DEL GIMNASIO (BUSCADOR E INDIVIDUAL)
+ function abrirBuscadorDentroGym() {
+   const modal = document.getElementById("modal-dentro-gym");
+   const listContainer = document.getElementById("list-dentro-gym-container");
+   
+   // Limpiar detalle inicial
+   document.getElementById("detail-dentro-photo").src = DEFAULT_AVATAR;
+   document.getElementById("detail-dentro-name").textContent = "Seleccione un miembro";
+   document.getElementById("detail-dentro-dni").textContent = "DNI: ---";
+   document.getElementById("detail-dentro-plan").className = "hidden";
+
+   listContainer.innerHTML = "";
+   if (listadoPersonasDentro.length === 0) {
+     listContainer.innerHTML = `<p class="text-xs text-slate-600 text-center py-8 uppercase tracking-widest font-semibold">No hay personas en el GYM</p>`;
+   } else {
+     listadoPersonasDentro.forEach(p => {
+       const tiempoGym = calcularTiempoTranscurrido(p.horaEntrada);
+
+       listContainer.innerHTML += `
+         <div onclick="mostrarDetalleDentroGym(${JSON.stringify(p).replace(/"/g, '&quot;')})" class="flex justify-between items-center p-3 hover:bg-slate-950 rounded-xl cursor-pointer transition border border-transparent hover:border-slate-800 text-left">
+           <div>
+             <p class="text-sm font-extrabold text-white capitalize">${p.nombre}</p>
+             <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Ingreso: ${p.horaEntrada} • Plan: ${p.plan}</p>
+           </div>
+           <span class="px-2.5 py-1 rounded-lg text-[9px] font-black tracking-widest bg-amber-500/10 text-amber-400 border border-amber-500/20">
+             ${tiempoGym}
+           </span>
+         </div>
+       `;
+     });
+   }
+
+   modal.classList.remove("hidden");
+ }
+
+ function cerrarBuscadorDentroGym() {
+   document.getElementById("modal-dentro-gym").classList.add("hidden");
+ }
+
+ function mostrarDetalleDentroGym(p) {
+   document.getElementById("detail-dentro-photo").src = p.foto || DEFAULT_AVATAR;
+   document.getElementById("detail-dentro-name").textContent = p.nombre;
+   document.getElementById("detail-dentro-dni").textContent = "DNI: " + p.dni;
+   
+   const badgePlan = document.getElementById("detail-dentro-plan");
+   badgePlan.textContent = p.plan;
+   badgePlan.className = "px-3 py-1 rounded-full text-[10px] font-black tracking-widest bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase";
+ }
+
+ // Calcula de forma matemática la diferencia entre su ingreso y la hora actual de la computadora
+ function calcularTiempoTranscurrido(horaEntradaStr) {
+   try {
+     const partes = horaEntradaStr.split(":");
+     const ahora = new Date();
+     
+     const entrada = new Date();
+     entrada.setHours(parseInt(partes[0], 10));
+     entrada.setMinutes(parseInt(partes[1], 10));
+     entrada.setSeconds(parseInt(partes[2], 10));
+     
+     var diffMs = ahora - entrada;
+     if (diffMs < 0) {
+       diffMs += 24 * 60 * 60 * 1000;
+     }
+     
+     var diffMins = Math.floor(diffMs / 60000);
+     var hrs = Math.floor(diffMins / 60);
+     var mins = diffMins % 60;
+     
+     if (hrs > 0) {
+       return hrs + " h " + mins + " min";
+     }
+     return mins + " min";
+   } catch (e) {
+     return "---";
+   }
+ }
   </script>
 </body>
 </html>
