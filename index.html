@@ -702,10 +702,10 @@
       myChartDays = new Chart(ctxDays, {
         type: 'bar',
         data: {
-          labels: chartsData ? chartsData.diasLabels : ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          labels: chartsData ? chartsData.diasLabels : ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
           datasets: [{
-            label: 'Flujo',
-            data: chartsData ? chartsData.diasValores : [0, 0, 0, 0, 0, 0],
+            label: 'Usuarios',
+            data: chartsData ? chartsData.diasValores : [0, 0, 0, 0, 0, 0, 0],
             backgroundColor: '#10b981',
             borderRadius: 6
           }]
