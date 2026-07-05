@@ -171,7 +171,7 @@
 
     <!-- ================= VISTA DE ADMINISTRACIÓN EN TIEMPO REAL ================= -->
     <section id="section-admin" class="hidden w-full max-w-6xl z-10 transition-all duration-300">
-      <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-8 backdrop-blur-md">
+      <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-8 backdrop-blur-md max-h-[85vh] overflow-y-auto">
         
         <div class="flex justify-between items-center border-b border-slate-800 pb-5">
           <h2 class="text-2xl font-black text-white uppercase tracking-wider">
@@ -180,8 +180,8 @@
           <span class="text-xs text-slate-500 uppercase tracking-widest font-bold">Monitoreo Operativo</span>
         </div>
 
-        <!-- KPIs Reales -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- KPIs Reales (Con indicador de personas dentro) -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl flex items-center space-x-4 shadow-inner">
             <div class="p-4 bg-emerald-500/10 text-emerald-400 rounded-xl text-2xl"><i class="fa-solid fa-users"></i></div>
             <div>
@@ -196,12 +196,36 @@
               <h3 id="kpi-hoy" class="text-3xl font-black mt-1">...</h3>
             </div>
           </div>
+          <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl flex items-center space-x-4 shadow-inner animate-pulse">
+            <div class="p-4 bg-amber-500/10 text-amber-400 rounded-xl text-2xl"><i class="fa-solid fa-person-running"></i></div>
+            <div>
+              <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Dentro del GYM</p>
+              <h3 id="kpi-dentro" class="text-3xl font-black mt-1">...</h3>
+            </div>
+          </div>
           <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl flex items-center space-x-4 shadow-inner">
             <div class="p-4 bg-rose-500/10 text-rose-400 rounded-lg text-2xl"><i class="fa-solid fa-circle-exclamation"></i></div>
             <div>
               <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Membresías Vencidas</p>
               <h3 id="kpi-vencidos" class="text-3xl font-black mt-1">...</h3>
             </div>
+          </div>
+        </div>
+
+        <!-- Buscador de Miembros para Recepción -->
+        <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl shadow-lg space-y-4">
+          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center">
+            <i class="fa-solid fa-magnifying-glass text-emerald-400 mr-2"></i>Buscador e Historial de Miembros
+          </h4>
+          <input 
+            type="text" 
+            id="admin-search-input" 
+            oninput="filtrarMiembrosBuscador()"
+            placeholder="Escriba DNI o Nombre del miembro..." 
+            class="w-full bg-slate-900 text-white placeholder-slate-700 border border-slate-800 focus:border-emerald-500 rounded-xl px-4 py-3 font-semibold outline-none transition"
+          >
+          <div id="search-results-container" class="max-h-60 overflow-y-auto space-y-2 divide-y divide-slate-900 hidden">
+            <!-- Resultados dinámicos -->
           </div>
         </div>
 
@@ -265,6 +289,98 @@
 
   </main>
 
+  <!-- ================= VENTANA MODAL FLOTANTE: EDITOR DE MIEMBROS ================= -->
+  <div id="modal-editor" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row">
+      
+      <!-- Columna Izquierda: Foto y Cámara -->
+      <div class="w-full md:w-2/5 bg-slate-950 p-6 flex flex-col items-center justify-between border-b md:border-b-0 md:border-r border-slate-800 gap-6">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Fotografía del Miembro</h3>
+        
+        <div class="w-48 h-48 rounded-2xl overflow-hidden border-4 border-slate-800 bg-slate-900 shadow-inner flex items-center justify-center relative">
+          <video id="editor-video" autoplay playsinline class="hidden w-full h-full object-cover"></video>
+          <img id="editor-photo-preview" src="" alt="Foto Miembro" class="w-full h-full object-cover" onerror="this.onerror=null; this.src=DEFAULT_AVATAR;">
+        </div>
+
+        <!-- Botones de Cámara en Editor -->
+        <div class="w-full space-y-2">
+          <button type="button" id="btn-editor-cam" onclick="activarCamaraEditor()" class="w-full bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold py-2.5 rounded-xl uppercase transition">
+            <i class="fa-solid fa-camera mr-2"></i>Tomar Nueva Foto
+          </button>
+          <button type="button" id="btn-editor-shutter" onclick="capturarFotoEditor()" class="hidden w-full bg-emerald-500 text-slate-950 text-xs font-black py-2.5 rounded-xl uppercase transition shadow-lg">
+            <i class="fa-solid fa-shutter-button mr-2"></i>Capturar Cuadro
+          </button>
+          <button type="button" id="btn-editor-retry" onclick="cancelarNuevaFotoEditor()" class="hidden w-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold py-2.5 rounded-xl uppercase transition">
+            <i class="fa-solid fa-rotate-left mr-2"></i>Descartar Foto
+          </button>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Formulario de Datos -->
+      <div class="w-full md:w-3/5 p-8 space-y-6">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+          <h3 class="text-lg font-bold text-white uppercase tracking-wider">Modificar Miembro</h3>
+          <button onclick="cerrarEditorModal()" class="text-slate-500 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <form id="form-editor" onsubmit="guardarCambiosEditor(event)" class="grid grid-cols-2 gap-4">
+          <!-- DNI (Solo lectura) -->
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">DNI (No editable)</label>
+            <input type="text" id="edit-dni" readonly class="w-full bg-slate-950 text-slate-500 border border-slate-800 rounded-xl p-3 text-sm font-bold outline-none">
+          </div>
+          <!-- Nombre -->
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nombre Completo</label>
+            <input type="text" id="edit-nombre" required class="w-full bg-slate-950 text-white border border-slate-800 focus:border-emerald-500 rounded-xl p-3 text-sm font-bold outline-none capitalize">
+          </div>
+          <!-- Nacimiento -->
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">F. de Nacimiento</label>
+            <input type="text" id="edit-nacimiento" placeholder="DD/MM/AAAA" required class="w-full bg-slate-950 text-white border border-slate-800 focus:border-emerald-500 rounded-xl p-3 text-sm font-bold outline-none">
+          </div>
+          <!-- Celular -->
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Número Celular</label>
+            <input type="text" id="edit-celular" maxlength="9" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required class="w-full bg-slate-950 text-white border border-slate-800 focus:border-emerald-500 rounded-xl p-3 text-sm font-bold outline-none">
+          </div>
+          <!-- Plan select -->
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Plan contratado</label>
+            <select id="edit-plan" onchange="calcularVencimientoEditor()" class="w-full bg-slate-950 text-white border border-slate-800 rounded-xl p-3 text-sm font-bold outline-none cursor-pointer"></select>
+          </div>
+          <!-- Estado select -->
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Estado de Membresía</label>
+            <select id="edit-estado" class="w-full bg-slate-950 text-white border border-slate-800 rounded-xl p-3 text-sm font-bold outline-none cursor-pointer">
+              <option value="Activo">ACTIVO</option>
+              <option value="Vencido">VENCIDO</option>
+            </select>
+          </div>
+          <!-- Fecha de inicio -->
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Fecha de Inicio</label>
+            <input type="text" id="edit-inicio" oninput="calcularVencimientoEditor()" placeholder="DD/MM/AAAA" required class="w-full bg-slate-950 text-white border border-slate-800 focus:border-emerald-500 rounded-xl p-3 text-sm font-bold outline-none">
+          </div>
+          <!-- Vencimiento -->
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Vencimiento</label>
+            <input type="text" id="edit-vencimiento" placeholder="AUTOMÁTICO" required class="w-full bg-slate-900 text-emerald-400 border border-slate-800 rounded-xl p-3 text-sm font-black text-center outline-none">
+          </div>
+
+          <!-- Botón de guardado -->
+          <button type="submit" class="col-span-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-3.5 rounded-xl text-xs uppercase tracking-wider transition shadow-lg mt-4">
+            <i class="fa-solid fa-floppy-disk mr-2"></i>Guardar Cambios de Miembro
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CANVAS OCULTO PARA FOTOS DEL EDITOR -->
+  <canvas id="hidden-editor-canvas" class="hidden" width="600" height="600"></canvas>
+
   <!-- FOOTER -->
   <footer class="bg-slate-900 border-t border-slate-800/50 px-6 py-4 text-center text-xs text-slate-500">
     &copy; 2026 Fitness Club Control Hub. Todos los derechos reservados.
@@ -275,6 +391,12 @@
     document.getElementById("nav-logo").src = LOGO_URL;
     document.getElementById("form-logo").src = LOGO_URL;
     document.getElementById("loader-logo").src = LOGO_URL;
+
+    // Variables globales de administración
+    let listadoCompletoClientes = [];
+    let listadoCompletoPlanes = [];
+    let streamEditor = null;
+    let fotoBase64Editor = "";
 
     // 1. Navegación entre pestañas
     function switchTab(tab) {
@@ -371,7 +493,7 @@
         });
     }
 
-    // 4. Presentar Datos de Usuario en Pantalla Gigante Organizada (Sin celular)
+    // 4. Presentar Datos de Usuario en Pantalla Gigante Organizada
     function presentarPantallaGigante(usuario, status) {
       const modal = document.getElementById("pantalla-gigante");
       const bg = document.getElementById("glow-bg");
@@ -391,19 +513,16 @@
         
         // EVALUAR SI ES SU CUMPLEAÑOS
         if (usuario.esCumpleanos) {
-          // Fondo dorado festivo
           bg.style.background = "radial-gradient(circle, rgba(245,158,11,0.3) 0%, rgba(2,6,23,1) 80%)";
           border.className = "w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-amber-500 shadow-[0_0_60px_rgba(245,158,11,0.5)] flex items-center justify-center transition-all";
           badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-amber-500/20 text-amber-400 border border-amber-500/40 shadow-md animate-bounce";
           badge.textContent = "🎂 ¡FELIZ CUMPLEAÑOS! 🎂";
           motivationalBox.className = "bg-slate-900/70 p-6 rounded-2xl border-l-8 border-amber-500 italic text-slate-200 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4";
           
-          // Desplegar festejo
           lanzarExplosionConfeti();
           crearGlobosFlotantes();
           playBirthdayMelody();
         } else {
-          // Diseño normal de ingreso verde
           bg.style.background = "radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(2,6,23,1) 80%)";
           border.className = "w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-emerald-500 shadow-[0_0_60px_rgba(16,185,129,0.35)] flex items-center justify-center transition-all";
           badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-md";
@@ -437,7 +556,7 @@
       }, 5000);
     }
 
-    // 5. Presentar Alertas o Errores en Pantalla Gigante (Sin celular)
+    // 5. Presentar Alertas o Errores en Pantalla Gigante
     function presentarErrorPantallaGigante(mensaje) {
       const modal = document.getElementById("pantalla-gigante");
       const bg = document.getElementById("glow-bg");
@@ -527,14 +646,13 @@
     function playBirthdayMelody() {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        // Primer fragmento clásico de Cumpleaños Feliz
         const notas = [
-          {f: 261.63, d: 0.25}, // Do4
-          {f: 261.63, d: 0.25}, // Do4
-          {f: 293.66, d: 0.50}, // Re4
-          {f: 261.63, d: 0.50}, // Do4
-          {f: 349.23, d: 0.50}, // Fa4
-          {f: 329.63, d: 1.00}  // Mi4
+          {f: 261.63, d: 0.25}, 
+          {f: 261.63, d: 0.25}, 
+          {f: 293.66, d: 0.50}, 
+          {f: 261.63, d: 0.50}, 
+          {f: 349.23, d: 0.50}, 
+          {f: 329.63, d: 1.00}  
         ];
         let tiempo = audioCtx.currentTime;
         notas.forEach(nota => {
@@ -553,7 +671,7 @@
           
           osc.start(tiempo);
           osc.stop(tiempo + nota.d);
-          tiempo += nota.d + 0.05; // Pausa sutil entre notas
+          tiempo += nota.d + 0.05; 
         });
       } catch (e) {
         console.warn("Fallo de melodía: ", e);
@@ -597,15 +715,13 @@
         globo.style.backgroundColor = colorRandom;
         globo.style.left = Math.random() * 90 + "vw";
         
-        // Hilo del globo
         const hilo = document.createElement("div");
         hilo.className = "w-0.5 h-12 bg-slate-400 absolute top-full";
         globo.appendChild(hilo);
         
         container.appendChild(globo);
         
-        // Animación suave de elevación hacia el cielo
-        const velocidad = Math.random() * 4000 + 3000; // 3s a 7s
+        const velocidad = Math.random() * 4000 + 3000; 
         const retardo = Math.random() * 1500;
         
         setTimeout(() => {
@@ -620,14 +736,14 @@
         }, retardo);
       }
       
-      setTimeout(() => container.remove(), 7500); // Auto-eliminación de elementos
+      setTimeout(() => container.remove(), 7500); 
     }
 
-    // Nueva función para solicitar los datos del Dashboard del administrador en tiempo real
+    // 7. CONSULTA Y RENDERIZACIÓN DEL PANEL DE ADMINISTRACIÓN COMPLETO
     function consultarDatosAdmin() {
-      // Mostrar estados de carga temporales
       document.getElementById("kpi-activos").textContent = "...";
       document.getElementById("kpi-hoy").textContent = "...";
+      document.getElementById("kpi-dentro").textContent = "...";
       document.getElementById("kpi-vencidos").textContent = "...";
 
       fetch(`${API_URL}?action=getAdminDashboardData`)
@@ -638,22 +754,25 @@
             return;
           }
 
-          // 1. Inyectar KPIs reales
+          // Inyectar KPIs reales
           document.getElementById("kpi-activos").textContent = res.kpis.miembrosActivos;
           document.getElementById("kpi-hoy").textContent = res.kpis.asistenciasHoy;
+          document.getElementById("kpi-dentro").textContent = res.kpis.personasDentro;
           document.getElementById("kpi-vencidos").textContent = res.kpis.vencidosAlerta;
 
-          // 2. Inicializar los gráficos con datos dinámicos
+          // Guardar listado de clientes en memoria para el buscador
+          listadoCompletoClientes = res.clientesList || [];
+
+          // Inicializar los gráficos con datos reales
           inicializarGraficos(res.charts);
 
-          // 3. Renderizar Tabla de Últimos Ingresos de Hoy
+          // Cargar Tabla de últimos ingresos
           const recentBody = document.getElementById("table-recent-body");
           recentBody.innerHTML = "";
           if (res.ultimosIngresos.length === 0) {
             recentBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-600">No se registran asistencias hoy.</td></tr>`;
           } else {
             res.ultimosIngresos.forEach(ingreso => {
-              // Asignar colores según el tipo de marcación (IN, OUT o Vencido)
               let badgeColor = "";
               if (ingreso.movimiento === "IN") {
                 badgeColor = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
@@ -678,7 +797,7 @@
             });
           }
 
-          // 4. Renderizar Alertas de Membresía por Vencer
+          // Cargar Alertas de Membresías por Vencer
           const alertsContainer = document.getElementById("list-alerts");
           alertsContainer.innerHTML = "";
           if (res.proximosVencer.length === 0) {
@@ -701,11 +820,244 @@
           console.error("Fallo al consultar el API del Administrador: ", err);
           document.getElementById("kpi-activos").textContent = "ERR";
           document.getElementById("kpi-hoy").textContent = "ERR";
+          document.getElementById("kpi-dentro").textContent = "ERR";
           document.getElementById("kpi-vencidos").textContent = "ERR";
         });
     }
 
-    // Sobrescribir el switchTab para llamar a la consulta en tiempo real al entrar a admin
+    // Cargar selector de planes en el editor dinámicamente
+    function cargarPlanesEnEditor() {
+      const selectEdit = document.getElementById("edit-plan");
+      if (listadoCompletoPlanes.length > 0) return; // Si ya se cargaron, omitir
+
+      fetch(`${API_URL}?action=getPlanes`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            listadoCompletoPlanes = data.planes;
+            selectEdit.innerHTML = "";
+            data.planes.forEach(plan => {
+              selectEdit.innerHTML += `<option value="${plan.nombre}">${plan.nombre.toUpperCase()}</option>`;
+            });
+          }
+        });
+    }
+
+    // 8. BUSCADOR EN TIEMPO REAL
+    function filtrarMiembrosBuscador() {
+      const input = document.getElementById("admin-search-input").value.trim().toUpperCase();
+      const resultsContainer = document.getElementById("search-results-container");
+      
+      if (!input) {
+        resultsContainer.innerHTML = "";
+        resultsContainer.classList.add("hidden");
+        return;
+      }
+
+      // Filtrar clientes por DNI o por Nombre
+      const filtrados = listadoCompletoClientes.filter(c => 
+        c.dni.includes(input) || c.nombre.toUpperCase().includes(input)
+      );
+
+      resultsContainer.innerHTML = "";
+      if (filtrados.length === 0) {
+        resultsContainer.innerHTML = `<p class="text-xs text-slate-600 text-center py-3">No se encontraron miembros con ese término de búsqueda.</p>`;
+      } else {
+        filtrados.forEach(c => {
+          const badgeColor = c.estado === "Activo" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border border-rose-500/20";
+          resultsContainer.innerHTML += `
+            <div onclick="abrirEditorModal(${JSON.stringify(c).replace(/"/g, '&quot;')})" class="flex justify-between items-center p-3 hover:bg-slate-900 rounded-xl cursor-pointer transition">
+              <div>
+                <p class="text-sm font-extrabold text-white capitalize">${c.nombre}</p>
+                <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">DNI: ${c.dni} • Plan: ${c.plan} • Vence: ${c.fechaVencimiento}</p>
+              </div>
+              <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest ${badgeColor}">
+                ${c.estado.toUpperCase()}
+              </span>
+            </div>
+          `;
+        });
+      }
+      resultsContainer.classList.remove("hidden");
+    }
+
+    // 9. MODAL EDITOR: CONTROL Y ASIGNACIÓN DE VALORES
+    function abrirEditorModal(cliente) {
+      cargarPlanesEnEditor();
+      
+      // Inyectar datos al formulario
+      document.getElementById("edit-dni").value = cliente.dni;
+      document.getElementById("edit-nombre").value = cliente.nombre;
+      document.getElementById("edit-nacimiento").value = cliente.fechaNacimiento;
+      document.getElementById("edit-celular").value = cliente.celular;
+      document.getElementById("edit-estado").value = cliente.estado;
+      document.getElementById("edit-inicio").value = cliente.fechaInicio;
+      document.getElementById("edit-vencimiento").value = cliente.fechaVencimiento;
+      
+      // Foto actual
+      document.getElementById("editor-photo-preview").src = cliente.foto || DEFAULT_AVATAR;
+      fotoBase64Editor = ""; // Resetear nueva foto capturada
+
+      // Cargar el plan correcto en el select (esperar carga de planes si es necesario)
+      setTimeout(() => {
+        document.getElementById("edit-plan").value = cliente.plan;
+      }, 300);
+
+      // Mostrar modal
+      document.getElementById("modal-editor").classList.remove("hidden");
+    }
+
+    function cerrarEditorModal() {
+      cancelarNuevaFotoEditor();
+      document.getElementById("modal-editor").classList.add("hidden");
+    }
+
+    // Recalcular vencimiento de manera interactiva dentro del editor
+    function calcularVencimientoEditor() {
+      const selectPlan = document.getElementById("edit-plan").value;
+      const fInicioStr = document.getElementById("edit-inicio").value;
+      const inputVenc = document.getElementById("edit-vencimiento");
+
+      if (!selectPlan || !fInicioStr || listadoCompletoPlanes.length === 0) return;
+
+      const planInfo = listadoCompletoPlanes.find(p => p.nombre.trim().toUpperCase() === selectPlan.trim().toUpperCase());
+      if (!planInfo) return;
+
+      const unidad = planInfo.unidad.trim().toUpperCase();
+
+      if (unidad === "LIBRE") {
+        inputVenc.value = "LIBRE";
+        return;
+      }
+
+      // Validar si el formato ingresado es DD/MM/AAAA
+      const partes = fInicioStr.split("/");
+      if (partes.length < 3) return;
+
+      let fechaInicio = new Date(parseInt(partes[2], 10), parseInt(partes[1], 10) - 1, parseInt(partes[0], 10));
+      let fechaVencimiento = new Date(fechaInicio);
+      const duracion = parseInt(planInfo.duracion);
+
+      if (unidad === "DIAS" || unidad === "DÍAS") {
+        fechaVencimiento.setDate(fechaInicio.getDate() + duracion);
+      } else if (unidad === "MESES") {
+        fechaVencimiento.setMonth(fechaInicio.getMonth() + duracion);
+      }
+
+      inputVenc.value = utilFormatearFecha(fechaVencimiento);
+    }
+
+    // 10. CONTROL DE CÁMARA PARA EL EDITOR
+    function activarCamaraEditor() {
+      const video = document.getElementById("editor-video");
+      const preview = document.getElementById("editor-photo-preview");
+      const btnCam = document.getElementById("btn-editor-cam");
+      const btnShutter = document.getElementById("btn-editor-shutter");
+
+      preview.classList.add("hidden");
+      video.classList.remove("hidden");
+
+      navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+        audio: false
+      })
+      .then(stream => {
+        streamEditor = stream;
+        video.srcObject = stream;
+        btnCam.classList.add("hidden");
+        btnShutter.classList.remove("hidden");
+      })
+      .catch(err => {
+        alert("Permisos de cámara bloqueados en este dispositivo.");
+        console.error(err);
+      });
+    }
+
+    function capturarFotoEditor() {
+      const video = document.getElementById("editor-video");
+      const canvas = document.getElementById("hidden-editor-canvas");
+      const preview = document.getElementById("editor-photo-preview");
+      const ctx = canvas.getContext("2d");
+
+      const size = Math.min(video.videoWidth, video.videoHeight);
+      const startX = (video.videoWidth - size) / 2;
+      const startY = (video.videoHeight - size) / 2;
+
+      ctx.drawImage(video, startX, startY, size, size, 0, 0, 600, 600);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+
+      preview.src = dataUrl;
+      fotoBase64Editor = dataUrl; // Confirmar para el guardado
+
+      preview.classList.remove("hidden");
+      video.classList.add("hidden");
+
+      cancelarNuevaFotoEditor(true); // Detener stream de cámara, mantener vista previa
+      document.getElementById("btn-editor-shutter").classList.add("hidden");
+      document.getElementById("btn-editor-retry").classList.remove("hidden");
+    }
+
+    function cancelarNuevaFotoEditor(mantenerPreview = false) {
+      if (streamEditor) {
+        streamEditor.getTracks().forEach(track => track.stop());
+        streamEditor = null;
+      }
+      document.getElementById("editor-video").classList.add("hidden");
+      document.getElementById("btn-editor-shutter").classList.add("hidden");
+      document.getElementById("btn-editor-retry").classList.add("hidden");
+      document.getElementById("btn-editor-cam").classList.remove("hidden");
+
+      if (!mantenerPreview) {
+        fotoBase64Editor = "";
+        document.getElementById("editor-photo-preview").classList.remove("hidden");
+      }
+    }
+
+    // 11. ENVIAR CAMBIOS DEL EDITOR AL SERVIDOR (doPost)
+    function guardarCambiosEditor(event) {
+      event.preventDefault();
+
+      const loader = document.getElementById("loader-overlay");
+      loader.classList.remove("hidden");
+
+      const payload = {
+        action: "editarClienteCelular",
+        dni: document.getElementById("edit-dni").value,
+        nombre: document.getElementById("edit-nombre").value,
+        fechaNacimiento: document.getElementById("edit-nacimiento").value,
+        plan: document.getElementById("edit-plan").value,
+        fechaInicio: document.getElementById("edit-inicio").value,
+        fechaVencimiento: document.getElementById("edit-vencimiento").value,
+        estado: document.getElementById("edit-estado").value,
+        celular: document.getElementById("edit-celular").value,
+        fotoBase64: fotoBase64Editor // Mandar solo si tomó una nueva foto, de lo contrario vacío
+      };
+
+      fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        loader.classList.add("hidden");
+        if (data.success) {
+          alert("¡Miembro modificado con éxito!");
+          cerrarEditorModal();
+          consultarDatosAdmin(); // Refrescar consola de recepción al instante
+          document.getElementById("admin-search-input").value = "";
+          document.getElementById("search-results-container").classList.add("hidden");
+        } else {
+          alert("Fallo al actualizar: " + data.message);
+        }
+      })
+      .catch(err => {
+        loader.classList.add("hidden");
+        alert("Error de red al intentar actualizar el usuario.");
+        console.error(err);
+      });
+    }
+
+    // Sobrescribir switchTab para recargar datos de administración al abrir
     const switchTabOriginal = switchTab;
     switchTab = function(tab) {
       switchTabOriginal(tab);
