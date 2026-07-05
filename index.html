@@ -209,7 +209,7 @@
         </div>
 
         <!-- LAYOUT DE DOS COLUMNAS: MENÚ LATERAL IZQUIERDO Y CONTENIDO DINÁMICO DERECHO -->
-        <div class="flex flex-col md:flex-row gap-6 mt-4 overflow-hidden flex-grow animate-pulse-none">
+        <div class="flex flex-col md:flex-row gap-6 mt-4 overflow-hidden flex-grow">
           
           <!-- MENÚ LATERAL IZQUIERDO -->
           <div class="w-full md:w-1/5 flex flex-col gap-2 bg-slate-950/40 p-3 rounded-2xl border border-slate-800/40 h-full">
@@ -227,7 +227,7 @@
             </button>
           </div>
 
-          <!-- PANEL DE CONTENIDO DINÁMICO DERECHO (Con scroll interno) -->
+          <!-- PANEL DE CONTENIDO DINÁMICO DERECHO -->
           <div class="w-full md:w-4/5 bg-slate-950/70 border border-slate-800 p-6 rounded-2xl shadow-inner overflow-y-auto h-full max-h-[52vh]">
             
             <!-- SUBSECCIÓN 1: BUSCADOR Y ÚLTIMOS INGRESOS (30 REGISTROS) -->
@@ -266,19 +266,17 @@
               </div>
             </div>
 
-            <!-- SUBSECCIÓN 2: GRÁFICAS OPERATIVAS (CON RECREACIÓN DE CANVAS DE SEGURIDAD AL REINICIAR) -->
+            <!-- SUBSECCIÓN 2: GRÁFICAS OPERATIVAS -->
             <div id="sub-admin-graficas" class="hidden space-y-6">
               <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800/80 shadow-md">
                   <h4 class="text-[11px] font-bold text-slate-400 mb-4 uppercase tracking-wider">Horas Pico de Ingreso</h4>
-                  <!-- Contenedor relativo para el canvas horas -->
                   <div id="container-canvas-hours" class="relative h-48 w-full">
                     <canvas id="chartHours" class="w-full h-full"></canvas>
                   </div>
                 </div>
                 <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800/80 shadow-md">
                   <h4 class="text-[11px] font-bold text-slate-400 mb-4 uppercase tracking-wider">Flujo por Día</h4>
-                  <!-- Contenedor relativo para el canvas días -->
                   <div id="container-canvas-days" class="relative h-48 w-full">
                     <canvas id="chartDays" class="w-full h-full"></canvas>
                   </div>
@@ -461,7 +459,7 @@
   </footer>
 
   <script>
-    // 1. VARIABLES GLOBALES DE ADMINISTRACIÓN (Declaración limpia inicial para prevenir errores de referencia)
+    // 1. VARIABLES GLOBALES DE ADMINISTRACIÓN (Declaración limpia inicial con VAR para evitar errores de TDZ)
     var listadoCompletoClientes = [];
     var listadoCompletoPlanes = [];
     var listadoPersonasDentro = []; 
@@ -470,6 +468,7 @@
     var cachedChartsData = null; 
     var myChartHours = null;
     var myChartDays = null;
+    var hideScreenTimer = null;
 
     // Inyectar imágenes del logo
     document.getElementById("nav-logo").src = LOGO_URL;
@@ -555,8 +554,6 @@
         console.warn("Audio silenciado por políticas del navegador.", e);
       }
     }
-
-    let hideScreenTimer;
 
     // Petición y Registro de Asistencias
     function registrarAsistencia(event) {
@@ -657,7 +654,7 @@
 
       modal.classList.remove("hidden");
 
-      hideScreenTimer = setTimeout(() => {
+      hideScreenTimer = setTimeout(function() {
         modal.classList.add("hidden");
         document.getElementById("section-registro").classList.remove("hidden");
         document.getElementById("input-dni").focus();
@@ -687,7 +684,7 @@
       playSound("error");
       modal.classList.remove("hidden");
 
-      hideScreenTimer = setTimeout(() => {
+      hideScreenTimer = setTimeout(function() {
         modal.classList.add("hidden");
         document.getElementById("section-registro").classList.remove("hidden");
         document.getElementById("input-dni").focus();
@@ -701,9 +698,11 @@
       document.getElementById("kpi-dentro").textContent = "...";
       document.getElementById("kpi-vencidos").textContent = "...";
 
-      fetch(`${API_URL}?action=getAdminDashboardData`)
-        .then(res => res.json())
-        .then(res => {
+      var requestUrl = API_URL + "?action=getAdminDashboardData";
+
+      fetch(requestUrl)
+        .then(function(res) { return res.json(); })
+        .then(function(res) {
           if (!res.success) {
             alert("Error al cargar datos del panel: " + res.message);
             return;
@@ -724,9 +723,9 @@
           const recentBody = document.getElementById("table-recent-body");
           recentBody.innerHTML = "";
           if (res.ultimosIngresos.length === 0) {
-            recentBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-600">No se registran asistencias hoy.</td></tr>`;
+            recentBody.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-slate-600">No se registran asistencias hoy.</td></tr>';
           } else {
-            res.ultimosIngresos.forEach(ingreso => {
+            res.ultimosIngresos.forEach(function(ingreso) {
               let badgeColor = "";
               if (ingreso.movimiento === "IN") {
                 badgeColor = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
@@ -755,9 +754,9 @@
           const alertsContainer = document.getElementById("list-alerts");
           alertsContainer.innerHTML = "";
           if (res.proximosVencer.length === 0) {
-            alertsContainer.innerHTML = `<p class="text-xs text-center text-slate-600 py-4 uppercase tracking-wider">No hay avisos urgentes</p>`;
+            alertsContainer.innerHTML = '<p class="text-xs text-center text-slate-600 py-4 uppercase tracking-wider">No hay avisos urgentes</p>';
           } else {
-            res.proximosVencer.forEach(alert => {
+            res.proximosVencer.forEach(function(alert) {
               alertsContainer.innerHTML += `
                 <div class="bg-slate-900/80 border-l-4 border-orange-500 p-3 rounded-r-xl flex justify-between items-center transition">
                   <div class="space-y-1">
@@ -774,10 +773,10 @@
           const inactivosBody = document.getElementById("table-inactivos-body");
           inactivosBody.innerHTML = "";
           if (!res.inactivosList || res.inactivosList.length === 0) {
-            inactivosBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-600">No hay clientes ausentes de alta.</td></tr>`;
+            inactivosBody.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-slate-600">No hay clientes ausentes de alta.</td></tr>';
           } else {
-            res.inactivosList.forEach(c => {
-              const waLink = `https://wa.me/51${c.celular}?text=Hola%20${encodeURIComponent(c.nombre)}%2C%20te%20escribimos%20de%20VibraFitness.%20Notamos%20que%20no%20nos%20visitas%20hace%20${c.diasInactivo}%20d%C3%ADas.%20%C2%A1Te%20esperamos%20pronto%20para%20seguir%20entrenando!`;
+            res.inactivosList.forEach(function(c) {
+              var waLink = 'https://wa.me/51' + c.celular + '?text=Hola%20' + encodeURIComponent(c.nombre) + '%2C%20te%20escribimos%20de%20VibraFitness.%20Notamos%20que%20no%20nos%20visitas%20hace%20' + c.diasInactivo + '%20d%C3%ADas.%20%C2%A1Te%20esperamos%20pronto%20para%20seguir%20entrenando!';
               
               inactivosBody.innerHTML += `
                 <tr class="hover:bg-slate-900/40 transition duration-150">
@@ -795,7 +794,7 @@
           }
 
         })
-        .catch(err => {
+        .catch(function(err) {
           console.error("Fallo al consultar el API del Administrador: ", err);
           document.getElementById("kpi-activos").textContent = "ERR";
           document.getElementById("kpi-hoy").textContent = "ERR";
@@ -809,13 +808,13 @@
       const selectEdit = document.getElementById("edit-plan");
       if (listadoCompletoPlanes.length > 0) return; 
 
-      fetch(`${API_URL}?action=getPlanes`)
-        .then(res => res.json())
-        .then(data => {
+      fetch(API_URL + "?action=getPlanes")
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
           if (data.success) {
             listadoCompletoPlanes = data.planes;
             selectEdit.innerHTML = "";
-            data.planes.forEach(plan => {
+            data.planes.forEach(function(plan) {
               selectEdit.innerHTML += `<option value="${plan.nombre}">${plan.nombre.toUpperCase()}</option>`;
             });
           }
@@ -833,15 +832,15 @@
         return;
       }
 
-      const filtrados = listadoCompletoClientes.filter(c => 
-        c.dni.includes(input) || c.nombre.toUpperCase().includes(input)
-      );
+      const filtrados = listadoCompletoClientes.filter(function(c) { 
+        return c.dni.includes(input) || c.nombre.toUpperCase().includes(input);
+      });
 
       resultsContainer.innerHTML = "";
       if (filtrados.length === 0) {
-        resultsContainer.innerHTML = `<p class="text-xs text-slate-600 text-center py-3">No se encontraron miembros con ese término de búsqueda.</p>`;
+        resultsContainer.innerHTML = '<p class="text-xs text-slate-600 text-center py-3">No se encontraron miembros con ese término de búsqueda.</p>';
       } else {
-        filtrados.forEach(c => {
+        filtrados.forEach(function(c) {
           const badgeColor = c.estado === "Activo" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border border-rose-500/20";
           resultsContainer.innerHTML += `
             <div onclick="abrirEditorModal(${JSON.stringify(c).replace(/"/g, '&quot;')})" class="flex justify-between items-center p-3 hover:bg-slate-900 rounded-xl cursor-pointer transition text-left">
@@ -874,7 +873,7 @@
       document.getElementById("editor-photo-preview").src = cliente.foto || DEFAULT_AVATAR;
       fotoBase64Editor = ""; 
 
-      setTimeout(() => {
+      setTimeout(function() {
         document.getElementById("edit-plan").value = cliente.plan;
       }, 300);
 
@@ -886,7 +885,6 @@
       const modal = document.getElementById("modal-dentro-gym");
       const listContainer = document.getElementById("list-dentro-gym-container");
       
-      // Limpiar detalle inicial
       document.getElementById("detail-dentro-photo").src = DEFAULT_AVATAR;
       document.getElementById("detail-dentro-name").textContent = "Seleccione un miembro";
       document.getElementById("detail-dentro-dni").textContent = "DNI: ---";
@@ -894,9 +892,9 @@
 
       listContainer.innerHTML = "";
       if (listadoPersonasDentro.length === 0) {
-        listContainer.innerHTML = `<p class="text-xs text-slate-600 text-center py-8 uppercase tracking-widest font-semibold">No hay personas en el GYM</p>`;
+        listContainer.innerHTML = '<p class="text-xs text-slate-600 text-center py-8 uppercase tracking-widest font-semibold">No hay personas en el GYM</p>';
       } else {
-        listadoPersonasDentro.forEach(p => {
+        listadoPersonasDentro.forEach(function(p) {
           const tiempoGym = calcularTiempoTranscurrido(p.horaEntrada);
 
           listContainer.innerHTML += `
@@ -951,9 +949,9 @@
         const mins = diffMins % 60;
         
         if (hrs > 0) {
-          return `${hrs} h ${mins} min`;
+          return hrs + " h " + mins + " min";
         }
-        return `${mins} min`;
+        return mins + " min";
       } catch (e) {
         return "---";
       }
@@ -972,7 +970,9 @@
 
       if (!selectPlan || !fInicioStr || listadoCompletoPlanes.length === 0) return;
 
-      const planInfo = listadoCompletoPlanes.find(p => p.nombre.trim().toUpperCase() === selectPlan.trim().toUpperCase());
+      const planInfo = listadoCompletoPlanes.find(function(p) { 
+        return p.nombre.trim().toUpperCase() === selectPlan.trim().toUpperCase();
+      });
       if (!planInfo) return;
 
       const unidad = planInfo.unidad.trim().toUpperCase();
@@ -985,9 +985,9 @@
       const partes = fInicioStr.split("/");
       if (partes.length < 3) return;
 
-      let fechaInicio = new Date(parseInt(partes[2], 10), parseInt(partes[1], 10) - 1, parseInt(partes[0], 10));
-      let fechaVencimiento = new Date(fechaInicio);
-      const duracion = parseInt(planInfo.duracion);
+      var fechaInicio = new Date(parseInt(partes[2], 10), parseInt(partes[1], 10) - 1, parseInt(partes[0], 10));
+      var fechaVencimiento = new Date(fechaInicio);
+      var duracion = parseInt(planInfo.duracion);
 
       if (unidad === "DIAS" || unidad === "DÍAS") {
         fechaVencimiento.setDate(fechaInicio.getDate() + duracion);
@@ -1012,13 +1012,13 @@
         video: { facingMode: "environment" },
         audio: false
       })
-      .then(stream => {
+      .then(function(stream) {
         streamEditor = stream;
         video.srcObject = stream;
         btnCam.classList.add("hidden");
         btnShutter.classList.remove("hidden");
       })
-      .catch(err => {
+      .catch(function(err) {
         alert("Permisos de cámara bloqueados en este dispositivo.");
         console.error(err);
       });
@@ -1048,9 +1048,9 @@
       document.getElementById("btn-editor-retry").classList.remove("hidden");
     }
 
-    function cancelarNuevaFotoEditor(mantenerPreview = false) {
+    function cancelarNuevaFotoEditor(mantenerPreview) {
       if (streamEditor) {
-        streamEditor.getTracks().forEach(track => track.stop());
+        streamEditor.getTracks().forEach(function(track) { track.stop(); });
         streamEditor = null;
       }
       document.getElementById("editor-video").classList.add("hidden");
@@ -1088,8 +1088,8 @@
         method: "POST",
         body: JSON.stringify(payload)
       })
-      .then(res => res.json())
-      .then(data => {
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
         loader.classList.add("hidden");
         if (data.success) {
           alert("¡Miembro modificado con éxito!");
@@ -1101,7 +1101,7 @@
           alert("Fallo al actualizar: " + data.message);
         }
       })
-      .catch(err => {
+      .catch(function(err) {
         loader.classList.add("hidden");
         alert("Error de red al intentar actualizar el usuario.");
         console.error(err);
