@@ -169,7 +169,7 @@
       </div>
     </div>
 
-    <!-- ================= VISTA DE ADMINISTRACIÓN EN TIEMPO REAL (DISEÑO PANORÁMICO AL 96%) ================= -->
+    <!-- ================= VISTA DE ADMINISTRACIÓN EN TIEMPO REAL (PANTALLA COMPLETA AL 96%) ================= -->
     <section id="section-admin" class="hidden w-full max-w-[98%] xl:max-w-[96%] z-10 transition-all duration-300">
       <div class="bg-slate-900/95 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 backdrop-blur-md h-[86vh] flex flex-col justify-between">
         
@@ -179,39 +179,36 @@
             <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-lg text-lg"><i class="fa-solid fa-users"></i></div>
             <div>
               <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Activos</p>
-              <h3 id="kpi-activos" class="text-lg font-black text-white">...</h3>
+              <h3 id="kpi-activos" class="text-xl font-black text-white">...</h3>
             </div>
           </div>
           <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner">
             <div class="p-3 bg-blue-500/10 text-blue-400 rounded-lg text-lg"><i class="fa-solid fa-calendar-check"></i></div>
             <div>
               <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Asistencias</p>
-              <h3 id="kpi-hoy" class="text-lg font-black text-white">...</h3>
+              <h3 id="kpi-hoy" class="text-xl font-black text-white">...</h3>
             </div>
           </div>
-          
-          <!-- KPI DENTRO GYM CON EFECTO HOVER Y ACCIÓN CLIQUEABLE -->
-          <div onclick="abrirBuscadorDentroGym()" class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner cursor-pointer hover:bg-slate-900 transition-all duration-150 border-amber-500/30">
+          <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner animate-pulse">
             <div class="p-3 bg-amber-500/10 text-amber-400 rounded-lg text-lg"><i class="fa-solid fa-person-running"></i></div>
             <div>
               <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Dentro GYM</p>
-              <h3 id="kpi-dentro" class="text-lg font-black text-white">...</h3>
+              <h3 id="kpi-dentro" class="text-xl font-black text-white">...</h3>
             </div>
           </div>
-          
           <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner">
             <div class="p-3 bg-rose-500/10 text-rose-400 rounded-lg text-lg"><i class="fa-solid fa-circle-exclamation"></i></div>
             <div>
               <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Vencidos</p>
-              <h3 id="kpi-vencidos" class="text-lg font-black text-white">...</h3>
+              <h3 id="kpi-vencidos" class="text-xl font-black text-white">...</h3>
             </div>
           </div>
         </div>
 
         <!-- LAYOUT DE DOS COLUMNAS: MENÚ LATERAL IZQUIERDO Y CONTENIDO DINÁMICO DERECHO -->
-        <div class="flex flex-col md:flex-row gap-6 mt-4 overflow-hidden flex-grow animate-pulse-none">
+        <div class="flex-grow flex flex-col md:flex-row gap-6 mt-4 overflow-hidden">
           
-          <!-- MENÚ LATERAL IZQUIERDO -->
+          <!-- MENÚ LATERAL IZQUIERDO (Botonera modular para la Asistente) -->
           <div class="w-full md:w-1/5 flex flex-col gap-2 bg-slate-950/40 p-3 rounded-2xl border border-slate-800/40 h-full">
             <button onclick="cambiarSeccionAdmin('buscador')" id="btn-sec-buscador" class="w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-emerald-500 text-slate-950 transition duration-150 shadow-lg">
               <i class="fa-solid fa-magnifying-glass mr-3 text-sm"></i>Buscador y Recientes
@@ -227,7 +224,7 @@
             </button>
           </div>
 
-          <!-- PANEL DE CONTENIDO DINÁMICO DERECHO -->
+          <!-- PANEL DE CONTENIDO DINÁMICO DERECHO (Con altura fija y scroll interno profesional) -->
           <div class="w-full md:w-4/5 bg-slate-950/70 border border-slate-800 p-6 rounded-2xl shadow-inner overflow-y-auto h-full max-h-[52vh]">
             
             <!-- SUBSECCIÓN 1: BUSCADOR Y ÚLTIMOS INGRESOS (30 REGISTROS) -->
@@ -266,7 +263,7 @@
               </div>
             </div>
 
-            <!-- SUBSECCIÓN 2: GRÁFICAS OPERATIVAS -->
+            <!-- SUBSECCIÓN 2: GRÁFICAS OPERATIVAS (CON RECREACIÓN DE CANVAS DE SEGURIDAD) -->
             <div id="sub-admin-graficas" class="hidden space-y-6">
               <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800/80 shadow-md">
@@ -296,7 +293,7 @@
               </div>
             </div>
 
-            <!-- SUBSECCIÓN 4: CLIENTES INACTIVOS -->
+            <!-- SUBSECCIÓN 4: CLIENTES INACTIVOS (>7 DÍAS CON CELULAR Y ACCION DE WHATSAPP) -->
             <div id="sub-admin-inactivos" class="hidden space-y-4">
               <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center">
                 <i class="fa-solid fa-user-slash text-rose-400 mr-2"></i>Clientes Ausentes (>7 días de inactividad)
@@ -325,43 +322,6 @@
     </section>
 
   </main>
-
-  <!-- ================= VENTANA MODAL FLOTANTE: PERSONAS DENTRO DEL GIMNASIO ================= -->
-  <div id="modal-dentro-gym" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row h-[75vh]">
-      
-      <!-- Columna Izquierda: Listado de miembros dentro -->
-      <div class="w-full md:w-1/2 p-6 flex flex-col justify-between border-b md:border-b-0 md:border-r border-slate-800 gap-4 h-full overflow-hidden">
-        <div class="flex justify-between items-center border-b border-slate-800 pb-3 flex-shrink-0">
-          <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center">
-            <i class="fa-solid fa-users-viewfinder text-amber-500 mr-2"></i>Miembros en Sala Activa
-          </h3>
-          <button onclick="cerrarBuscadorDentroGym()" class="text-slate-500 hover:text-white text-lg md:hidden"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        
-        <div id="list-dentro-gym-container" class="flex-grow overflow-y-auto space-y-2 pr-2">
-          <!-- Inyectados dinámicamente -->
-        </div>
-      </div>
-
-      <!-- Columna Derecha: Tarjeta Visual Gigante del Miembro Seleccionado -->
-      <div class="w-full md:w-1/2 p-8 flex flex-col items-center justify-center bg-slate-950 h-full relative">
-        <button onclick="cerrarBuscadorDentroGym()" class="absolute right-6 top-6 text-slate-500 hover:text-white text-lg hidden md:block"><i class="fa-solid fa-xmark"></i></button>
-        
-        <div id="card-dentro-gym-detail" class="text-center space-y-6">
-          <div class="w-48 h-48 rounded-full overflow-hidden border-4 border-amber-500 shadow-xl mx-auto bg-slate-900">
-            <img id="detail-dentro-photo" src="" alt="Foto Miembro" class="w-full h-full object-cover" onerror="this.onerror=null; this.src=DEFAULT_AVATAR;">
-          </div>
-          <div class="space-y-2">
-            <span id="detail-dentro-plan" class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase">PLAN GENERAL</span>
-            <h2 id="detail-dentro-name" class="text-3xl font-black text-white capitalize tracking-wide">Seleccione un miembro</h2>
-            <p id="detail-dentro-dni" class="text-xs text-slate-500 font-bold uppercase tracking-wider">DNI: ---</p>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
 
   <!-- ================= VENTANA MODAL FLOTANTE: EDITOR DE MIEMBROS ================= -->
   <div id="modal-editor" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur z-50 flex items-center justify-center p-4">
@@ -461,29 +421,19 @@
   </footer>
 
   <script>
-    // 1. VARIABLES GLOBALES DE ADMINISTRACIÓN (Al inicio de todo en una sola etiqueta para evitar colisiones de carga)
-    var listadoCompletoClientes = [];
-    var listadoCompletoPlanes = [];
-    var listadoPersonasDentro = []; 
-    var streamEditor = null;
-    var fotoBase64Editor = "";
-    var cachedChartsData = null; 
-    var myChartHours = null;
-    var myChartDays = null;
-    var hideScreenTimer = null;
+    // Inyectar imágenes del logo
+    document.getElementById("nav-logo").src = LOGO_URL;
+    document.getElementById("form-logo").src = LOGO_URL;
+    document.getElementById("loader-logo").src = LOGO_URL;
 
-    // Inyectar imágenes del logo de forma 100% segura una vez cargado el DOM físico para prevenir bloqueos de script
-    window.addEventListener("DOMContentLoaded", function() {
-      var navLogo = document.getElementById("nav-logo");
-      var formLogo = document.getElementById("form-logo");
-      var loaderLogo = document.getElementById("loader-logo");
-      
-      if (navLogo) navLogo.src = LOGO_URL;
-      if (formLogo) formLogo.src = LOGO_URL;
-      if (loaderLogo) loaderLogo.src = LOGO_URL;
-    });
+    // Variables globales de administración
+    let listadoCompletoClientes = [];
+    let listadoCompletoPlanes = [];
+    let streamEditor = null;
+    let fotoBase64Editor = "";
+    let cachedChartsData = null; // Guardar datos para renderizado al vuelo
 
-    // Navegación entre pestañas principales
+    // 1. Navegación entre pestañas principales
     function switchTab(tab) {
       const regSection = document.getElementById("section-registro");
       const adminSection = document.getElementById("section-admin");
@@ -509,7 +459,7 @@
       }
     }
 
-    // Navegación entre sub-pestañas del Administrador (Sidebar modular)
+    // 2. Navegación entre sub-pestañas del Administrador (Sidebar modular)
     function cambiarSeccionAdmin(seccion) {
       const secciones = ['buscador', 'graficas', 'alertas', 'inactivos'];
       
@@ -530,11 +480,11 @@
       if (seccion === 'graficas' && cachedChartsData) {
         setTimeout(() => {
           inicializarGraficos(cachedChartsData);
-        }, 50); 
+        }, 50); // Pequeña pausa para asegurar que el DOM quitó el hidden
       }
     }
 
-    // Sintetizador de Sonidos
+    // 3. Sintetizador de Sonidos
     function playSound(type) {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -565,7 +515,7 @@
 
     let hideScreenTimer;
 
-    // Petición y Registro de Asistencias
+    // 4. Petición y Registro de Asistencias
     function registrarAsistencia(event) {
       event.preventDefault();
       
@@ -605,7 +555,7 @@
         });
     }
 
-    // Presentar Datos de Usuario en Pantalla Gigante Organizada
+    // 5. Presentar Datos de Usuario en Pantalla Gigante Organizada
     function presentarPantallaGigante(usuario, status) {
       const modal = document.getElementById("pantalla-gigante");
       const bg = document.getElementById("glow-bg");
@@ -664,14 +614,14 @@
 
       modal.classList.remove("hidden");
 
-      hideScreenTimer = setTimeout(function() {
+      hideScreenTimer = setTimeout(() => {
         modal.classList.add("hidden");
         document.getElementById("section-registro").classList.remove("hidden");
         document.getElementById("input-dni").focus();
       }, 5000);
     }
 
-    // Presentar Alertas o Errores en Pantalla Gigante
+    // 5. Presentar Alertas o Errores en Pantalla Gigante
     function presentarErrorPantallaGigante(mensaje) {
       const modal = document.getElementById("pantalla-gigante");
       const bg = document.getElementById("glow-bg");
@@ -694,25 +644,191 @@
       playSound("error");
       modal.classList.remove("hidden");
 
-      hideScreenTimer = setTimeout(function() {
+      hideScreenTimer = setTimeout(() => {
         modal.classList.add("hidden");
         document.getElementById("section-registro").classList.remove("hidden");
         document.getElementById("input-dni").focus();
       }, 5000);
     }
 
-    // CONSULTA Y RENDERIZACIÓN DEL PANEL DE ADMINISTRACIÓN COMPLETO
+    // 6. Configuración de Gráficos del Administrador (RECREACIÓN DE CANVAS PARA FIJAR RENDERING)
+    let myChartHours, myChartDays;
+    function inicializarGraficos(chartsData) {
+      if (myChartHours) {
+        myChartHours.destroy();
+        myChartHours = null;
+      }
+      if (myChartDays) {
+        myChartDays.destroy();
+        myChartDays = null;
+      }
+
+      // Recreación limpia de los elementos canvas en el DOM para borrar memorias de gráficos ocultos
+      const containerHours = document.getElementById('container-canvas-hours');
+      const containerDays = document.getElementById('container-canvas-days');
+      
+      if (containerHours && containerDays) {
+        containerHours.innerHTML = '<canvas id="chartHours" class="w-full h-full"></canvas>';
+        containerDays.innerHTML = '<canvas id="chartDays" class="w-full h-full"></canvas>';
+      }
+
+      const ctxHours = document.getElementById('chartHours').getContext('2d');
+      myChartHours = new Chart(ctxHours, {
+        type: 'line',
+        data: {
+          labels: chartsData ? chartsData.horasLabels : ['6am', '8am', '10am', '12pm', '2pm', '4pm', '6pm', '8pm', '10pm'],
+          datasets: [{
+            label: 'Asistencias',
+            data: chartsData ? chartsData.horasValores : [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+
+      const ctxDays = document.getElementById('chartDays').getContext('2d');
+      myChartDays = new Chart(ctxDays, {
+        type: 'bar',
+        data: {
+          labels: chartsData ? chartsData.diasLabels : ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+          datasets: [{
+            label: 'Usuarios',
+            data: chartsData ? chartsData.diasValores : [0, 0, 0, 0, 0, 0, 0],
+            backgroundColor: '#10b981',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    // Sintetizador de la melodía de Feliz Cumpleaños
+    function playBirthdayMelody() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const notas = [
+          {f: 261.63, d: 0.25}, 
+          {f: 261.63, d: 0.25}, 
+          {f: 293.66, d: 0.50}, 
+          {f: 261.63, d: 0.50}, 
+          {f: 349.23, d: 0.50}, 
+          {f: 329.63, d: 1.00}  
+        ];
+        let tiempo = audioCtx.currentTime;
+        notas.forEach(nota => {
+          const osc = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          
+          osc.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(nota.f, tiempo);
+          
+          gainNode.gain.setValueAtTime(0, tiempo);
+          gainNode.gain.linearRampToValueAtTime(0.15, tiempo + 0.02);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, tiempo + nota.d - 0.02);
+          
+          osc.start(tiempo);
+          osc.stop(tiempo + nota.d);
+          tiempo += nota.d + 0.05; 
+        });
+      } catch (e) {
+        console.warn("Fallo de melodía: ", e);
+      }
+    }
+
+    // Explosión de Confeti continua en ráfagas
+    function lanzarExplosionConfeti() {
+      const duration = 4 * 1000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+      function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+        if (timeLeft <= 0) return clearInterval(interval);
+
+        const particleCount = 50 * (timeLeft / duration);
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+      }, 250);
+    }
+
+    // Creación y elevación de Globos animada en 3D
+    function crearGlobosFlotantes() {
+      const container = document.createElement("div");
+      container.id = "birthday-balloons";
+      container.className = "fixed inset-0 pointer-events-none z-50 overflow-hidden";
+      document.body.appendChild(container);
+      
+      const colores = ["#ef4444", "#3b82f6", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6"];
+      
+      for (let i = 0; i < 20; i++) {
+        const globo = document.createElement("div");
+        const colorRandom = colores[Math.floor(Math.random() * colores.length)];
+        
+        globo.className = "absolute bottom-0 w-12 h-16 rounded-full opacity-85 shadow-[inset_-5px_-5px_0_rgba(0,0,0,0.15)] flex flex-col items-center justify-end";
+        globo.style.backgroundColor = colorRandom;
+        globo.style.left = Math.random() * 90 + "vw";
+        
+        const hilo = document.createElement("div");
+        hilo.className = "w-0.5 h-12 bg-slate-400 absolute top-full";
+        globo.appendChild(hilo);
+        
+        container.appendChild(globo);
+        
+        const velocidad = Math.random() * 4000 + 3000; 
+        const retardo = Math.random() * 1500;
+        
+        setTimeout(() => {
+          globo.animate([
+            { transform: "translateY(110vh) rotate(0deg)" },
+            { transform: `translateY(-120vh) rotate(${Math.random() * 40 - 20}deg)` }
+          ], {
+            duration: velocidad,
+            easing: "ease-in-out",
+            fill: "forwards"
+          });
+        }, retardo);
+      }
+      
+      setTimeout(() => container.remove(), 7500); 
+    }
+
+    // 7. CONSULTA Y RENDERIZACIÓN DEL PANEL DE ADMINISTRACIÓN COMPLETO
     function consultarDatosAdmin() {
       document.getElementById("kpi-activos").textContent = "...";
       document.getElementById("kpi-hoy").textContent = "...";
       document.getElementById("kpi-dentro").textContent = "...";
       document.getElementById("kpi-vencidos").textContent = "...";
 
-      var requestUrl = API_URL + "?action=getAdminDashboardData";
-
-      fetch(requestUrl)
-        .then(function(res) { return res.json(); })
-        .then(function(res) {
+      fetch(`${API_URL}?action=getAdminDashboardData`)
+        .then(res => res.json())
+        .then(res => {
           if (!res.success) {
             alert("Error al cargar datos del panel: " + res.message);
             return;
@@ -724,18 +840,17 @@
           document.getElementById("kpi-dentro").textContent = res.kpis.personasDentro;
           document.getElementById("kpi-vencidos").textContent = res.kpis.vencidosAlerta;
 
-          // Guardar listado de clientes, gráficos y personas dentro en caché
+          // Guardar listado de clientes y gráficos en memoria
           listadoCompletoClientes = res.clientesList || [];
-          listadoPersonasDentro = res.personasDentroList || [];
           cachedChartsData = res.charts; 
 
-          // Cargar Tabla de últimos 30 ingresos
+          // Cargar Tabla de últimos ingresos
           const recentBody = document.getElementById("table-recent-body");
           recentBody.innerHTML = "";
           if (res.ultimosIngresos.length === 0) {
-            recentBody.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-slate-600">No se registran asistencias hoy.</td></tr>';
+            recentBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-600">No se registran asistencias hoy.</td></tr>`;
           } else {
-            res.ultimosIngresos.forEach(function(ingreso) {
+            res.ultimosIngresos.forEach(ingreso => {
               let badgeColor = "";
               if (ingreso.movimiento === "IN") {
                 badgeColor = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
@@ -764,9 +879,9 @@
           const alertsContainer = document.getElementById("list-alerts");
           alertsContainer.innerHTML = "";
           if (res.proximosVencer.length === 0) {
-            alertsContainer.innerHTML = '<p class="text-xs text-center text-slate-600 py-4 uppercase tracking-wider">No hay avisos urgentes</p>';
+            alertsContainer.innerHTML = `<p class="text-xs text-center text-slate-600 py-4 uppercase tracking-wider">No hay avisos urgentes</p>`;
           } else {
-            res.proximosVencer.forEach(function(alert) {
+            res.proximosVencer.forEach(alert => {
               alertsContainer.innerHTML += `
                 <div class="bg-slate-900/80 border-l-4 border-orange-500 p-3 rounded-r-xl flex justify-between items-center transition">
                   <div class="space-y-1">
@@ -783,10 +898,10 @@
           const inactivosBody = document.getElementById("table-inactivos-body");
           inactivosBody.innerHTML = "";
           if (!res.inactivosList || res.inactivosList.length === 0) {
-            inactivosBody.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-slate-600">No hay clientes ausentes de alta.</td></tr>';
+            inactivosBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-600">No hay clientes ausentes de alta.</td></tr>`;
           } else {
-            res.inactivosList.forEach(function(c) {
-              var waLink = 'https://wa.me/51' + c.celular + '?text=Hola%20' + encodeURIComponent(c.nombre) + '%2C%20te%20escribimos%20de%20VibraFitness.%20Notamos%20que%20no%20nos%20visitas%20hace%20' + c.diasInactivo + '%20d%C3%ADas.%20%C2%A1Te%20esperamos%20pronto%20para%20seguir%20entrenando!';
+            res.inactivosList.forEach(c => {
+              const waLink = `https://wa.me/51${c.celular}?text=Hola%20${encodeURIComponent(c.nombre)}%2C%20te%20escribimos%20de%20VibraFitness.%20Notamos%20que%20no%20nos%20visitas%20hace%20${c.diasInactivo}%20d%C3%ADas.%20%C2%A1Te%20esperamos%20pronto%20para%20seguir%20entrenando!`;
               
               inactivosBody.innerHTML += `
                 <tr class="hover:bg-slate-900/40 transition duration-150">
@@ -804,7 +919,7 @@
           }
 
         })
-        .catch(function(err) {
+        .catch(err => {
           console.error("Fallo al consultar el API del Administrador: ", err);
           document.getElementById("kpi-activos").textContent = "ERR";
           document.getElementById("kpi-hoy").textContent = "ERR";
@@ -818,20 +933,20 @@
       const selectEdit = document.getElementById("edit-plan");
       if (listadoCompletoPlanes.length > 0) return; 
 
-      fetch(API_URL + "?action=getPlanes")
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
+      fetch(`${API_URL}?action=getPlanes`)
+        .then(res => res.json())
+        .then(data => {
           if (data.success) {
             listadoCompletoPlanes = data.planes;
             selectEdit.innerHTML = "";
-            data.planes.forEach(function(plan) {
+            data.planes.forEach(plan => {
               selectEdit.innerHTML += `<option value="${plan.nombre}">${plan.nombre.toUpperCase()}</option>`;
             });
           }
         });
     }
 
-    // BUSCADOR EN TIEMPO REAL
+    // 8. BUSCADOR EN TIEMPO REAL
     function filtrarMiembrosBuscador() {
       const input = document.getElementById("admin-search-input").value.trim().toUpperCase();
       const resultsContainer = document.getElementById("search-results-container");
@@ -842,15 +957,15 @@
         return;
       }
 
-      const filtrados = listadoCompletoClientes.filter(function(c) { 
-        return c.dni.includes(input) || c.nombre.toUpperCase().includes(input);
-      });
+      const filtrados = listadoCompletoClientes.filter(c => 
+        c.dni.includes(input) || c.nombre.toUpperCase().includes(input)
+      );
 
       resultsContainer.innerHTML = "";
       if (filtrados.length === 0) {
-        resultsContainer.innerHTML = '<p class="text-xs text-slate-600 text-center py-3">No se encontraron miembros con ese término de búsqueda.</p>';
+        resultsContainer.innerHTML = `<p class="text-xs text-slate-600 text-center py-3">No se encontraron miembros con ese término de búsqueda.</p>`;
       } else {
-        filtrados.forEach(function(c) {
+        filtrados.forEach(c => {
           const badgeColor = c.estado === "Activo" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border border-rose-500/20";
           resultsContainer.innerHTML += `
             <div onclick="abrirEditorModal(${JSON.stringify(c).replace(/"/g, '&quot;')})" class="flex justify-between items-center p-3 hover:bg-slate-900 rounded-xl cursor-pointer transition text-left">
@@ -868,7 +983,7 @@
       resultsContainer.classList.remove("hidden");
     }
 
-    // MODAL EDITOR: CONTROL Y ASIGNACIÓN DE VALORES
+    // 9. MODAL EDITOR: CONTROL Y ASIGNACIÓN DE VALORES
     function abrirEditorModal(cliente) {
       cargarPlanesEnEditor();
       
@@ -883,90 +998,11 @@
       document.getElementById("editor-photo-preview").src = cliente.foto || DEFAULT_AVATAR;
       fotoBase64Editor = ""; 
 
-      setTimeout(function() {
+      setTimeout(() => {
         document.getElementById("edit-plan").value = cliente.plan;
       }, 300);
 
       document.getElementById("modal-editor").classList.remove("hidden");
-    }
-
-    // MODAL DE PERSONAS DENTRO DEL GIMNASIO (BUSCADOR E INDIVIDUAL)
-    function abrirBuscadorDentroGym() {
-      const modal = document.getElementById("modal-dentro-gym");
-      const listContainer = document.getElementById("list-dentro-gym-container");
-      
-      document.getElementById("detail-dentro-photo").src = DEFAULT_AVATAR;
-      document.getElementById("detail-dentro-name").textContent = "Seleccione un miembro";
-      document.getElementById("detail-dentro-dni").textContent = "DNI: ---";
-      document.getElementById("detail-dentro-plan").className = "hidden";
-
-      listContainer.innerHTML = "";
-      if (listadoPersonasDentro.length === 0) {
-        listContainer.innerHTML = '<p class="text-xs text-slate-600 text-center py-8 uppercase tracking-widest font-semibold">No hay personas en el GYM</p>';
-      } else {
-        listadoPersonasDentro.forEach(function(p) {
-          const tiempoGym = calcularTiempoTranscurrido(p.horaEntrada);
-
-          listContainer.innerHTML += `
-            <div onclick="mostrarDetalleDentroGym(${JSON.stringify(p).replace(/"/g, '&quot;')})" class="flex justify-between items-center p-3 hover:bg-slate-950 rounded-xl cursor-pointer transition border border-transparent hover:border-slate-800 text-left">
-              <div>
-                <p class="text-sm font-extrabold text-white capitalize">${p.nombre}</p>
-                <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Ingreso: ${p.horaEntrada} • Plan: ${p.plan}</p>
-              </div>
-              <span class="px-2.5 py-1 rounded-lg text-[9px] font-black tracking-widest bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                ${tiempoGym}
-              </span>
-            </div>
-          `;
-        });
-      }
-
-      modal.classList.remove("hidden");
-    }
-
-    // Cierra modal de personas dentro
-    function cerrarBuscadorDentroGym() {
-      document.getElementById("modal-dentro-gym").classList.add("hidden");
-    }
-
-    // Muestra detalle de personas dentro
-    function mostrarDetalleDentroGym(p) {
-      document.getElementById("detail-dentro-photo").src = p.foto || DEFAULT_AVATAR;
-      document.getElementById("detail-dentro-name").textContent = p.nombre;
-      document.getElementById("detail-dentro-dni").textContent = "DNI: " + p.dni;
-      
-      const badgePlan = document.getElementById("detail-dentro-plan");
-      badgePlan.textContent = p.plan;
-      badgePlan.className = "px-3 py-1 rounded-full text-[10px] font-black tracking-widest bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase";
-    }
-
-    // Calcula de forma matemática la diferencia entre su ingreso y la hora actual de la computadora
-    function calcularTiempoTranscurrido(horaEntradaStr) {
-      try {
-        const partes = horaEntradaStr.split(":");
-        const ahora = new Date();
-        
-        const entrada = new Date();
-        entrada.setHours(parseInt(partes[0], 10));
-        entrada.setMinutes(parseInt(partes[1], 10));
-        entrada.setSeconds(parseInt(partes[2], 10));
-        
-        var diffMs = ahora - entrada;
-        if (diffMs < 0) {
-          diffMs += 24 * 60 * 60 * 1000;
-        }
-        
-        var diffMins = Math.floor(diffMs / 60000);
-        var hrs = Math.floor(diffMins / 60);
-        var mins = diffMins % 60;
-        
-        if (hrs > 0) {
-          return hrs + " h " + mins + " min";
-        }
-        return mins + " min";
-      } catch (e) {
-        return "---";
-      }
     }
 
     function cerrarEditorModal() {
@@ -982,9 +1018,7 @@
 
       if (!selectPlan || !fInicioStr || listadoCompletoPlanes.length === 0) return;
 
-      const planInfo = listadoCompletoPlanes.find(function(p) { 
-        return p.nombre.trim().toUpperCase() === selectPlan.trim().toUpperCase();
-      });
+      const planInfo = listadoCompletoPlanes.find(p => p.nombre.trim().toUpperCase() === selectPlan.trim().toUpperCase());
       if (!planInfo) return;
 
       const unidad = planInfo.unidad.trim().toUpperCase();
@@ -997,9 +1031,9 @@
       const partes = fInicioStr.split("/");
       if (partes.length < 3) return;
 
-      var fechaInicio = new Date(parseInt(partes[2], 10), parseInt(partes[1], 10) - 1, parseInt(partes[0], 10));
-      var fechaVencimiento = new Date(fechaInicio);
-      var duracion = parseInt(planInfo.duracion);
+      let fechaInicio = new Date(parseInt(partes[2], 10), parseInt(partes[1], 10) - 1, parseInt(partes[0], 10));
+      let fechaVencimiento = new Date(fechaInicio);
+      const duracion = parseInt(planInfo.duracion);
 
       if (unidad === "DIAS" || unidad === "DÍAS") {
         fechaVencimiento.setDate(fechaInicio.getDate() + duracion);
@@ -1007,11 +1041,10 @@
         fechaVencimiento.setMonth(fechaInicio.getMonth() + duracion);
       }
 
-      // CORRECCIÓN TYPO: Se asocia correctamente a la variable existente "inputVenc"
       inputVenc.value = utilFormatearFecha(fechaVencimiento);
     }
 
-    // CONTROL DE CÁMARA PARA EL EDITOR
+    // 10. CONTROL DE CÁMARA PARA EL EDITOR
     function activarCamaraEditor() {
       const video = document.getElementById("editor-video");
       const preview = document.getElementById("editor-photo-preview");
@@ -1025,13 +1058,13 @@
         video: { facingMode: "environment" },
         audio: false
       })
-      .then(function(stream) {
+      .then(stream => {
         streamEditor = stream;
         video.srcObject = stream;
         btnCam.classList.add("hidden");
         btnShutter.classList.remove("hidden");
       })
-      .catch(function(err) {
+      .catch(err => {
         alert("Permisos de cámara bloqueados en este dispositivo.");
         console.error(err);
       });
@@ -1061,9 +1094,9 @@
       document.getElementById("btn-editor-retry").classList.remove("hidden");
     }
 
-    function cancelarNuevaFotoEditor(mantenerPreview) {
+    function cancelarNuevaFotoEditor(mantenerPreview = false) {
       if (streamEditor) {
-        streamEditor.getTracks().forEach(function(track) { track.stop(); });
+        streamEditor.getTracks().forEach(track => track.stop());
         streamEditor = null;
       }
       document.getElementById("editor-video").classList.add("hidden");
@@ -1077,7 +1110,7 @@
       }
     }
 
-    // ENVIAR CAMBIOS DEL EDITOR AL SERVIDOR (doPost)
+    // 11. ENVIAR CAMBIOS DEL EDITOR AL SERVIDOR (doPost)
     function guardarCambiosEditor(event) {
       event.preventDefault();
 
@@ -1101,8 +1134,8 @@
         method: "POST",
         body: JSON.stringify(payload)
       })
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
+      .then(res => res.json())
+      .then(data => {
         loader.classList.add("hidden");
         if (data.success) {
           alert("¡Miembro modificado con éxito!");
@@ -1114,85 +1147,21 @@
           alert("Fallo al actualizar: " + data.message);
         }
       })
-      .catch(function(err) {
+      .catch(err => {
         loader.classList.add("hidden");
         alert("Error de red al intentar actualizar el usuario.");
         console.error(err);
       });
     }
 
-    // 12. DEFINICIÓN DE GRÁFICOS REALES CON INICIALIZACIÓN DINÁMICA
-    function inicializarGraficos(chartsData) {
-      // Destruir instancias previas si existen para evitar basura en memoria
-      if (myChartHours) {
-        myChartHours.destroy();
-        myChartHours = null;
+    // Reescritura limpia del switchTab para jalar datos reales al abrir admin
+    const switchTabOriginal = switchTab;
+    switchTab = function(tab) {
+      switchTabOriginal(tab);
+      if (tab === 'admin') {
+        consultarDatosAdmin();
       }
-      if (myChartDays) {
-        myChartDays.destroy();
-        myChartDays = null;
-      }
-
-      // Recreación física de los lienzos canvas en el DOM para forzar el dibujo limpio
-      var containerHours = document.getElementById('container-canvas-hours');
-      var containerDays = document.getElementById('container-canvas-days');
-      
-      if (containerHours && containerDays) {
-        containerHours.innerHTML = '<canvas id="chartHours" class="w-full h-full"></canvas>';
-        containerDays.innerHTML = '<canvas id="chartDays" class="w-full h-full"></canvas>';
-      }
-
-      // Inicializar Gráfico de Línea de Horas Pico
-      var ctxHours = document.getElementById('chartHours').getContext('2d');
-      myChartHours = new Chart(ctxHours, {
-        type: 'line',
-        data: {
-          labels: chartsData ? chartsData.horasLabels : ['6am', '8am', '10am', '12pm', '2pm', '4pm', '6pm', '8pm', '10pm'],
-          datasets: [{
-            label: 'Asistencias',
-            data: chartsData ? chartsData.horasValores : [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            borderColor: '#10b981',
-            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.3
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
-            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-          },
-          plugins: { legend: { display: false } }
-        }
-      });
-
-      // Inicializar Gráfico de Barras de Flujo Semanal (Con Domingo incorporado)
-      var ctxDays = document.getElementById('chartDays').getContext('2d');
-      myChartDays = new Chart(ctxDays, {
-        type: 'bar',
-        data: {
-          labels: chartsData ? chartsData.diasLabels : ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
-          datasets: [{
-            label: 'Flujo',
-            data: chartsData ? chartsData.diasValores : [0, 0, 0, 0, 0, 0, 0],
-            backgroundColor: '#10b981',
-            borderRadius: 6
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
-            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-          },
-          plugins: { legend: { display: false } }
-        }
-      });
-    }
+    };
   </script>
 </body>
 </html>
