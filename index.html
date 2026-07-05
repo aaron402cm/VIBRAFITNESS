@@ -169,7 +169,7 @@
       </div>
     </div>
 
-    <!-- ================= VISTA DE ADMINISTRACIÓN EN TIEMPO REAL (DISEÑO PANORÁMICO AL 96%) ================= -->
+    <!-- ================= VISTA DE ADMINISTRACIÓN EN TIEMPO REAL (DISEÑO PANORÁMICO EXPANSO AL 96%) ================= -->
     <section id="section-admin" class="hidden w-full max-w-[98%] xl:max-w-[96%] z-10 transition-all duration-300">
       <div class="bg-slate-900/95 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 backdrop-blur-md h-[86vh] flex flex-col justify-between">
         
@@ -209,7 +209,7 @@
         </div>
 
         <!-- LAYOUT DE DOS COLUMNAS: MENÚ LATERAL IZQUIERDO Y CONTENIDO DINÁMICO DERECHO -->
-        <div class="flex flex-col md:flex-row gap-6 mt-4 overflow-hidden flex-grow">
+        <div class="flex flex-col md:flex-row gap-6 mt-4 overflow-hidden flex-grow animate-pulse-none">
           
           <!-- MENÚ LATERAL IZQUIERDO -->
           <div class="w-full md:w-1/5 flex flex-col gap-2 bg-slate-950/40 p-3 rounded-2xl border border-slate-800/40 h-full">
@@ -227,7 +227,7 @@
             </button>
           </div>
 
-          <!-- PANEL DE CONTENIDO DINÁMICO DERECHO -->
+          <!-- PANEL DE CONTENIDO DINÁMICO DERECHO (Con scroll interno) -->
           <div class="w-full md:w-4/5 bg-slate-950/70 border border-slate-800 p-6 rounded-2xl shadow-inner overflow-y-auto h-full max-h-[52vh]">
             
             <!-- SUBSECCIÓN 1: BUSCADOR Y ÚLTIMOS INGRESOS (30 REGISTROS) -->
@@ -266,7 +266,7 @@
               </div>
             </div>
 
-            <!-- SUBSECCIÓN 2: GRÁFICAS OPERATIVAS -->
+            <!-- SUBSECCIÓN 2: GRÁFICAS OPERATIVAS (CON RECREACIÓN DE CANVAS DE SEGURIDAD AL REINICIAR) -->
             <div id="sub-admin-graficas" class="hidden space-y-6">
               <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800/80 shadow-md">
@@ -461,20 +461,22 @@
   </footer>
 
   <script>
+    // 1. VARIABLES GLOBALES DE ADMINISTRACIÓN (Declaración limpia inicial para prevenir errores de referencia)
+    var listadoCompletoClientes = [];
+    var listadoCompletoPlanes = [];
+    var listadoPersonasDentro = []; 
+    var streamEditor = null;
+    var fotoBase64Editor = "";
+    var cachedChartsData = null; 
+    var myChartHours = null;
+    var myChartDays = null;
+
     // Inyectar imágenes del logo
     document.getElementById("nav-logo").src = LOGO_URL;
     document.getElementById("form-logo").src = LOGO_URL;
     document.getElementById("loader-logo").src = LOGO_URL;
 
-    // Variables globales de administración
-    let listadoCompletoClientes = [];
-    let listadoCompletoPlanes = [];
-    let listadoPersonasDentro = []; // Guardar personas en sala para el popup
-    let streamEditor = null;
-    let fotoBase64Editor = "";
-    let cachedChartsData = null; 
-
-    // 1. Navegación entre pestañas principales
+    // Navegación entre pestañas principales
     function switchTab(tab) {
       const regSection = document.getElementById("section-registro");
       const adminSection = document.getElementById("section-admin");
@@ -500,7 +502,7 @@
       }
     }
 
-    // 2. Navegación entre sub-pestañas del Administrador (Sidebar modular)
+    // Navegación entre sub-pestañas del Administrador (Sidebar modular)
     function cambiarSeccionAdmin(seccion) {
       const secciones = ['buscador', 'graficas', 'alertas', 'inactivos'];
       
@@ -525,7 +527,7 @@
       }
     }
 
-    // 3. Sintetizador de Sonidos
+    // Sintetizador de Sonidos
     function playSound(type) {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -556,7 +558,7 @@
 
     let hideScreenTimer;
 
-    // 4. Petición y Registro de Asistencias
+    // Petición y Registro de Asistencias
     function registrarAsistencia(event) {
       event.preventDefault();
       
@@ -596,7 +598,7 @@
         });
     }
 
-    // 5. Presentar Datos de Usuario en Pantalla Gigante Organizada
+    // Presentar Datos de Usuario en Pantalla Gigante Organizada
     function presentarPantallaGigante(usuario, status) {
       const modal = document.getElementById("pantalla-gigante");
       const bg = document.getElementById("glow-bg");
@@ -662,7 +664,7 @@
       }, 5000);
     }
 
-    // 5. Presentar Alertas o Errores en Pantalla Gigante
+    // Presentar Alertas o Errores en Pantalla Gigante
     function presentarErrorPantallaGigante(mensaje) {
       const modal = document.getElementById("pantalla-gigante");
       const bg = document.getElementById("glow-bg");
@@ -692,7 +694,7 @@
       }, 5000);
     }
 
-    // 7. CONSULTA Y RENDERIZACIÓN DEL PANEL DE ADMINISTRACIÓN COMPLETO
+    // CONSULTA Y RENDERIZACIÓN DEL PANEL DE ADMINISTRACIÓN COMPLETO
     function consultarDatosAdmin() {
       document.getElementById("kpi-activos").textContent = "...";
       document.getElementById("kpi-hoy").textContent = "...";
@@ -820,7 +822,7 @@
         });
     }
 
-    // 8. BUSCADOR EN TIEMPO REAL
+    // BUSCADOR EN TIEMPO REAL
     function filtrarMiembrosBuscador() {
       const input = document.getElementById("admin-search-input").value.trim().toUpperCase();
       const resultsContainer = document.getElementById("search-results-container");
@@ -857,7 +859,7 @@
       resultsContainer.classList.remove("hidden");
     }
 
-    // 9. MODAL EDITOR: CONTROL Y ASIGNACIÓN DE VALORES
+    // MODAL EDITOR: CONTROL Y ASIGNACIÓN DE VALORES
     function abrirEditorModal(cliente) {
       cargarPlanesEnEditor();
       
@@ -895,7 +897,6 @@
         listContainer.innerHTML = `<p class="text-xs text-slate-600 text-center py-8 uppercase tracking-widest font-semibold">No hay personas en el GYM</p>`;
       } else {
         listadoPersonasDentro.forEach(p => {
-          // Calcular el tiempo transcurrido en el GYM
           const tiempoGym = calcularTiempoTranscurrido(p.horaEntrada);
 
           listContainer.innerHTML += `
@@ -942,7 +943,6 @@
         
         let diffMs = ahora - entrada;
         if (diffMs < 0) {
-          // Si el registro cruzó la medianoche
           diffMs += 24 * 60 * 60 * 1000;
         }
         
@@ -998,7 +998,7 @@
       inputVenc.value = utilFormatearFecha(fechaVencimiento);
     }
 
-    // 10. CONTROL DE CÁMARA PARA EL EDITOR
+    // CONTROL DE CÁMARA PARA EL EDITOR
     function activarCamaraEditor() {
       const video = document.getElementById("editor-video");
       const preview = document.getElementById("editor-photo-preview");
@@ -1064,7 +1064,7 @@
       }
     }
 
-    // 11. ENVIAR CAMBIOS DEL EDITOR AL SERVIDOR (doPost)
+    // ENVIAR CAMBIOS DEL EDITOR AL SERVIDOR (doPost)
     function guardarCambiosEditor(event) {
       event.preventDefault();
 
@@ -1107,15 +1107,6 @@
         console.error(err);
       });
     }
-
-    // Reescritura limpia del switchTab para jalar datos reales al abrir admin
-    const switchTabOriginal = switchTab;
-    switchTab = function(tab) {
-      switchTabOriginal(tab);
-      if (tab === 'admin') {
-        consultarDatosAdmin();
-      }
-    };
   </script>
 </body>
 </html>
