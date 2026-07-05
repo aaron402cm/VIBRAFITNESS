@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Miembros - Móvil</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome para Iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap');
+    body {
+      font-family: 'Montserrat', sans-serif;
+    }
+    .logo-container-3d {
+      perspective: 1000px;
+    }
+    .logo-3d {
+      width: 150px;
+      height: 150px;
+      transform-style: preserve-3d;
+      animation: spin3D 2s infinite linear;
+    }
+    @keyframes spin3D {
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between p-4 pb-8">
+
+  <!-- CONFIGURACIÓN DE URL -->
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbyOCkoYWJ44abs2fuw5-yPgkMC2bCkHaDiYg1dHX_9oLiDlwrBVA_wpKEGZlXDJNl9X/exec";
+    const LOGO_URL = "logo.png"; // Tu logo guardado en GitHub
+  </script>
+
+  <!-- LOGO Y CABECERA DE LA APP -->
+  <header class="text-center my-4 space-y-2">
+    <img id="header-logo" src="" alt="Gym Logo" class="h-16 mx-auto object-contain">
+    <h1 class="text-xl font-black uppercase tracking-widest text-emerald-400">Nuevo Registro</h1>
+    <p class="text-[10px] text-slate-500 uppercase tracking-widest">Panel de Afiliación Directa</p>
+  </header>
+
+  <!-- FORMULARIO DE REGISTRO MÓVIL -->
+  <main class="w-full max-w-md mx-auto bg-slate-900/80 border border-slate-800/80 p-6 rounded-3xl shadow-2xl space-y-6 backdrop-blur-md">
+    <form id="form-registro" onsubmit="enviarRegistro(event)" class="space-y-5">
+      
+      <!-- DNI (Máximo 9 dígitos) -->
+      <div>
+        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">DNI del Miembro</label>
+        <div class="relative">
+          <span class="absolute left-4 top-3.5 text-slate-500 text-lg"><i class="fa-solid fa-address-card"></i></span>
+          <input 
+            type="text" 
+            id="reg-dni" 
+            maxlength="9"
+            inputmode="numeric"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+            placeholder="Escriba el DNI" 
+            required
+            class="w-full bg-slate-950 text-white placeholder-slate-800 border border-slate-800 focus:border-emerald-500 rounded-xl pl-12 pr-4 py-3.5 font-bold outline-none transition"
+          >
+        </div>
+      </div>
+
+      <!-- Nombre Completo -->
+      <div>
+        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Nombre Completo</label>
+        <div class="relative">
+          <span class="absolute left-4 top-3.5 text-slate-500 text-lg"><i class="fa-solid fa-user"></i></span>
+          <input 
+            type="text" 
+            id="reg-nombre" 
+            placeholder="Nombre y Apellidos" 
+            required
+            class="w-full bg-slate-950 text-white placeholder-slate-800 border border-slate-800 focus:border-emerald-500 rounded-xl pl-12 pr-4 py-3.5 font-bold outline-none transition capitalize"
+          >
+        </div>
+      </div>
+
+      <!-- Fecha de Nacimiento -->
+      <div>
+        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Fecha de Nacimiento</label>
+        <div class="relative">
+          <span class="absolute left-4 top-3.5 text-slate-500 text-lg"><i class="fa-solid fa-cake-candles"></i></span>
+          <input 
+            type="date" 
+            id="reg-nacimiento" 
+            required
+            class="w-full bg-slate-950 text-white border border-slate-800 focus:border-emerald-500 rounded-xl pl-12 pr-4 py-3.5 font-bold outline-none transition uppercase"
+          >
+        </div>
+      </div>
+
+      <!-- Número Celular -->
+      <div>
+        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Número Celular</label>
+        <div class="relative">
+          <span class="absolute left-4 top-3.5 text-slate-500 text-lg"><i class="fa-solid fa-phone"></i></span>
+          <input 
+            type="tel" 
+            id="reg-celular" 
+            maxlength="9"
+            inputmode="numeric"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+            placeholder="Número de contacto" 
+            required
+            class="w-full bg-slate-950 text-white placeholder-slate-800 border border-slate-800 focus:border-emerald-500 rounded-xl pl-12 pr-4 py-3.5 font-bold outline-none transition"
+          >
+        </div>
+      </div>
+
+      <!-- Selector de Plan (Cargado dinámicamente) -->
+      <div>
+        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Plan</label>
+        <div class="relative">
+          <span class="absolute left-4 top-3.5 text-slate-500 text-lg"><i class="fa-solid fa-cubes"></i></span>
+          <select 
+            id="reg-plan" 
+            required 
+            onchange="calcularVencimiento()"
+            class="w-full bg-slate-950 text-white border border-slate-800 focus:border-emerald-500 rounded-xl pl-12 pr-4 py-3.5 font-bold outline-none transition appearance-none cursor-pointer"
+          >
+            <option value="" disabled selected>Cargando planes...</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Fechas del Plan (Contenedor horizontal) -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Fecha de Inicio</label>
+          <input 
+            type="date" 
+            id="reg-inicio" 
+            required
+            onchange="calcularVencimiento()"
+            class="w-full bg-slate-950 text-white border border-slate-800 focus:border-emerald-500 rounded-xl p-3 text-xs font-bold outline-none transition uppercase"
+          >
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Vencimiento</label>
+          <input 
+            type="text" 
+            id="reg-vencimiento" 
+            readonly
+            placeholder="AUTOMÁTICO"
+            class="w-full bg-slate-900 text-emerald-400 border border-slate-800 rounded-xl p-3 text-xs font-black text-center outline-none"
+          >
+        </div>
+      </div>
+
+      <!-- SECCIÓN FOTO (Integración con la cámara nativa del celular) -->
+      <div class="border border-slate-800 bg-slate-950 p-4 rounded-2xl space-y-4">
+        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider text-center">Fotografía del Cliente</label>
+        
+        <!-- Recuadro de Video de Cámara o Vista Previa -->
+        <div class="relative w-full aspect-square bg-slate-900 rounded-xl overflow-hidden flex items-center justify-center border border-slate-800 shadow-inner">
+          
+          <!-- Elemento de Video (Cámara en vivo) -->
+          <video id="video-stream" autoplay playsinline class="hidden w-full h-full object-cover"></video>
+          
+          <!-- Imagen de Vista Previa (Foto Capturada) -->
+          <img id="photo-preview" src="" alt="Vista previa" class="hidden w-full h-full object-cover">
+          
+          <!-- Indicador visual / Icono de espera -->
+          <div id="camera-placeholder" class="text-center text-slate-700 space-y-2">
+            <i class="fa-solid fa-camera text-5xl"></i>
+            <p class="text-xs font-semibold uppercase tracking-wider">Cámara inactiva</p>
+          </div>
+        </div>
+
+        <!-- Botones de Acción de Cámara -->
+        <div class="flex gap-2">
+          <button type="button" id="btn-iniciar-camara" onclick="iniciarCamara()" class="flex-grow bg-slate-850 hover:bg-slate-800 text-white text-xs font-bold py-3 px-2 rounded-xl transition uppercase">
+            <i class="fa-solid fa-power-off mr-2"></i>Activar Cámara
+          </button>
+          
+          <button type="button" id="btn-capturar" onclick="capturarFoto()" class="hidden flex-grow bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-bold py-3 px-2 rounded-xl transition uppercase shadow-lg">
+            <i class="fa-solid fa-shutter-button mr-2"></i>Capturar
+          </button>
+        </div>
+
+        <!-- Botones de Confirmar/Repetir (Se muestran tras capturar la foto) -->
+        <div id="photo-actions" class="hidden flex gap-2">
+          <button type="button" onclick="reiniciarCamara()" class="flex-grow bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold py-3 rounded-xl transition uppercase">
+            <i class="fa-solid fa-rotate-right mr-2"></i>Repetir Foto
+          </button>
+          <button type="button" onclick="confirmarFoto()" class="flex-grow bg-emerald-500 text-slate-950 text-xs font-bold py-3 rounded-xl transition uppercase shadow-lg">
+            <i class="fa-solid fa-check mr-2"></i>Confirmar Foto
+          </button>
+        </div>
+      </div>
+
+      <!-- BOTÓN REGISTRAR MIEMBRO -->
+      <button type="submit" id="btn-submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-4 rounded-2xl transition uppercase tracking-widest shadow-lg">
+        <i class="fa-solid fa-user-plus mr-2"></i>Afiliar Miembro
+      </button>
+
+    </form>
+  </main>
+
+  <!-- PANTALLA COMPLETA DE CARGANDO (LOGO 3D) -->
+  <div id="loader-overlay" class="hidden fixed inset-0 bg-slate-950 flex flex-col items-center justify-center z-50">
+    <div class="logo-container-3d mb-8">
+      <img id="loader-logo" src="" alt="Logo" class="logo-3d object-contain">
+    </div>
+    <p class="text-emerald-400 text-sm uppercase tracking-[0.3em] font-semibold animate-pulse">Registrando Miembro...</p>
+  </div>
+
+  <footer class="text-center text-[10px] text-slate-600 uppercase tracking-widest mt-6">
+    &copy; 2026 FitControl Register App
+  </footer>
+
+  <!-- CANVAS OCULTO PARA PROCESAR LA IMAGEN -->
+  <canvas id="hidden-canvas" class="hidden" width="600" height="600"></canvas>
+
+  <script>
+    // Asignación de imágenes
+    document.getElementById("header-logo").src = LOGO_URL;
+    document.getElementById("loader-logo").src = LOGO_URL;
+
+    // Colocar fecha de inicio como HOY por defecto
+    const inputInicio = document.getElementById("reg-inicio");
+    const hoy = new Date();
+    inputInicio.value = hoy.toISOString().substring(0, 10);
+
+    let planesGuardados = [];
+    let streamActivo = null;
+    let fotoBase64Confirmada = "";
+
+    // 1. Cargar Planes desde Google Sheets al iniciar la app
+    fetch(`${API_URL}?action=getPlanes`)
+      .then(res => res.json())
+      .then(data => {
+        const select = document.getElementById("reg-plan");
+        select.innerHTML = '<option value="" disabled selected>SELECCIONE PLAN</option>';
+        if (data.success) {
+          planesGuardados = data.planes;
+          data.planes.forEach(plan => {
+            select.innerHTML += `<option value="${plan.nombre}">${plan.nombre.toUpperCase()}</option>`;
+          });
+        } else {
+          select.innerHTML = '<option value="" disabled>Error al cargar planes</option>';
+        }
+      })
+      .catch(err => {
+        console.error("Error al obtener planes: ", err);
+        document.getElementById("reg-plan").innerHTML = '<option value="" disabled>Error de red</option>';
+      });
+
+    // 2. Calcular fecha de vencimiento según el plan seleccionado
+    function calcularVencimiento() {
+      const selectPlan = document.getElementById("reg-plan").value;
+      const fInicioStr = document.getElementById("reg-inicio").value;
+      const inputVencimiento = document.getElementById("reg-vencimiento");
+
+      if (!selectPlan || !fInicioStr) return;
+
+      const planInfo = planesGuardados.find(p => p.nombre === selectPlan);
+      if (!planInfo) return;
+
+      let fechaInicio = new Date(fInicioStr + "T00:00:00");
+      let fechaVencimiento = new Date(fechaInicio);
+
+      if (planInfo.unidad === "Libre") {
+        // Acceso libre: Vence en el año 2099
+        fechaVencimiento = new Date("2099-12-31T00:00:00");
+      } else if (planInfo.unidad === "Dias") {
+        // Sumar días exactos
+        fechaVencimiento.setDate(fechaInicio.getDate() + parseInt(planInfo.duracion));
+      } else if (planInfo.unidad === "Meses") {
+        // Sumar meses exactos respetando los días del mes
+        fechaVencimiento.setMonth(fechaInicio.getMonth() + parseInt(planInfo.duracion));
+      }
+
+      // Mostrar fecha formateada (DD/MM/AAAA)
+      inputVencimiento.value = utilFormatearFecha(fechaVencimiento);
+    }
+
+    // 3. Activar Cámara del Celular
+    function iniciarCamara() {
+      const video = document.getElementById("video-stream");
+      const preview = document.getElementById("photo-preview");
+      const placeholder = document.getElementById("camera-placeholder");
+      const btnIniciar = document.getElementById("btn-iniciar-camara");
+      const btnCapturar = document.getElementById("btn-capturar");
+
+      preview.classList.add("hidden");
+      placeholder.classList.add("hidden");
+      video.classList.remove("hidden");
+
+      // Pedir cámara trasera preferentemente
+      navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+        audio: false
+      })
+      .then(stream => {
+        streamActivo = stream;
+        video.srcObject = stream;
+        btnIniciar.classList.add("hidden");
+        btnCapturar.classList.remove("hidden");
+      })
+      .catch(err => {
+        alert("No se pudo acceder a la cámara. Verifique los permisos.");
+        console.error(err);
+      });
+    }
+
+    // 4. Capturar Imagen
+    function capturarFoto() {
+      const video = document.getElementById("video-stream");
+      const canvas = document.getElementById("hidden-canvas");
+      const preview = document.getElementById("photo-preview");
+      const ctx = canvas.getContext("2d");
+
+      // Capturar cuadro centrado y cuadrado
+      const size = Math.min(video.videoWidth, video.videoHeight);
+      const startX = (video.videoWidth - size) / 2;
+      const startY = (video.videoHeight - size) / 2;
+
+      ctx.drawImage(video, startX, startY, size, size, 0, 0, 600, 600);
+      
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.85); // Calidad balanceada
+      
+      // Mostrar preview estática
+      preview.src = dataUrl;
+      preview.classList.remove("hidden");
+      video.classList.add("hidden");
+
+      // Apagar cámara temporalmente
+      detenerCamara();
+
+      document.getElementById("btn-capturar").classList.add("hidden");
+      document.getElementById("photo-actions").classList.remove("hidden");
+    }
+
+    // 5. Reiniciar o tomar otra foto
+    function reiniciarCamara() {
+      document.getElementById("photo-actions").classList.add("hidden");
+      fotoBase64Confirmada = "";
+      iniciarCamara();
+    }
+
+    // 6. Confirmar Foto
+    function confirmarFoto() {
+      const preview = document.getElementById("photo-preview");
+      fotoBase64Confirmada = preview.src;
+      alert("¡Fotografía confirmada con éxito!");
+      document.getElementById("photo-actions").classList.add("hidden");
+      document.getElementById("btn-iniciar-camara").classList.remove("hidden");
+    }
+
+    // Detener flujo de cámara
+    function detenerCamara() {
+      if (streamActivo) {
+        streamActivo.getTracks().forEach(track => track.stop());
+        streamActivo = null;
+      }
+    }
+
+    // 7. Generar Tono de Éxito Potente (Fuerte de gimnasio)
+    function playStrongSuccessSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Generar un silbato / alarma agradable pero fuerte de dos notas
+        const osc1 = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        
+        osc1.connect(gainNode);
+        osc2.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        osc1.type = "sine";
+        osc1.frequency.setValueAtTime(660, audioCtx.currentTime); // Mi5
+        osc1.frequency.setValueAtTime(880, audioCtx.currentTime + 0.15); // La5
+        
+        osc2.type = "triangle";
+        osc2.frequency.setValueAtTime(660, audioCtx.currentTime);
+        osc2.frequency.setValueAtTime(880, audioCtx.currentTime + 0.15);
+        
+        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        
+        osc1.start();
+        osc2.start();
+        
+        osc1.stop(audioCtx.currentTime + 0.5);
+        osc2.stop(audioCtx.currentTime + 0.5);
+      } catch (e) {
+        console.warn("Fallo de audio: ", e);
+      }
+    }
+
+    // 8. Enviar Datos de Registro al Apps Script (POST)
+    function enviarRegistro(event) {
+      event.preventDefault();
+
+      if (!fotoBase64Confirmada) {
+        alert("Por favor, tome y CONFIRME la fotografía del cliente antes de afiliarlo.");
+        return;
+      }
+
+      const loader = document.getElementById("loader-overlay");
+      loader.classList.remove("hidden"); // Mostrar logo 3D giratorio
+
+      // Preparar payload para el POST
+      const nacimientoRaw = document.getElementById("reg-nacimiento").value;
+      const inicioRaw = document.getElementById("reg-inicio").value;
+
+      const payload = {
+        action: "registrarClienteCelular",
+        dni: document.getElementById("reg-dni").value,
+        nombre: document.getElementById("reg-nombre").value,
+        fechaNacimiento: utilFormatearFechaStr(nacimientoRaw),
+        plan: document.getElementById("reg-plan").value,
+        fechaInicio: utilFormatearFechaStr(inicioRaw),
+        fechaVencimiento: document.getElementById("reg-vencimiento").value,
+        celular: document.getElementById("reg-celular").value,
+        fotoBase64: fotoBase64Confirmada
+      };
+
+      fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        loader.classList.add("hidden");
+        if (data.success) {
+          playStrongSuccessSound();
+          alert("¡Miembro afiliado con éxito! Registro completado.");
+          resetFormulario();
+        } else {
+          alert("Error al afiliar: " + data.message);
+        }
+      })
+      .catch(err => {
+        loader.classList.add("hidden");
+        alert("Error de red. No se pudo registrar en la base de datos.");
+        console.error(err);
+      });
+    }
+
+    function resetFormulario() {
+      document.getElementById("form-registro").reset();
+      document.getElementById("photo-preview").classList.add("hidden");
+      document.getElementById("camera-placeholder").classList.remove("hidden");
+      fotoBase64Confirmada = "";
+      document.getElementById("reg-inicio").value = new Date().toISOString().substring(0, 10);
+    }
+
+    // Auxiliares de fecha
+    function utilFormatearFecha(date) {
+      var d = new Date(date),
+          month = '' + (d.getMonth() + 1),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+      return [day, month, year].join('/');
+    }
+
+    function utilFormatearFechaStr(dateStr) {
+      if (!dateStr) return "";
+      const partes = dateStr.split("-");
+      return [partes[2], partes[1], partes[0]].join('/');
+    }
+  </script>
+</body>
+</html>
