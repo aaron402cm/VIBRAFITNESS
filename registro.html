@@ -251,29 +251,49 @@
         document.getElementById("reg-plan").innerHTML = '<option value="" disabled>Error de red</option>';
       });
 
-    // 2. Calcular fecha de vencimiento según el plan seleccionado
+    // 2. Calcular fecha de vencimiento según el plan seleccionado de forma robusta
     function calcularVencimiento() {
       const selectPlan = document.getElementById("reg-plan").value;
-      const fInicioStr = document.getElementById("reg-inicio").value;
+      const inputInicio = document.getElementById("reg-inicio");
       const inputVencimiento = document.getElementById("reg-vencimiento");
 
-      if (!selectPlan || !fInicioStr) return;
+      if (!selectPlan) return;
 
-      const planInfo = planesGuardados.find(p => p.nombre === selectPlan);
+      // Buscar el plan ignorando diferencias de mayúsculas/minúsculas y espacios
+      const planInfo = planesGuardados.find(p => p.nombre.trim().toUpperCase() === selectPlan.trim().toUpperCase());
       if (!planInfo) return;
+
+      const unidad = planInfo.unidad.trim().toUpperCase();
+
+      // Si el plan es LIBRE, forzar "LIBRE" en ambos campos de texto
+      if (unidad === "LIBRE") {
+        inputInicio.type = "text";
+        inputInicio.value = "LIBRE";
+        inputInicio.readOnly = true;
+        inputVencimiento.value = "LIBRE";
+        return;
+      }
+
+      // Si no es Libre, restaurar el campo de fecha de inicio a su estado normal (date)
+      if (inputInicio.type === "text") {
+        inputInicio.type = "date";
+        inputInicio.readOnly = false;
+        const hoy = new Date();
+        inputInicio.value = hoy.toISOString().substring(0, 10);
+      }
+
+      const fInicioStr = inputInicio.value;
+      if (!fInicioStr) return;
 
       let fechaInicio = new Date(fInicioStr + "T00:00:00");
       let fechaVencimiento = new Date(fechaInicio);
+      const duracion = parseInt(planInfo.duracion);
 
-      if (planInfo.unidad === "Libre") {
-        // Acceso libre: Vence en el año 2099
-        fechaVencimiento = new Date("2099-12-31T00:00:00");
-      } else if (planInfo.unidad === "Dias") {
-        // Sumar días exactos
-        fechaVencimiento.setDate(fechaInicio.getDate() + parseInt(planInfo.duracion));
-      } else if (planInfo.unidad === "Meses") {
-        // Sumar meses exactos respetando los días del mes
-        fechaVencimiento.setMonth(fechaInicio.getMonth() + parseInt(planInfo.duracion));
+      // Sumar según la unidad (ignorando tildes y mayúsculas)
+      if (unidad === "DIAS" || unidad === "DÍAS") {
+        fechaVencimiento.setDate(fechaInicio.getDate() + duracion);
+      } else if (unidad === "MESES") {
+        fechaVencimiento.setMonth(fechaInicio.getMonth() + duracion);
       }
 
       // Mostrar fecha formateada (DD/MM/AAAA)
@@ -467,7 +487,9 @@
 
     function utilFormatearFechaStr(dateStr) {
       if (!dateStr) return "";
+      if (dateStr === "LIBRE") return "LIBRE"; // Proteger la palabra "LIBRE" para que se guarde así en Sheets
       const partes = dateStr.split("-");
+      if (partes.length < 3) return dateStr;
       return [partes[2], partes[1], partes[0]].join('/');
     }
   </script>
