@@ -33,7 +33,7 @@
       100% { transform: rotateY(360deg); }
     }
 
-    /* Transición de aparición suave para la pantalla de bienvenida */
+    /* Transiciones suaves */
     .slide-in-right {
       animation: slideInRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
@@ -169,119 +169,147 @@
       </div>
     </div>
 
-    <!-- ================= VISTA DE ADMINISTRACIÓN EN TIEMPO REAL ================= -->
+    <!-- ================= VISTA DE ADMINISTRACIÓN EN TIEMPO REAL (PANTALLA COMPLETA) ================= -->
     <section id="section-admin" class="hidden w-full max-w-6xl z-10 transition-all duration-300">
-      <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-8 backdrop-blur-md max-h-[85vh] overflow-y-auto">
+      <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 backdrop-blur-md max-h-[85vh] overflow-y-auto">
         
-        <div class="flex justify-between items-center border-b border-slate-800 pb-5">
-          <h2 class="text-2xl font-black text-white uppercase tracking-wider">
-            <i class="fa-solid fa-chart-line text-emerald-500 mr-2"></i>Consola de Recepción
-          </h2>
-          <span class="text-xs text-slate-500 uppercase tracking-widest font-bold">Monitoreo Operativo</span>
-        </div>
-
-        <!-- KPIs Reales (Con indicador de personas dentro) -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl flex items-center space-x-4 shadow-inner">
-            <div class="p-4 bg-emerald-500/10 text-emerald-400 rounded-xl text-2xl"><i class="fa-solid fa-users"></i></div>
+        <!-- CABECERA PRINCIPAL DE KPIS (SIEMPRE VISIBLE EN ADMIN) -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 pb-6 border-b border-slate-800">
+          <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner">
+            <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-lg text-lg"><i class="fa-solid fa-users"></i></div>
             <div>
-              <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Miembros Activos</p>
-              <h3 id="kpi-activos" class="text-3xl font-black mt-1">...</h3>
+              <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Activos</p>
+              <h3 id="kpi-activos" class="text-lg font-black text-white">...</h3>
             </div>
           </div>
-          <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl flex items-center space-x-4 shadow-inner">
-            <div class="p-4 bg-blue-500/10 text-blue-400 rounded-xl text-2xl"><i class="fa-solid fa-calendar-check"></i></div>
+          <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner">
+            <div class="p-3 bg-blue-500/10 text-blue-400 rounded-lg text-lg"><i class="fa-solid fa-calendar-check"></i></div>
             <div>
-              <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Asistencias Hoy</p>
-              <h3 id="kpi-hoy" class="text-3xl font-black mt-1">...</h3>
+              <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Asistencias</p>
+              <h3 id="kpi-hoy" class="text-lg font-black text-white">...</h3>
             </div>
           </div>
-          <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl flex items-center space-x-4 shadow-inner animate-pulse">
-            <div class="p-4 bg-amber-500/10 text-amber-400 rounded-xl text-2xl"><i class="fa-solid fa-person-running"></i></div>
+          <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner animate-pulse">
+            <div class="p-3 bg-amber-500/10 text-amber-400 rounded-lg text-lg"><i class="fa-solid fa-person-running"></i></div>
             <div>
-              <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Dentro del GYM</p>
-              <h3 id="kpi-dentro" class="text-3xl font-black mt-1">...</h3>
+              <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Dentro GYM</p>
+              <h3 id="kpi-dentro" class="text-lg font-black text-white">...</h3>
             </div>
           </div>
-          <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl flex items-center space-x-4 shadow-inner">
-            <div class="p-4 bg-rose-500/10 text-rose-400 rounded-lg text-2xl"><i class="fa-solid fa-circle-exclamation"></i></div>
+          <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner">
+            <div class="p-3 bg-rose-500/10 text-rose-400 rounded-lg text-lg"><i class="fa-solid fa-circle-exclamation"></i></div>
             <div>
-              <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Membresías Vencidas</p>
-              <h3 id="kpi-vencidos" class="text-3xl font-black mt-1">...</h3>
+              <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Vencidos</p>
+              <h3 id="kpi-vencidos" class="text-lg font-black text-white">...</h3>
             </div>
           </div>
         </div>
 
-        <!-- Buscador de Miembros para Recepción -->
-        <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl shadow-lg space-y-4">
-          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center">
-            <i class="fa-solid fa-magnifying-glass text-emerald-400 mr-2"></i>Buscador e Historial de Miembros
-          </h4>
-          <input 
-            type="text" 
-            id="admin-search-input" 
-            oninput="filtrarMiembrosBuscador()"
-            placeholder="Escriba DNI o Nombre del miembro..." 
-            class="w-full bg-slate-900 text-white placeholder-slate-700 border border-slate-800 focus:border-emerald-500 rounded-xl px-4 py-3 font-semibold outline-none transition"
-          >
-          <div id="search-results-container" class="max-h-60 overflow-y-auto space-y-2 divide-y divide-slate-900 hidden">
-            <!-- Resultados dinámicos -->
-          </div>
-        </div>
-
-        <!-- Gráficos Reales -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-lg">
-            <h4 class="text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider">Horas Pico de Ingreso</h4>
-            <div class="h-64">
-              <canvas id="chartHours"></canvas>
-            </div>
-          </div>
-          <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-lg">
-            <h4 class="text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider">Flujo por Día de la Semana</h4>
-            <div class="h-64">
-              <canvas id="chartDays"></canvas>
-            </div>
-          </div>
-        </div>
-
-        <!-- TABLAS DE CONTROL OPERATIVO PARA LA ASISTENTE -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- LAYOUT DE DOS COLUMNAS: MENÚ LATERAL IZQUIERDO Y CONTENIDO DINÁMICO DERECHO -->
+        <div class="flex flex-col md:flex-row gap-6 min-h-[480px]">
           
-          <!-- Tabla de Últimas Asistencias (2/3 de ancho) -->
-          <div class="lg:col-span-2 bg-slate-950 border border-slate-800 p-6 rounded-2xl shadow-lg space-y-4">
-            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center">
-              <i class="fa-solid fa-clock-rotate-left text-emerald-400 mr-2"></i>Últimos Ingresos de Hoy
-            </h4>
-            <div class="overflow-x-auto">
-              <table class="w-full text-left border-collapse text-sm">
-                <thead>
-                  <tr class="border-b border-slate-800 text-slate-500 text-xs font-bold uppercase tracking-wider">
-                    <th class="pb-3">Hora</th>
-                    <th class="pb-3">DNI</th>
-                    <th class="pb-3">Nombre Completo</th>
-                    <th class="pb-3 text-right">Movimiento</th>
-                  </tr>
-                </thead>
-                <tbody id="table-recent-body" class="divide-y divide-slate-900 text-slate-300">
-                  <tr>
-                    <td colspan="4" class="py-4 text-center text-slate-600">Consultando base de datos...</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+          <!-- MENÚ LATERAL IZQUIERDO (Botonera modular para la Asistente) -->
+          <div class="w-full md:w-1/4 flex flex-col gap-2 bg-slate-950/40 p-3 rounded-2xl border border-slate-800/40">
+            <button onclick="cambiarSeccionAdmin('buscador')" id="btn-sec-buscador" class="w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-emerald-500 text-slate-950 transition duration-150">
+              <i class="fa-solid fa-magnifying-glass mr-3 text-sm"></i>Buscador e Ingresos
+            </button>
+            <button onclick="cambiarSeccionAdmin('graficas')" id="btn-sec-graficas" class="w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-slate-850 hover:bg-slate-800 text-slate-300 transition duration-150">
+              <i class="fa-solid fa-chart-pie mr-3 text-sm"></i>Gráficas de Flujo
+            </button>
+            <button onclick="cambiarSeccionAdmin('alertas')" id="btn-sec-alertas" class="w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-slate-850 hover:bg-slate-800 text-slate-300 transition duration-150">
+              <i class="fa-solid fa-bell mr-3 text-sm"></i>Membresías por Vencer
+            </button>
+            <button onclick="cambiarSeccionAdmin('inactivos')" id="btn-sec-inactivos" class="w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-slate-850 hover:bg-slate-800 text-slate-300 transition duration-150">
+              <i class="fa-solid fa-user-slash mr-3 text-sm"></i>Ausentes (>7 días)
+            </button>
           </div>
 
-          <!-- Alertas de Próximos Vencimientos (1/3 de ancho) -->
-          <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl shadow-lg space-y-4">
-            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center">
-              <i class="fa-solid fa-bell text-orange-400 mr-2"></i>Membresías por vencer (7 días)
-            </h4>
-            <div id="list-alerts" class="space-y-3">
-              <p class="text-xs text-center text-slate-600 py-4">No hay alertas activas en este momento.</p>
-            </div>
-          </div>
+          <!-- PANEL DE CONTENIDO DINÁMICO DERECHO (Con altura fija y scroll interno profesional) -->
+          <div class="w-full md:w-3/4 bg-slate-950/70 border border-slate-800 p-6 rounded-2xl shadow-inner relative max-h-[50vh] overflow-y-auto">
+            
+            <!-- SUBSECCIÓN 1: BUSCADOR Y ÚLTIMOS INGRESOS (30 REGISTROS) -->
+            <div id="sub-admin-buscador" class="space-y-6">
+              <div class="space-y-3">
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest"><i class="fa-solid fa-magnifying-glass text-emerald-400 mr-2"></i>Buscador en Tiempo Real</h4>
+                <input 
+                  type="text" 
+                  id="admin-search-input" 
+                  oninput="filtrarMiembrosBuscador()"
+                  placeholder="Escriba DNI o Nombre para buscar y editar miembro..." 
+                  class="w-full bg-slate-900 text-white placeholder-slate-700 border border-slate-800 focus:border-emerald-500 rounded-xl px-4 py-3 font-semibold outline-none transition text-sm"
+                >
+                <div id="search-results-container" class="max-h-48 overflow-y-auto space-y-1 divide-y divide-slate-900 hidden bg-slate-950 border border-slate-800 p-2 rounded-xl">
+                  <!-- Coincidencias de búsqueda -->
+                </div>
+              </div>
 
+              <div class="space-y-3">
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest"><i class="fa-solid fa-clock-rotate-left text-emerald-400 mr-2"></i>Últimos 30 Ingresos Recientes</h4>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                      <tr class="border-b border-slate-800 text-slate-500 font-bold uppercase tracking-wider">
+                        <th class="pb-2">Hora</th>
+                        <th class="pb-2">DNI</th>
+                        <th class="pb-2">Nombre Completo</th>
+                        <th class="pb-2 text-right">Movimiento</th>
+                      </tr>
+                    </thead>
+                    <tbody id="table-recent-body" class="divide-y divide-slate-900 text-slate-300">
+                      <!-- Dinámico -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUBSECCIÓN 2: GRÁFICAS OPERATIVAS -->
+            <div id="sub-admin-graficas" class="hidden space-y-6">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80 shadow-md">
+                  <h4 class="text-[11px] font-bold text-slate-400 mb-4 uppercase tracking-wider">Horas Pico de Ingreso</h4>
+                  <div class="h-48"><canvas id="chartHours"></canvas></div>
+                </div>
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80 shadow-md">
+                  <h4 class="text-[11px] font-bold text-slate-400 mb-4 uppercase tracking-wider">Flujo por Día</h4>
+                  <div class="h-48"><canvas id="chartDays"></canvas></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUBSECCIÓN 3: MEMBRESÍAS POR VENCER (7 DÍAS) -->
+            <div id="sub-admin-alertas" class="hidden space-y-4">
+              <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center">
+                <i class="fa-solid fa-bell text-orange-400 mr-2"></i>Próximos Vencimientos (Siguientes 7 días)
+              </h4>
+              <div id="list-alerts" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Dinámico -->
+              </div>
+            </div>
+
+            <!-- SUBSECCIÓN 4: CLIENTES INACTIVOS (>7 DÍAS CON CELULAR Y ACCION DE WHATSAPP) -->
+            <div id="sub-admin-inactivos" class="hidden space-y-4">
+              <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center">
+                <i class="fa-solid fa-user-slash text-rose-400 mr-2"></i>Clientes Ausentes (>7 días de inactividad)
+              </h4>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="border-b border-slate-800 text-slate-500 font-bold uppercase tracking-wider">
+                      <th class="pb-2">Ausencia</th>
+                      <th class="pb-2">Miembro</th>
+                      <th class="pb-2">Última Visita</th>
+                      <th class="pb-2 text-right">Contacto WhatsApp</th>
+                    </tr>
+                  </thead>
+                  <tbody id="table-inactivos-body" class="divide-y divide-slate-900 text-slate-300">
+                    <!-- Dinámico -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
         </div>
 
       </div>
@@ -398,7 +426,7 @@
     let streamEditor = null;
     let fotoBase64Editor = "";
 
-    // 1. Navegación entre pestañas
+    // 1. Navegación entre pestañas principales
     function switchTab(tab) {
       const regSection = document.getElementById("section-registro");
       const adminSection = document.getElementById("section-admin");
@@ -422,7 +450,25 @@
       }
     }
 
-    // 2. Sintetizador de Sonidos
+    // 2. Navegación entre sub-pestañas del Administrador (Sidebar modular)
+    function cambiarSeccionAdmin(seccion) {
+      const secciones = ['buscador', 'graficas', 'alertas', 'inactivos'];
+      
+      secciones.forEach(sec => {
+        const divSeccion = document.getElementById(`sub-admin-${sec}`);
+        const btnSeccion = document.getElementById(`btn-sec-${sec}`);
+        
+        if (sec === seccion) {
+          divSeccion.classList.remove("hidden");
+          btnSeccion.className = "w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-emerald-500 text-slate-950 transition duration-150";
+        } else {
+          divSeccion.classList.add("hidden");
+          btnSeccion.className = "w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-slate-850 hover:bg-slate-800 text-slate-300 transition duration-150";
+        }
+      });
+    }
+
+    // 3. Sintetizador de Sonidos
     function playSound(type) {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -453,7 +499,7 @@
 
     let hideScreenTimer;
 
-    // 3. Petición y Registro
+    // 4. Petición y Registro de Asistencias
     function registrarAsistencia(event) {
       event.preventDefault();
       
@@ -493,7 +539,7 @@
         });
     }
 
-    // 4. Presentar Datos de Usuario en Pantalla Gigante Organizada
+    // 5. Presentar Datos de Usuario en Pantalla Gigante Organizada
     function presentarPantallaGigante(usuario, status) {
       const modal = document.getElementById("pantalla-gigante");
       const bg = document.getElementById("glow-bg");
@@ -529,9 +575,13 @@
           
           if (usuario.movimiento === "IN") {
             badge.textContent = "ACCESO AUTORIZADO • INGRESO (IN)";
-          } else {
+          } else if (usuario.movimiento === "OUT") {
             badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-orange-500/15 text-orange-400 border border-orange-500/30 shadow-md";
             badge.textContent = "ACCESO AUTORIZADO • SALIDA (OUT)";
+          } else {
+            // Estilo específico en caso de que un usuario con membresía vencida intente marcar
+            badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-md animate-pulse";
+            badge.textContent = "MEMBRESÍA VENCIDA";
           }
           motivationalBox.className = "bg-slate-900/70 p-6 rounded-2xl border-l-8 border-emerald-500 italic text-slate-200 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4";
           playSound("success");
@@ -624,7 +674,7 @@
         data: {
           labels: chartsData ? chartsData.diasLabels : ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
           datasets: [{
-            label: 'Usuarios',
+            label: 'Flujo',
             data: chartsData ? chartsData.diasValores : [0, 0, 0, 0, 0, 0],
             backgroundColor: '#10b981',
             borderRadius: 6
@@ -815,6 +865,32 @@
               `;
             });
           }
+
+          // Cargar Tabla de Clientes Ausentes (>7 días) con integración directa de WhatsApp
+          const inactivosBody = document.getElementById("table-inactivos-body");
+          inactivosBody.innerHTML = "";
+          if (!res.inactivosList || res.inactivosList.length === 0) {
+            inactivosBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-600">No hay clientes ausentes de alta.</td></tr>`;
+          } else {
+            res.inactivosList.forEach(c => {
+              // Enlace directo de API de WhatsApp (asumiendo código de país +51 de Perú, modificable)
+              const waLink = `https://wa.me/51${c.celular}?text=Hola%20${encodeURIComponent(c.nombre)}%2C%20te%20escribimos%20de%20VibraFitness.%20Notamos%20que%20no%20nos%20visitas%20hace%20${c.diasInactivo}%20d%C3%ADas.%20%C2%A1Te%20esperamos%20pronto%20para%20seguir%20entrenando!`;
+              
+              inactivosBody.innerHTML += `
+                <tr class="hover:bg-slate-900/40 transition duration-150">
+                  <td class="py-3 font-extrabold text-rose-400 text-xs uppercase tracking-widest">${c.diasInactivo} días</td>
+                  <td class="py-3 font-extrabold text-white capitalize">${c.nombre}</td>
+                  <td class="py-3 font-semibold text-slate-500">${c.ultimoRegistro}</td>
+                  <td class="py-3 text-right">
+                    <a href="${waLink}" target="_blank" class="inline-flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-[10px] uppercase tracking-wider transition gap-1">
+                      <i class="fa-brands fa-whatsapp text-xs"></i> Contactar
+                    </a>
+                  </td>
+                </tr>
+              `;
+            });
+          }
+
         })
         .catch(err => {
           console.error("Fallo al consultar el API del Administrador: ", err);
@@ -828,7 +904,7 @@
     // Cargar selector de planes en el editor dinámicamente
     function cargarPlanesEnEditor() {
       const selectEdit = document.getElementById("edit-plan");
-      if (listadoCompletoPlanes.length > 0) return; // Si ya se cargaron, omitir
+      if (listadoCompletoPlanes.length > 0) return; 
 
       fetch(`${API_URL}?action=getPlanes`)
         .then(res => res.json())
@@ -854,7 +930,6 @@
         return;
       }
 
-      // Filtrar clientes por DNI o por Nombre
       const filtrados = listadoCompletoClientes.filter(c => 
         c.dni.includes(input) || c.nombre.toUpperCase().includes(input)
       );
@@ -866,7 +941,7 @@
         filtrados.forEach(c => {
           const badgeColor = c.estado === "Activo" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border border-rose-500/20";
           resultsContainer.innerHTML += `
-            <div onclick="abrirEditorModal(${JSON.stringify(c).replace(/"/g, '&quot;')})" class="flex justify-between items-center p-3 hover:bg-slate-900 rounded-xl cursor-pointer transition">
+            <div onclick="abrirEditorModal(${JSON.stringify(c).replace(/"/g, '&quot;')})" class="flex justify-between items-center p-3 hover:bg-slate-900 rounded-xl cursor-pointer transition text-left">
               <div>
                 <p class="text-sm font-extrabold text-white capitalize">${c.nombre}</p>
                 <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">DNI: ${c.dni} • Plan: ${c.plan} • Vence: ${c.fechaVencimiento}</p>
@@ -885,7 +960,6 @@
     function abrirEditorModal(cliente) {
       cargarPlanesEnEditor();
       
-      // Inyectar datos al formulario
       document.getElementById("edit-dni").value = cliente.dni;
       document.getElementById("edit-nombre").value = cliente.nombre;
       document.getElementById("edit-nacimiento").value = cliente.fechaNacimiento;
@@ -894,16 +968,13 @@
       document.getElementById("edit-inicio").value = cliente.fechaInicio;
       document.getElementById("edit-vencimiento").value = cliente.fechaVencimiento;
       
-      // Foto actual
       document.getElementById("editor-photo-preview").src = cliente.foto || DEFAULT_AVATAR;
-      fotoBase64Editor = ""; // Resetear nueva foto capturada
+      fotoBase64Editor = ""; 
 
-      // Cargar el plan correcto en el select (esperar carga de planes si es necesario)
       setTimeout(() => {
         document.getElementById("edit-plan").value = cliente.plan;
       }, 300);
 
-      // Mostrar modal
       document.getElementById("modal-editor").classList.remove("hidden");
     }
 
@@ -930,7 +1001,6 @@
         return;
       }
 
-      // Validar si el formato ingresado es DD/MM/AAAA
       const partes = fInicioStr.split("/");
       if (partes.length < 3) return;
 
@@ -987,12 +1057,12 @@
       const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
 
       preview.src = dataUrl;
-      fotoBase64Editor = dataUrl; // Confirmar para el guardado
+      fotoBase64Editor = dataUrl; 
 
       preview.classList.remove("hidden");
       video.classList.add("hidden");
 
-      cancelarNuevaFotoEditor(true); // Detener stream de cámara, mantener vista previa
+      cancelarNuevaFotoEditor(true); 
       document.getElementById("btn-editor-shutter").classList.add("hidden");
       document.getElementById("btn-editor-retry").classList.remove("hidden");
     }
@@ -1030,7 +1100,7 @@
         fechaVencimiento: document.getElementById("edit-vencimiento").value,
         estado: document.getElementById("edit-estado").value,
         celular: document.getElementById("edit-celular").value,
-        fotoBase64: fotoBase64Editor // Mandar solo si tomó una nueva foto, de lo contrario vacío
+        fotoBase64: fotoBase64Editor 
       };
 
       fetch(API_URL, {
@@ -1043,7 +1113,7 @@
         if (data.success) {
           alert("¡Miembro modificado con éxito!");
           cerrarEditorModal();
-          consultarDatosAdmin(); // Refrescar consola de recepción al instante
+          consultarDatosAdmin(); 
           document.getElementById("admin-search-input").value = "";
           document.getElementById("search-results-container").classList.add("hidden");
         } else {
@@ -1057,7 +1127,7 @@
       });
     }
 
-    // Sobrescribir switchTab para recargar datos de administración al abrir
+    // Reescritura limpia del switchTab para jalar datos reales al abrir admin
     const switchTabOriginal = switchTab;
     switchTab = function(tab) {
       switchTabOriginal(tab);
