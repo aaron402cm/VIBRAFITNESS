@@ -66,7 +66,7 @@
   <header class="bg-slate-900/80 backdrop-blur border-b border-slate-800/60 px-6 py-4 flex justify-between items-center shadow-lg z-10">
     <div class="flex items-center space-x-3">
       <img id="nav-logo" src="" alt="Logo" class="h-8 w-auto object-contain">
-      <span class="text-sm font-extrabold uppercase tracking-widest text-slate-400">VIBRAFITNESS</span>
+      <span class="text-sm font-extrabold uppercase tracking-widest text-slate-400">FITNESS CLUB</span>
     </div>
     <nav class="flex space-x-2">
       <button onclick="switchTab('registro')" id="tab-registro-btn" class="px-4 py-2 rounded-lg font-bold text-xs uppercase bg-emerald-500 text-slate-950 transition duration-300">
@@ -267,7 +267,7 @@
 
   <!-- FOOTER -->
   <footer class="bg-slate-900 border-t border-slate-800/50 px-6 py-4 text-center text-xs text-slate-500">
-    &copy; 2026 VIBRAFITNESS Control Hub. Todos los derechos reservados.
+    &copy; 2026 Fitness Club Control Hub. Todos los derechos reservados.
   </footer>
 
   <script>
@@ -469,129 +469,58 @@
 
     // 6. Configuración de Gráficos del Administrador
     let myChartHours, myChartDays;
-    function inicializarGraficos() {
-      // Mostrar estados de carga
-      document.getElementById("kpi-activos").textContent = "...";
-      document.getElementById("kpi-hoy").textContent = "...";
-      document.getElementById("kpi-vencidos").textContent = "...";
+    function inicializarGraficos(chartsData) {
+      if (myChartHours) myChartHours.destroy();
+      if (myChartDays) myChartDays.destroy();
 
-      fetch(`${API_URL}?action=getAdminDashboardData`)
-        .then(res => res.json())
-        .then(res => {
-          if (!res.success) {
-            alert("Error al cargar datos del panel: " + res.message);
-            return;
-          }
+      const ctxHours = document.getElementById('chartHours').getContext('2d');
+      myChartHours = new Chart(ctxHours, {
+        type: 'line',
+        data: {
+          labels: chartsData ? chartsData.horasLabels : ['6am', '8am', '10am', '12pm', '2pm', '4pm', '6pm', '8pm', '10pm'],
+          datasets: [{
+            label: 'Asistencias',
+            data: chartsData ? chartsData.horasValores : [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
 
-          // 1. Cargar KPIs reales
-          document.getElementById("kpi-activos").textContent = res.kpis.miembrosActivos;
-          document.getElementById("kpi-hoy").textContent = res.kpis.asistenciasHoy;
-          document.getElementById("kpi-vencidos").textContent = res.kpis.vencidosAlerta;
-
-          // 2. Destruir gráficos anteriores si existen
-          if (myChartHours) myChartHours.destroy();
-          if (myChartDays) myChartDays.destroy();
-
-          // 3. Crear Gráfico Horas Pico
-          const ctxHours = document.getElementById('chartHours').getContext('2d');
-          myChartHours = new Chart(ctxHours, {
-            type: 'line',
-            data: {
-              labels: res.charts.horasLabels,
-              datasets: [{
-                label: 'Asistencias',
-                data: res.charts.horasValores,
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.3
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: {
-                y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
-                x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-              },
-              plugins: { legend: { display: false } }
-            }
-          });
-
-          // 4. Crear Gráfico Días Pico
-          const ctxDays = document.getElementById('chartDays').getContext('2d');
-          myChartDays = new Chart(ctxDays, {
-            type: 'bar',
-            data: {
-              labels: res.charts.diasLabels,
-              datasets: [{
-                label: 'Flujo',
-                data: res.charts.diasValores,
-                backgroundColor: '#10b981',
-                borderRadius: 6
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: {
-                y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
-                x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-              },
-              plugins: { legend: { display: false } }
-            }
-          });
-
-          // 5. Cargar Tabla de últimos ingresos de hoy
-          const recentBody = document.getElementById("table-recent-body");
-          recentBody.innerHTML = "";
-          if (res.ultimosIngresos.length === 0) {
-            recentBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-600">No se registran asistencias hoy.</td></tr>`;
-          } else {
-            res.ultimosIngresos.forEach(ingreso => {
-              const badgeColor = ingreso.movimiento === "IN" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-orange-500/10 text-orange-400 border border-orange-500/20";
-              recentBody.innerHTML += `
-                <tr class="hover:bg-slate-900/40 transition duration-150">
-                  <td class="py-3 font-semibold text-slate-400">${ingreso.hora}</td>
-                  <td class="py-3 font-semibold text-slate-400">${ingreso.dni}</td>
-                  <td class="py-3 font-extrabold capitalize text-white">${ingreso.nombre}</td>
-                  <td class="py-3 text-right">
-                    <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest ${badgeColor}">
-                      ${ingreso.movimiento}
-                    </span>
-                  </td>
-                </tr>
-              `;
-            });
-          }
-
-          // 6. Cargar Alertas de Vencimiento
-          const alertsContainer = document.getElementById("list-alerts");
-          alertsContainer.innerHTML = "";
-          if (res.proximosVencer.length === 0) {
-            alertsContainer.innerHTML = `<p class="text-xs text-center text-slate-600 py-4 uppercase tracking-wider">No hay avisos urgentes</p>`;
-          } else {
-            res.proximosVencer.forEach(alert => {
-              alertsContainer.innerHTML += `
-                <div class="bg-slate-900/80 border-l-4 border-orange-500 p-3 rounded-r-xl flex justify-between items-center transition">
-                  <div class="space-y-1">
-                    <h5 class="text-xs font-black text-white capitalize truncate max-w-[150px]">${alert.nombre}</h5>
-                    <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">${alert.plan} • Vence: ${alert.vencimiento}</p>
-                  </div>
-                  <span class="text-xs text-orange-400 font-black uppercase tracking-wider"><i class="fa-solid fa-bell animate-swing"></i></span>
-                </div>
-              `;
-            });
-          }
-
-        })
-        .catch(err => {
-          console.error("Fallo al consultar el API del Administrador: ", err);
-          document.getElementById("kpi-activos").textContent = "ERR";
-          document.getElementById("kpi-hoy").textContent = "ERR";
-          document.getElementById("kpi-vencidos").textContent = "ERR";
-        });
+      const ctxDays = document.getElementById('chartDays').getContext('2d');
+      myChartDays = new Chart(ctxDays, {
+        type: 'bar',
+        data: {
+          labels: chartsData ? chartsData.diasLabels : ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          datasets: [{
+            label: 'Usuarios',
+            data: chartsData ? chartsData.diasValores : [0, 0, 0, 0, 0, 0],
+            backgroundColor: '#10b981',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
     }
 
     // Sintetizador de la melodía de Feliz Cumpleaños
@@ -693,6 +622,97 @@
       
       setTimeout(() => container.remove(), 7500); // Auto-eliminación de elementos
     }
+
+    // Nueva función para solicitar los datos del Dashboard del administrador en tiempo real
+    function consultarDatosAdmin() {
+      // Mostrar estados de carga temporales
+      document.getElementById("kpi-activos").textContent = "...";
+      document.getElementById("kpi-hoy").textContent = "...";
+      document.getElementById("kpi-vencidos").textContent = "...";
+
+      fetch(`${API_URL}?action=getAdminDashboardData`)
+        .then(res => res.json())
+        .then(res => {
+          if (!res.success) {
+            alert("Error al cargar datos del panel: " + res.message);
+            return;
+          }
+
+          // 1. Inyectar KPIs reales
+          document.getElementById("kpi-activos").textContent = res.kpis.miembrosActivos;
+          document.getElementById("kpi-hoy").textContent = res.kpis.asistenciasHoy;
+          document.getElementById("kpi-vencidos").textContent = res.kpis.vencidosAlerta;
+
+          // 2. Inicializar los gráficos con datos dinámicos
+          inicializarGraficos(res.charts);
+
+          // 3. Renderizar Tabla de Últimos Ingresos de Hoy
+          const recentBody = document.getElementById("table-recent-body");
+          recentBody.innerHTML = "";
+          if (res.ultimosIngresos.length === 0) {
+            recentBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-600">No se registran asistencias hoy.</td></tr>`;
+          } else {
+            res.ultimosIngresos.forEach(ingreso => {
+              // Asignar colores según el tipo de marcación (IN, OUT o Vencido)
+              let badgeColor = "";
+              if (ingreso.movimiento === "IN") {
+                badgeColor = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+              } else if (ingreso.movimiento === "OUT") {
+                badgeColor = "bg-orange-500/10 text-orange-400 border border-orange-500/20";
+              } else {
+                badgeColor = "bg-rose-500/10 text-rose-400 border border-rose-500/20";
+              }
+
+              recentBody.innerHTML += `
+                <tr class="hover:bg-slate-900/40 transition duration-150">
+                  <td class="py-3 font-semibold text-slate-400">${ingreso.hora}</td>
+                  <td class="py-3 font-semibold text-slate-400">${ingreso.dni}</td>
+                  <td class="py-3 font-extrabold capitalize text-white">${ingreso.nombre}</td>
+                  <td class="py-3 text-right">
+                    <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest ${badgeColor}">
+                      ${ingreso.movimiento}
+                    </span>
+                  </td>
+                </tr>
+              `;
+            });
+          }
+
+          // 4. Renderizar Alertas de Membresía por Vencer
+          const alertsContainer = document.getElementById("list-alerts");
+          alertsContainer.innerHTML = "";
+          if (res.proximosVencer.length === 0) {
+            alertsContainer.innerHTML = `<p class="text-xs text-center text-slate-600 py-4 uppercase tracking-wider">No hay avisos urgentes</p>`;
+          } else {
+            res.proximosVencer.forEach(alert => {
+              alertsContainer.innerHTML += `
+                <div class="bg-slate-900/80 border-l-4 border-orange-500 p-3 rounded-r-xl flex justify-between items-center transition">
+                  <div class="space-y-1">
+                    <h5 class="text-xs font-black text-white capitalize truncate max-w-[150px]">${alert.nombre}</h5>
+                    <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">${alert.plan} • Vence: ${alert.vencimiento}</p>
+                  </div>
+                  <span class="text-xs text-orange-400 font-black uppercase tracking-wider"><i class="fa-solid fa-bell animate-swing"></i></span>
+                </div>
+              `;
+            });
+          }
+        })
+        .catch(err => {
+          console.error("Fallo al consultar el API del Administrador: ", err);
+          document.getElementById("kpi-activos").textContent = "ERR";
+          document.getElementById("kpi-hoy").textContent = "ERR";
+          document.getElementById("kpi-vencidos").textContent = "ERR";
+        });
+    }
+
+    // Sobrescribir el switchTab para llamar a la consulta en tiempo real al entrar a admin
+    const switchTabOriginal = switchTab;
+    switchTab = function(tab) {
+      switchTabOriginal(tab);
+      if (tab === 'admin') {
+        consultarDatosAdmin();
+      }
+    };
   </script>
 </body>
 </html>
