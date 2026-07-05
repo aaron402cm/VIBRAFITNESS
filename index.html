@@ -461,7 +461,7 @@
   </footer>
 
   <script>
-    // 1. VARIABLES GLOBALES DE ADMINISTRACIÓN (Al inicio de todo en una sola etiqueta para evitar colisiones de carga)
+    // 1. VARIABLES GLOBALES DE ADMINISTRACIÓN (Declaración limpia inicial con VAR para evitar errores de TDZ)
     var listadoCompletoClientes = [];
     var listadoCompletoPlanes = [];
     var listadoPersonasDentro = []; 
@@ -1118,6 +1118,79 @@
         loader.classList.add("hidden");
         alert("Error de red al intentar actualizar el usuario.");
         console.error(err);
+      });
+    }
+
+    // 12. DEFINICIÓN DE GRÁFICOS REALES CON INICIALIZACIÓN DINÁMICA
+    function inicializarGraficos(chartsData) {
+      // Destruir instancias previas si existen para evitar basura en memoria
+      if (myChartHours) {
+        myChartHours.destroy();
+        myChartHours = null;
+      }
+      if (myChartDays) {
+        myChartDays.destroy();
+        myChartDays = null;
+      }
+
+      // Recreación física de los lienzos canvas en el DOM para forzar el dibujo limpio
+      var containerHours = document.getElementById('container-canvas-hours');
+      var containerDays = document.getElementById('container-canvas-days');
+      
+      if (containerHours && containerDays) {
+        containerHours.innerHTML = '<canvas id="chartHours" class="w-full h-full"></canvas>';
+        containerDays.innerHTML = '<canvas id="chartDays" class="w-full h-full"></canvas>';
+      }
+
+      // Inicializar Gráfico de Línea de Horas Pico
+      var ctxHours = document.getElementById('chartHours').getContext('2d');
+      myChartHours = new Chart(ctxHours, {
+        type: 'line',
+        data: {
+          labels: chartsData ? chartsData.horasLabels : ['6am', '8am', '10am', '12pm', '2pm', '4pm', '6pm', '8pm', '10pm'],
+          datasets: [{
+            label: 'Asistencias',
+            data: chartsData ? chartsData.horasValores : [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+
+      // Inicializar Gráfico de Barras de Flujo Semanal (Con Domingo incorporado)
+      var ctxDays = document.getElementById('chartDays').getContext('2d');
+      myChartDays = new Chart(ctxDays, {
+        type: 'bar',
+        data: {
+          labels: chartsData ? chartsData.diasLabels : ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+          datasets: [{
+            label: 'Flujo',
+            data: chartsData ? chartsData.diasValores : [0, 0, 0, 0, 0, 0, 0],
+            backgroundColor: '#10b981',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+          },
+          plugins: { legend: { display: false } }
+        }
       });
     }
   </script>
