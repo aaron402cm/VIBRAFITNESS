@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Chart.js para los gráficos del administrador -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Canvas Confetti para la explosión de festejo -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
     body {
@@ -328,40 +330,37 @@
     }
 
     // 4. Presentar Datos de Usuario en Pantalla Gigante Organizada (Sin celular)
-    function presentarPantallaGigante(usuario, status) {
-      const modal = document.getElementById("pantalla-gigante");
-      const bg = document.getElementById("glow-bg");
-      const border = document.getElementById("neon-photo-border");
-      const badge = document.getElementById("giant-status-badge");
-      const motivationalBox = document.getElementById("giant-message").parentNode;
-
-      const imgElem = document.getElementById("giant-photo");
-      imgElem.src = usuario.foto || "";
-      
-      document.getElementById("giant-name").textContent = usuario.nombre;
-      document.getElementById("giant-plan").textContent = usuario.plan;
-      document.getElementById("giant-expiry").textContent = usuario.fechaVencimiento;
-      document.getElementById("giant-message").textContent = usuario.message || usuario.mensaje;
-
-      if (status === "activo") {
-        // Estilos para acceso Permitido (Verde Radial)
-        bg.style.background = "radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(2,6,23,1) 80%)";
-        border.className = "w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-emerald-500 shadow-[0_0_60px_rgba(16,185,129,0.35)] flex items-center justify-center transition-all";
-        badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-md";
+    if (status === "activo") {
         
-        // Mostrar dinámicamente si es Entrada (IN) o Salida (OUT) en el banner
-        if (usuario.movimiento === "IN") {
-          // Mantener color verde esmeralda para el Ingreso
-          badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-md";
-          badge.textContent = "ACCESO AUTORIZADO • INGRESO (IN)";
+        // EVALUAR SI ES SU CUMPLEAÑOS
+        if (usuario.esCumpleanos) {
+          // Fondo dorado festivo
+          bg.style.background = "radial-gradient(circle, rgba(245,158,11,0.3) 0%, rgba(2,6,23,1) 80%)";
+          border.className = "w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-amber-500 shadow-[0_0_60px_rgba(245,158,11,0.5)] flex items-center justify-center transition-all";
+          badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-amber-500/20 text-amber-400 border border-amber-500/40 shadow-md animate-bounce";
+          badge.textContent = "🎂 ¡FELIZ CUMPLEAÑOS! 🎂";
+          motivationalBox.className = "bg-slate-900/70 p-6 rounded-2xl border-l-8 border-amber-500 italic text-slate-200 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4";
+          
+          // Desplegar festejo
+          lanzarExplosionConfeti();
+          crearGlobosFlotantes();
+          playBirthdayMelody();
         } else {
-          // Cambiar estrictamente a naranja cálido para la Salida
-          badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-orange-500/15 text-orange-400 border border-orange-500/30 shadow-md";
-          badge.textContent = "ACCESO AUTORIZADO • SALIDA (OUT)";
+          // Diseño normal de ingreso verde
+          bg.style.background = "radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(2,6,23,1) 80%)";
+          border.className = "w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-emerald-500 shadow-[0_0_60px_rgba(16,185,129,0.35)] flex items-center justify-center transition-all";
+          badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-md";
+          
+          if (usuario.movimiento === "IN") {
+            badge.textContent = "ACCESO AUTORIZADO • INGRESO (IN)";
+          } else {
+            badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-orange-500/15 text-orange-400 border border-orange-500/30 shadow-md";
+            badge.textContent = "ACCESO AUTORIZADO • SALIDA (OUT)";
+          }
+          motivationalBox.className = "bg-slate-900/70 p-6 rounded-2xl border-l-8 border-emerald-500 italic text-slate-200 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4";
+          playSound("success");
         }
-        
-        motivationalBox.className = "bg-slate-900/70 p-6 rounded-2xl border-l-8 border-emerald-500 italic text-slate-200 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4";
-        playSound("success");
+
       } else {
         // Estilos para acceso Denegado/Vencido (Rojo Radial)
         bg.style.background = "radial-gradient(circle, rgba(239,68,68,0.2) 0%, rgba(2,6,23,1) 80%)";
@@ -371,15 +370,6 @@
         motivationalBox.className = "bg-slate-900/70 p-6 rounded-2xl border-l-8 border-rose-500 italic text-slate-200 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4";
         playSound("error");
       }
-
-      modal.classList.remove("hidden");
-
-      hideScreenTimer = setTimeout(() => {
-        modal.classList.add("hidden");
-        document.getElementById("section-registro").classList.remove("hidden");
-        document.getElementById("input-dni").focus();
-      }, 5000);
-    }
 
     // 5. Presentar Alertas o Errores en Pantalla Gigante (Sin celular)
     function presentarErrorPantallaGigante(mensaje) {
@@ -465,6 +455,105 @@
           plugins: { legend: { display: false } }
         }
       });
+    }
+    // Sintetizador de la melodía de Feliz Cumpleaños
+    function playBirthdayMelody() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        // Primer fragmento clásico de Cumpleaños Feliz
+        const notas = [
+          {f: 261.63, d: 0.25}, // Do4
+          {f: 261.63, d: 0.25}, // Do4
+          {f: 293.66, d: 0.50}, // Re4
+          {f: 261.63, d: 0.50}, // Do4
+          {f: 349.23, d: 0.50}, // Fa4
+          {f: 329.63, d: 1.00}  // Mi4
+        ];
+        let tiempo = audioCtx.currentTime;
+        notas.forEach(nota => {
+          const osc = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          
+          osc.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(nota.f, tiempo);
+          
+          gainNode.gain.setValueAtTime(0, tiempo);
+          gainNode.gain.linearRampToValueAtTime(0.15, tiempo + 0.02);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, tiempo + nota.d - 0.02);
+          
+          osc.start(tiempo);
+          osc.stop(tiempo + nota.d);
+          tiempo += nota.d + 0.05; // Pausa sutil entre notas
+        });
+      } catch (e) {
+        console.warn("Fallo de melodía: ", e);
+      }
+    }
+
+    // Explosión de Confeti continua en ráfagas
+    function lanzarExplosionConfeti() {
+      const duration = 4 * 1000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+      function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+        if (timeLeft <= 0) return clearInterval(interval);
+
+        const particleCount = 50 * (timeLeft / duration);
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+      }, 250);
+    }
+
+    // Creación y elevación de Globos animada en 3D
+    function crearGlobosFlotantes() {
+      const container = document.createElement("div");
+      container.id = "birthday-balloons";
+      container.className = "fixed inset-0 pointer-events-none z-50 overflow-hidden";
+      document.body.appendChild(container);
+      
+      const colores = ["#ef4444", "#3b82f6", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6"];
+      
+      for (let i = 0; i < 20; i++) {
+        const globo = document.createElement("div");
+        const colorRandom = colores[Math.floor(Math.random() * colores.length)];
+        
+        globo.className = "absolute bottom-0 w-12 h-16 rounded-full opacity-85 shadow-[inset_-5px_-5px_0_rgba(0,0,0,0.15)] flex flex-col items-center justify-end";
+        globo.style.backgroundColor = colorRandom;
+        globo.style.left = Math.random() * 90 + "vw";
+        
+        // Hilo del globo
+        const hilo = document.createElement("div");
+        hilo.className = "w-0.5 h-12 bg-slate-400 absolute top-full";
+        globo.appendChild(hilo);
+        
+        container.appendChild(globo);
+        
+        // Animación suave de elevación hacia el cielo
+        const velocidad = Math.random() * 4000 + 3000; // 3s a 7s
+        const retardo = Math.random() * 1500;
+        
+        setTimeout(() => {
+          globo.animate([
+            { transform: "translateY(110vh) rotate(0deg)" },
+            { transform: `translateY(-120vh) rotate(${Math.random() * 40 - 20}deg)` }
+          ], {
+            duration: velocidad,
+            easing: "ease-in-out",
+            fill: "forwards"
+          });
+        }, retardo);
+      }
+      
+      setTimeout(() => container.remove(), 7500); // Auto-eliminación de elementos
     }
   </script>
 </body>
