@@ -13,9 +13,79 @@
   <!-- Canvas Confetti para la explosión de festejo -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Bebas+Neue&family=JetBrains+Mono:wght@400;600;700&display=swap');
     body {
       font-family: 'Montserrat', sans-serif;
+    }
+
+    /* NUEVO: Tipografía de impacto para números protagonistas (KPIs, nombre en pantalla de bienvenida) */
+    .font-display {
+      font-family: 'Bebas Neue', 'Montserrat', sans-serif;
+      letter-spacing: 0.04em;
+    }
+    /* NUEVO: Tipografía monoespaciada para datos (DNI, horas, timestamps) — sensación de sistema de control preciso */
+    .font-data {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* NUEVO: Scrollbar personalizada acorde a la identidad oscura/verde de la app */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(2, 6, 23, 0.4);
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(16, 185, 129, 0.35);
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(16, 185, 129, 0.6);
+    }
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(16, 185, 129, 0.35) rgba(2, 6, 23, 0.4);
+    }
+
+    /* NUEVO: Textura sutil de fondo (rejilla + glow radial) para que las pantallas no se sientan vacías */
+    .textura-fondo {
+      background-image:
+        radial-gradient(circle at 50% 20%, rgba(16, 185, 129, 0.08) 0%, rgba(0,0,0,0) 55%),
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 42px 42px, 42px 42px;
+    }
+
+    /* NUEVO: Ítem de navegación del sidebar admin con indicador lateral (en vez de botón sólido) */
+    .admin-nav-item {
+      position: relative;
+      background: transparent;
+      color: #94a3b8; /* slate-400 */
+      border-left: 3px solid transparent;
+      transition: all 0.2s ease;
+    }
+    .admin-nav-item:hover {
+      background: rgba(16, 185, 129, 0.06);
+      color: #e2e8f0;
+    }
+    .admin-nav-item.active {
+      background: rgba(16, 185, 129, 0.1);
+      border-left: 3px solid #10b981;
+      color: #ffffff;
+      box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.06);
+    }
+
+    /* NUEVO: Micro-interacción de elevación en botones principales */
+    .btn-hover-lift {
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+    }
+    .btn-hover-lift:hover {
+      transform: translateY(-2px);
+    }
+    .btn-hover-lift:active {
+      transform: translateY(0px);
     }
 
     /* Animación del Logo en 3D sobre el eje Y */
@@ -127,17 +197,17 @@
       <span class="text-sm font-extrabold uppercase tracking-widest text-slate-400">FITNESS CLUB</span>
     </div>
     <nav class="flex space-x-2">
-      <button onclick="switchTab('registro')" id="tab-registro-btn" class="px-4 py-2 rounded-lg font-bold text-xs uppercase bg-emerald-500 text-slate-950 transition duration-300">
+      <button onclick="switchTab('registro')" id="tab-registro-btn" class="btn-hover-lift px-4 py-2 rounded-lg font-bold text-xs uppercase bg-emerald-500 text-slate-950 transition duration-300">
         <i class="fa-solid fa-id-card mr-2"></i>Asistencia
       </button>
-      <button onclick="switchTab('admin')" id="tab-admin-btn" class="px-4 py-2 rounded-lg font-bold text-xs uppercase bg-slate-800 text-slate-300 hover:bg-slate-700 transition duration-300">
+      <button onclick="switchTab('admin')" id="tab-admin-btn" class="btn-hover-lift px-4 py-2 rounded-lg font-bold text-xs uppercase bg-slate-800 text-slate-300 hover:bg-slate-700 transition duration-300">
         <i class="fa-solid fa-lock mr-2"></i>Admin
       </button>
     </nav>
   </header>
 
   <!-- CONTENEDOR PRINCIPAL -->
-  <main class="flex-grow flex items-center justify-center p-4 lg:p-6 relative">
+  <main class="textura-fondo flex-grow flex items-center justify-center p-4 lg:p-6 relative">
     
     <!-- ================= VISTA DE REGISTRO (PANTALLA DE ESPERA) ================= -->
     <section id="section-registro" class="w-full max-w-xl flex flex-col items-center z-10 transition-all duration-300">
@@ -159,9 +229,9 @@
             autofocus
             required
             autocomplete="off"
-            class="w-full bg-slate-950 text-white placeholder-slate-700 border-2 border-slate-800 focus:border-emerald-500 rounded-2xl pl-6 pr-20 py-5 text-center text-2xl font-black tracking-wide outline-none transition duration-300 shadow-inner"
+            class="font-data w-full bg-slate-950 text-white placeholder-slate-700 border-2 border-slate-800 focus:border-emerald-500 rounded-2xl pl-6 pr-20 py-5 text-center text-2xl font-black tracking-wide outline-none transition duration-300 shadow-inner"
           >
-          <button type="submit" class="absolute right-3 top-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 w-14 h-14 rounded-xl flex items-center justify-center font-bold transition shadow-lg">
+          <button type="submit" class="btn-hover-lift absolute right-3 top-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 w-14 h-14 rounded-xl flex items-center justify-center font-bold transition shadow-lg">
             <i class="fa-solid fa-arrow-right text-xl"></i>
           </button>
         </form>
@@ -204,7 +274,7 @@
               ACCESO AUTORIZADO
             </span>
             <!-- Nombre capitalizado -->
-            <h1 id="giant-name" class="text-4xl md:text-5xl lg:text-6xl font-black mt-6 tracking-wide leading-snug text-white capitalize">
+            <h1 id="giant-name" class="font-display text-5xl md:text-6xl lg:text-7xl mt-6 leading-snug text-white capitalize">
               aaron ivan carrillo marchan
             </h1>
           </div>
@@ -217,7 +287,7 @@
             </div>
             <div class="bg-slate-900/90 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-md shadow-lg">
               <span class="text-xs text-slate-500 block uppercase font-bold tracking-widest">Vence el Día</span>
-              <span id="giant-expiry" class="text-xl font-extrabold text-slate-200 mt-2 block">24/12/2026</span>
+              <span id="giant-expiry" class="font-data text-xl font-extrabold text-slate-200 mt-2 block">24/12/2026</span>
             </div>
           </div>
 
@@ -236,32 +306,33 @@
         
         <!-- CABECERA PRINCIPAL DE KPIS (SIEMPRE VISIBLE EN EL ENCABEZADO) -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 pb-4 border-b border-slate-800">
+          <div onclick="abrirModalDentroGym()" class="bg-slate-950 border border-amber-500/30 p-4 rounded-xl flex items-center space-x-3 shadow-inner cursor-pointer hover:border-amber-500/60 transition relative overflow-hidden" title="Ver quiénes están dentro del gym">
+            <div class="absolute inset-0 bg-amber-500/5 animate-pulse pointer-events-none"></div>
+            <div class="p-3 bg-amber-500/10 text-amber-400 rounded-lg text-lg relative"><i class="fa-solid fa-person-running"></i></div>
+            <div class="relative">
+              <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Dentro GYM</p>
+              <h3 id="kpi-dentro" class="font-display text-3xl text-white leading-none mt-1">...</h3>
+            </div>
+          </div>
           <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner">
             <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-lg text-lg"><i class="fa-solid fa-users"></i></div>
             <div>
               <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Activos</p>
-              <h3 id="kpi-activos" class="text-xl font-black text-white">...</h3>
+              <h3 id="kpi-activos" class="font-display text-3xl text-white leading-none mt-1">...</h3>
             </div>
           </div>
           <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner">
             <div class="p-3 bg-blue-500/10 text-blue-400 rounded-lg text-lg"><i class="fa-solid fa-calendar-check"></i></div>
             <div>
               <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Asistencias</p>
-              <h3 id="kpi-hoy" class="text-xl font-black text-white">...</h3>
-            </div>
-          </div>
-          <div onclick="abrirModalDentroGym()" class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner animate-pulse cursor-pointer hover:border-amber-500/50 transition" title="Ver quiénes están dentro del gym">
-            <div class="p-3 bg-amber-500/10 text-amber-400 rounded-lg text-lg"><i class="fa-solid fa-person-running"></i></div>
-            <div>
-              <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Dentro GYM</p>
-              <h3 id="kpi-dentro" class="text-xl font-black text-white">...</h3>
+              <h3 id="kpi-hoy" class="font-display text-3xl text-white leading-none mt-1">...</h3>
             </div>
           </div>
           <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner">
             <div class="p-3 bg-red-600/15 text-red-500 rounded-lg text-lg"><i class="fa-solid fa-circle-exclamation"></i></div>
             <div>
               <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Vencidos</p>
-              <h3 id="kpi-vencidos" class="text-xl font-black text-white">...</h3>
+              <h3 id="kpi-vencidos" class="font-display text-3xl text-white leading-none mt-1">...</h3>
             </div>
           </div>
         </div>
@@ -270,17 +341,17 @@
         <div class="flex-grow flex flex-col md:flex-row gap-6 mt-4 overflow-hidden">
           
           <!-- MENÚ LATERAL IZQUIERDO (Botonera modular para la Asistente) -->
-          <div class="w-full md:w-1/5 flex flex-col gap-2 bg-slate-950/40 p-3 rounded-2xl border border-slate-800/40 h-full">
-            <button onclick="cambiarSeccionAdmin('buscador')" id="btn-sec-buscador" class="w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-emerald-500 text-slate-950 transition duration-150 shadow-lg">
+          <div class="w-full md:w-1/5 flex flex-col gap-3 bg-slate-950/40 p-3 rounded-2xl border border-slate-800/40 h-full">
+            <button onclick="cambiarSeccionAdmin('buscador')" id="btn-sec-buscador" class="admin-nav-item active w-full px-4 py-3 rounded-lg font-bold text-xs uppercase flex items-center">
               <i class="fa-solid fa-magnifying-glass mr-3 text-sm"></i>Buscador y Recientes
             </button>
-            <button onclick="cambiarSeccionAdmin('graficas')" id="btn-sec-graficas" class="w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-slate-850 hover:bg-slate-800 text-slate-300 transition duration-150">
+            <button onclick="cambiarSeccionAdmin('graficas')" id="btn-sec-graficas" class="admin-nav-item w-full px-4 py-3 rounded-lg font-bold text-xs uppercase flex items-center">
               <i class="fa-solid fa-chart-pie mr-3 text-sm"></i>Gráficas de Flujo
             </button>
-            <button onclick="cambiarSeccionAdmin('alertas')" id="btn-sec-alertas" class="w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-slate-850 hover:bg-slate-800 text-slate-300 transition duration-150">
+            <button onclick="cambiarSeccionAdmin('alertas')" id="btn-sec-alertas" class="admin-nav-item w-full px-4 py-3 rounded-lg font-bold text-xs uppercase flex items-center">
               <i class="fa-solid fa-bell mr-3 text-sm"></i>Membresías por Vencer
             </button>
-            <button onclick="cambiarSeccionAdmin('inactivos')" id="btn-sec-inactivos" class="w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-slate-850 hover:bg-slate-800 text-slate-300 transition duration-150">
+            <button onclick="cambiarSeccionAdmin('inactivos')" id="btn-sec-inactivos" class="admin-nav-item w-full px-4 py-3 rounded-lg font-bold text-xs uppercase flex items-center">
               <i class="fa-solid fa-user-slash mr-3 text-sm"></i>Ausentes (>7 días)
             </button>
           </div>
@@ -540,14 +611,14 @@
       if (tab === "registro") {
         regSection.classList.remove("hidden");
         adminSection.classList.add("hidden");
-        regBtn.className = "px-4 py-2 rounded-lg font-bold text-xs uppercase bg-emerald-500 text-slate-950 transition duration-300";
-        adminBtn.className = "px-4 py-2 rounded-lg font-bold text-xs uppercase bg-slate-800 text-slate-300 hover:bg-slate-700 transition duration-300";
+        regBtn.className = "btn-hover-lift px-4 py-2 rounded-lg font-bold text-xs uppercase bg-emerald-500 text-slate-950 transition duration-300";
+        adminBtn.className = "btn-hover-lift px-4 py-2 rounded-lg font-bold text-xs uppercase bg-slate-800 text-slate-300 hover:bg-slate-700 transition duration-300";
         document.getElementById("input-dni").focus();
       } else {
         regSection.classList.add("hidden");
         adminSection.classList.remove("hidden");
-        adminBtn.className = "px-4 py-2 rounded-lg font-bold text-xs uppercase bg-emerald-500 text-slate-950 transition duration-300";
-        regBtn.className = "px-4 py-2 rounded-lg font-bold text-xs uppercase bg-slate-800 text-slate-300 hover:bg-slate-700 transition duration-300";
+        adminBtn.className = "btn-hover-lift px-4 py-2 rounded-lg font-bold text-xs uppercase bg-emerald-500 text-slate-950 transition duration-300";
+        regBtn.className = "btn-hover-lift px-4 py-2 rounded-lg font-bold text-xs uppercase bg-slate-800 text-slate-300 hover:bg-slate-700 transition duration-300";
         // Resetear a sub-sección buscador por defecto al entrar
         cambiarSeccionAdmin('buscador');
         consultarDatosAdmin();
@@ -564,10 +635,10 @@
         
         if (sec === seccion) {
           divSeccion.classList.remove("hidden");
-          btnSeccion.className = "w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-emerald-500 text-slate-950 transition duration-150 shadow-lg";
+          btnSeccion.className = "admin-nav-item active w-full px-4 py-3 rounded-lg font-bold text-xs uppercase flex items-center";
         } else {
           divSeccion.classList.add("hidden");
-          btnSeccion.className = "w-full px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center bg-slate-850 hover:bg-slate-800 text-slate-300 transition duration-150";
+          btnSeccion.className = "admin-nav-item w-full px-4 py-3 rounded-lg font-bold text-xs uppercase flex items-center";
         }
       });
 
@@ -983,8 +1054,8 @@
 
               recentBody.innerHTML += `
                 <tr class="hover:bg-slate-900/40 transition duration-150">
-                  <td class="py-3 font-semibold text-slate-400">${ingreso.hora}</td>
-                  <td class="py-3 font-semibold text-slate-400">${ingreso.dni}</td>
+                  <td class="py-3 font-data font-semibold text-slate-400">${ingreso.hora}</td>
+                  <td class="py-3 font-data font-semibold text-slate-400">${ingreso.dni}</td>
                   <td class="py-3 font-extrabold capitalize text-white">${ingreso.nombre}</td>
                   <td class="py-3 text-right">
                     <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest ${badgeColor}">
