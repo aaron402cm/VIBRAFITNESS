@@ -89,36 +89,68 @@
       to { opacity: 1; transform: scale(1); }
     }
 
-    /* ANIMACIONES ASÍNCRONAS PARA EL BACKLIGHT TRASERO */
+    /* NUEVO: ANIMACIONES FLUIDAS PARA FONDO EN MOVIMIENTO "VIVO" (AURORAS) */
     @keyframes pulseSlow {
       0%, 100% {
-        opacity: 0.45;
-        transform: translate(-50%, -50%) scale(0.95);
-        filter: blur(80px);
+        opacity: 0.4;
+        transform: translate(-50%, -50%) translate(-25px, -15px) scale(0.9);
+        filter: blur(85px);
       }
       50% {
-        opacity: 0.85;
-        transform: translate(-50%, -50%) scale(1.1);
-        filter: blur(95px);
+        opacity: 0.8;
+        transform: translate(-50%, -50%) translate(25px, 15px) scale(1.15);
+        filter: blur(105px);
       }
     }
     @keyframes pulseFast {
       0%, 100% {
-        opacity: 0.35;
-        transform: translate(-50%, -50%) scale(1.05);
-        filter: blur(60px);
+        opacity: 0.3;
+        transform: translate(-50%, -50%) translate(15px, 25px) scale(1.1);
+        filter: blur(65px);
       }
       50% {
-        opacity: 0.7;
-        transform: translate(-50%, -50%) scale(0.9);
-        filter: blur(75px);
+        opacity: 0.65;
+        transform: translate(-50%, -50%) translate(-15px, -25px) scale(0.85);
+        filter: blur(80px);
       }
     }
     .animate-pulse-slow {
-      animation: pulseSlow 7s ease-in-out infinite;
+      animation: pulseSlow 9s ease-in-out infinite;
     }
     .animate-pulse-fast {
-      animation: pulseFast 5s ease-in-out infinite;
+      animation: pulseFast 6s ease-in-out infinite;
+    }
+
+    /* NUEVO: LATIDO EN BORDES PARA SENTIR EL SISTEMA "VIVO" */
+    @keyframes borderPulse {
+      0%, 100% {
+        border-color: rgba(30, 41, 59, 0.8);
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 0 10px rgba(16, 185, 129, 0.02);
+      }
+      50% {
+        border-color: rgba(16, 185, 129, 0.25);
+        box-shadow: 0 0 35px rgba(0, 0, 0, 0.85), 0 0 25px rgba(16, 185, 129, 0.08);
+      }
+    }
+    .animate-border-pulse {
+      animation: borderPulse 3.5s ease-in-out infinite;
+    }
+
+    /* NUEVO: DESTELLO ORGÁNICO DE ESTADO ACTIVO (BEACON) */
+    @keyframes beaconPulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.7;
+        box-shadow: 0 0 4px #10b981;
+      }
+      50% {
+        transform: scale(1.3);
+        opacity: 1;
+        box-shadow: 0 0 12px #10b981;
+      }
+    }
+    .animate-beacon {
+      animation: beaconPulse 2s ease-in-out infinite;
     }
 
     /* Marco circular con luz neón verde parpadeante para la foto de "Dentro GYM" */
@@ -196,31 +228,42 @@
   <main class="flex-grow flex items-center justify-center p-4 lg:p-6 relative">
     
     <!-- ================= VISTA DE REGISTRO (PANTALLA DE ESPERA) ================= -->
-    <section id="section-registro" class="w-full max-w-xl flex flex-col items-center z-10 transition-all duration-500 relative py-12">
+    <section id="section-registro" class="w-full max-w-2xl flex flex-col items-center z-10 transition-all duration-500 relative py-12">
       
-      <!-- GENERADORES DE ILUMINACIÓN DE FONDO (REAL BACKLIGHTS DE NEÓN) -->
-      <div class="absolute top-1/2 left-1/2 w-[380px] h-[380px] bg-emerald-500/20 rounded-full pointer-events-none animate-pulse-slow"></div>
-      <div class="absolute top-1/2 left-1/2 w-[290px] h-[290px] bg-cyan-500/15 rounded-full pointer-events-none animate-pulse-fast"></div>
+      <!-- GENERADORES DE ILUMINACIÓN DE FONDO DINÁMICOS (AURORAS DE NEÓN MÁS GRANDES Y EN MOVIMIENTO) -->
+      <div class="absolute top-1/2 left-1/2 w-[480px] h-[480px] bg-emerald-500/20 rounded-full pointer-events-none animate-pulse-slow"></div>
+      <div class="absolute top-1/2 left-1/2 w-[380px] h-[380px] bg-cyan-500/15 rounded-full pointer-events-none animate-pulse-fast"></div>
       
-      <!-- Contenedor del Input de DNI -->
-      <div class="w-full bg-slate-900/60 border border-slate-800 p-12 rounded-[32px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.95),0_0_40px_rgba(16,185,129,0.06)] text-center backdrop-blur-xl relative z-10 overflow-hidden">
+      <!-- Contenedor del Input de DNI (ESCALADO Y CON ANIMACIÓN DE LATIDO DE BORDE) -->
+      <div class="w-full bg-slate-900/60 border border-slate-800 p-16 rounded-[40px] text-center backdrop-blur-2xl relative z-10 overflow-hidden animate-border-pulse">
         
         <!-- Reflejo interior oblicuo (Glass shine) -->
         <div class="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 pointer-events-none"></div>
 
-        <!-- Logo estático -->
-        <img id="form-logo" src="" alt="Gym Logo" class="h-36 mx-auto mb-10 object-contain relative z-10 hover:scale-105 transition duration-500">
+        <!-- Logo estático (Escalado para mayor visualización) -->
+        <img id="form-logo" src="" alt="Gym Logo" class="h-44 mx-auto mb-12 object-contain relative z-10 hover:scale-105 transition duration-500">
         
-        <!-- ENCABEZADO CON BOTÓN DE ENFOQUE / PANTALLA COMPLETA -->
-        <div class="flex justify-between items-center mb-5 relative z-10">
-          <div class="w-6"></div> <!-- Espaciador para balancear alineación central -->
-          <h2 class="text-xs font-bold tracking-[0.3em] text-slate-400 uppercase">Control de Acceso</h2>
+        <!-- ENCABEZADO CON BOTÓN DE ENFOQUE Y FARO ACTIVO (BEACON) -->
+        <div class="flex justify-between items-center mb-8 relative z-10">
+          <button type="button" class="w-6 h-6 invisible"></button> <!-- Espaciador izquierdo -->
+          
+          <!-- Faro de Estado Activo al costado del título -->
+          <div class="flex items-center gap-2">
+            <span class="relative flex h-2.5 w-2.5">
+              <span class="animate-beacon absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+            </span>
+            <h2 class="text-xs font-bold tracking-[0.3em] text-slate-400 uppercase">Control de Acceso</h2>
+          </div>
+          
+          <!-- Botón de Ampliación -->
           <button type="button" onclick="entrarModoKioscoCompleto()" class="text-slate-500 hover:text-emerald-400 hover:scale-110 active:scale-95 transition-all duration-300 p-1" title="Modo Enfoque Total">
-            <i class="fa-solid fa-expand text-sm animate-pulse"></i>
+            <i class="fa-solid fa-expand text-sm"></i>
           </button>
         </div>
         
         <form onsubmit="registrarAsistencia(event)" class="relative z-10">
+          <!-- Input de DNI de escala aumentada -->
           <input 
             type="text" 
             id="input-dni" 
@@ -231,13 +274,13 @@
             autofocus
             required
             autocomplete="off"
-            class="w-full bg-slate-950/90 text-white placeholder-slate-800 border-2 border-slate-800/80 focus:border-emerald-500 focus:shadow-[0_0_30px_rgba(16,185,129,0.3)] rounded-2xl pl-6 pr-20 py-5 text-center text-2xl font-black tracking-widest outline-none transition-all duration-300 shadow-inner"
+            class="w-full bg-slate-950/90 text-white placeholder-slate-800 border-2 border-slate-800/80 focus:border-emerald-500 focus:shadow-[0_0_35px_rgba(16,185,129,0.35)] rounded-2xl pl-8 pr-24 py-6 text-center text-3xl font-black tracking-[0.15em] outline-none transition-all duration-300 shadow-inner"
           >
-          <button type="submit" class="absolute right-3 top-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 w-14 h-14 rounded-xl flex items-center justify-center font-bold transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(16,185,129,0.45)] active:scale-95">
-            <i class="fa-solid fa-arrow-right text-xl"></i>
+          <button type="submit" class="absolute right-4 top-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 w-16 h-16 rounded-xl flex items-center justify-center font-bold transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(16,185,129,0.45)] active:scale-95">
+            <i class="fa-solid fa-arrow-right text-2xl"></i>
           </button>
         </form>
-        <p class="text-[10px] text-slate-500 mt-5 uppercase tracking-[0.2em] relative z-10">Alinee su código o digite manualmente</p>
+        <p class="text-[11px] text-slate-500 mt-6 uppercase tracking-[0.2em] relative z-10">Alinee su código o digite manualmente</p>
       </div>
 
     </section>
@@ -339,10 +382,10 @@
           </div>
         </div>
 
-        <!-- LAYOUT DE DOS COLUMNAS: MENÚ LATERAL IZQUIERDO Y CONTENIDO DINÁMICO DERECHO -->
+        <!-- LAYOUT DE DOS COLUMNAS -->
         <div class="flex-grow flex flex-col md:flex-row gap-6 mt-4 overflow-hidden">
           
-          <!-- MENÚ LATERAL IZQUIERDO (Botonera modular con efectos de pestañas de neón) -->
+          <!-- MENÚ LATERAL IZQUIERDO -->
           <div class="w-full md:w-1/5 flex flex-col gap-2.5 bg-slate-950/60 p-3 rounded-2xl border border-slate-800/80 h-full">
             <button onclick="cambiarSeccionAdmin('buscador')" id="btn-sec-buscador" class="w-full px-4 py-3.5 rounded-xl font-bold text-xs uppercase flex items-center transition-all duration-300 active:scale-95 shadow-md">
               <i class="fa-solid fa-magnifying-glass mr-3 text-sm"></i>Buscador y Recientes
@@ -358,7 +401,7 @@
             </button>
           </div>
 
-          <!-- PANEL DE CONTENIDO DINÁMICO DERECHO (Con altura fija y scroll interno profesional) -->
+          <!-- PANEL DE CONTENIDO DINÁMICO DERECHO -->
           <div class="w-full md:w-4/5 bg-slate-950/70 border border-slate-800/80 p-6 rounded-2xl shadow-inner overflow-y-auto h-full max-h-[52vh]">
             
             <!-- SUBSECCIÓN 1: BUSCADOR Y ÚLTIMOS INGRESOS (30 REGISTROS) -->
@@ -1456,7 +1499,12 @@
         method: "POST",
         body: JSON.stringify(payload)
       })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error("HTTP error " + res.status);
+        }
+        return res.json();
+      })
       .then(data => {
         loader.classList.add("hidden");
         if (data.success) {
