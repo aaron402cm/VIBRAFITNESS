@@ -18,6 +18,35 @@
       font-family: 'Montserrat', sans-serif;
     }
 
+    /* BARRA DE DESPLAZAMIENTO ULTRA-PREMIUM */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(16, 185, 129, 0.25);
+      border-radius: 9999px;
+      transition: background 0.3s ease;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(16, 185, 129, 0.5);
+    }
+
+    /* EFECTO DE DESLIZAMIENTO EN LAS FILAS DE LA TABLA */
+    .custom-row {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      border-left: 3px solid transparent;
+    }
+    .custom-row:hover {
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0) 100%);
+      border-left-color: #10b981;
+      transform: translateX(4px);
+    }
+
     /* Animación del Logo en 3D sobre el eje Y */
     .logo-container-3d {
       perspective: 1200px;
@@ -50,29 +79,36 @@
       to { opacity: 1; transform: scale(1); }
     }
 
-    /* NUEVO: Efecto Respiración / Pulso para la Luz de Fondo (Backlight) */
-    @keyframes pulseGlow {
+    /* ANIMACIONES ASÍNCRONAS PARA EL BACKLIGHT TRASERO */
+    @keyframes pulseSlow {
       0%, 100% {
-        opacity: 0.5;
-        transform: scale(0.96) translate(-50%, -50%);
-        filter: blur(50px);
+        opacity: 0.45;
+        transform: translate(-50%, -50%) scale(0.95);
+        filter: blur(80px);
       }
       50% {
-        opacity: 0.8;
-        transform: scale(1.05) translate(-50%, -50%);
-        filter: blur(70px);
+        opacity: 0.85;
+        transform: translate(-50%, -50%) scale(1.1);
+        filter: blur(95px);
       }
     }
-    .animate-pulse-glow {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 110%;
-      height: 110%;
-      transform: translate(-50%, -50%);
-      animation: pulseGlow 5s ease-in-out infinite;
-      z-index: 0;
-      pointer-events: none;
+    @keyframes pulseFast {
+      0%, 100% {
+        opacity: 0.35;
+        transform: translate(-50%, -50%) scale(1.05);
+        filter: blur(60px);
+      }
+      50% {
+        opacity: 0.7;
+        transform: translate(-50%, -50%) scale(0.9);
+        filter: blur(75px);
+      }
+    }
+    .animate-pulse-slow {
+      animation: pulseSlow 7s ease-in-out infinite;
+    }
+    .animate-pulse-fast {
+      animation: pulseFast 5s ease-in-out infinite;
     }
 
     /* Marco circular con luz neón verde parpadeante para la foto de "Dentro GYM" */
@@ -115,7 +151,7 @@
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between overflow-hidden">
+<body class="bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900 text-slate-100 min-h-screen flex flex-col justify-between overflow-hidden">
 
   <!-- CONFIGURACIÓN DE LINKS -->
   <script>
@@ -127,16 +163,16 @@
   </script>
 
   <!-- NAVBAR / MENÚ SUPERIOR -->
-  <header class="bg-slate-900/80 backdrop-blur border-b border-slate-800/60 px-6 py-4 flex justify-between items-center shadow-lg z-10">
+  <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800/60 px-6 py-4 flex justify-between items-center shadow-lg z-10">
     <div class="flex items-center space-x-3">
       <img id="nav-logo" src="" alt="Logo" class="h-8 w-auto object-contain">
       <span class="text-sm font-extrabold uppercase tracking-widest text-slate-400">FITNESS CLUB</span>
     </div>
     <nav class="flex space-x-2">
-      <button onclick="switchTab('registro')" id="tab-registro-btn" class="px-5 py-2.5 rounded-xl font-bold text-xs uppercase bg-emerald-500 text-slate-950 hover:bg-emerald-400 hover:shadow-[0_0_15px_rgba(16,185,129,0.35)] transition-all duration-300 ease-out active:scale-95">
+      <button onclick="switchTab('registro')" id="tab-registro-btn" class="px-5 py-2.5 rounded-xl font-bold text-xs uppercase bg-emerald-500 text-slate-950 hover:bg-emerald-400 hover:shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-all duration-300 ease-out active:scale-95">
         <i class="fa-solid fa-id-card mr-2"></i>Asistencia
       </button>
-      <button onclick="switchTab('admin')" id="tab-admin-btn" class="px-5 py-2.5 rounded-xl font-bold text-xs uppercase bg-slate-850 text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-300 ease-out active:scale-95 border border-slate-800">
+      <button onclick="switchTab('admin')" id="tab-admin-btn" class="px-5 py-2.5 rounded-xl font-bold text-xs uppercase bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-all duration-300 ease-out active:scale-95 border border-slate-700/50">
         <i class="fa-solid fa-lock mr-2"></i>Admin
       </button>
     </nav>
@@ -146,21 +182,24 @@
   <main class="flex-grow flex items-center justify-center p-4 lg:p-6 relative">
     
     <!-- ================= VISTA DE REGISTRO (PANTALLA DE ESPERA) ================= -->
-    <section id="section-registro" class="w-full max-w-xl flex flex-col items-center z-10 transition-all duration-300 relative py-12">
+    <section id="section-registro" class="w-full max-w-xl flex flex-col items-center z-10 transition-all duration-500 relative py-12">
       
-      <!-- AURA DE LUZ DE FONDO (BACKLIGHT DE NEÓN DETRÁS DEL MÓDULO) -->
-      <div class="animate-pulse-glow bg-gradient-to-tr from-emerald-500/15 via-emerald-600/5 to-teal-500/15 rounded-full"></div>
+      <!-- GENERADORES DE ILUMINACIÓN DE FONDO (REAL BACKLIGHTS DE NEÓN) -->
+      <div class="absolute top-1/2 left-1/2 w-[380px] h-[380px] bg-emerald-500/20 rounded-full pointer-events-none animate-pulse-slow"></div>
+      <div class="absolute top-1/2 left-1/2 w-[290px] h-[290px] bg-cyan-500/15 rounded-full pointer-events-none animate-pulse-fast"></div>
       
       <!-- Contenedor del Input de DNI -->
-      <div class="w-full bg-slate-900/90 border border-slate-800/80 p-12 rounded-[32px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)] text-center backdrop-blur-xl relative z-10">
+      <div class="w-full bg-slate-900/60 border border-slate-800 p-12 rounded-[32px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.95),0_0_40px_rgba(16,185,129,0.06)] text-center backdrop-blur-xl relative z-10 overflow-hidden">
+        
+        <!-- Reflejo interior oblicuo (Glass shine) -->
+        <div class="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 pointer-events-none"></div>
+
         <!-- Logo estático -->
-        <div class="relative group inline-block">
-          <img id="form-logo" src="" alt="Gym Logo" class="h-36 mx-auto mb-10 object-contain transition-transform duration-500 group-hover:scale-105">
-        </div>
+        <img id="form-logo" src="" alt="Gym Logo" class="h-36 mx-auto mb-10 object-contain relative z-10 hover:scale-105 transition duration-500">
         
-        <h2 class="text-xs font-bold tracking-[0.3em] text-slate-400 uppercase mb-5">Control de Acceso</h2>
+        <h2 class="text-xs font-bold tracking-[0.3em] text-slate-400 uppercase mb-5 relative z-10">Control de Acceso</h2>
         
-        <form onsubmit="registrarAsistencia(event)" class="relative">
+        <form onsubmit="registrarAsistencia(event)" class="relative z-10">
           <input 
             type="text" 
             id="input-dni" 
@@ -171,13 +210,13 @@
             autofocus
             required
             autocomplete="off"
-            class="w-full bg-slate-950/80 text-white placeholder-slate-700 border-2 border-slate-800 focus:border-emerald-500 focus:shadow-[0_0_25px_rgba(16,185,129,0.25)] rounded-2xl pl-6 pr-20 py-5 text-center text-2xl font-black tracking-wide outline-none transition-all duration-300 shadow-inner"
+            class="w-full bg-slate-950/90 text-white placeholder-slate-800 border-2 border-slate-800/80 focus:border-emerald-500 focus:shadow-[0_0_30px_rgba(16,185,129,0.3)] rounded-2xl pl-6 pr-20 py-5 text-center text-2xl font-black tracking-widest outline-none transition-all duration-300 shadow-inner"
           >
-          <button type="submit" class="absolute right-3 top-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 w-14 h-14 rounded-xl flex items-center justify-center font-bold transition-all duration-300 shadow-lg hover:shadow-[0_0_15px_rgba(16,185,129,0.4)] active:scale-95">
+          <button type="submit" class="absolute right-3 top-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 w-14 h-14 rounded-xl flex items-center justify-center font-bold transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(16,185,129,0.45)] active:scale-95">
             <i class="fa-solid fa-arrow-right text-xl"></i>
           </button>
         </form>
-        <p class="text-[10px] text-slate-500 mt-5 uppercase tracking-[0.2em]">Alinee su código o digite manualmente</p>
+        <p class="text-[10px] text-slate-500 mt-5 uppercase tracking-[0.2em] relative z-10">Alinee su código o digite manualmente</p>
       </div>
 
     </section>
@@ -241,32 +280,36 @@
 
     <!-- ================= VISTA DE ADMINISTRACIÓN EN TIEMPO REAL ================= -->
     <section id="section-admin" class="hidden w-full max-w-[98%] xl:max-w-[96%] z-10 transition-all duration-300">
-      <div class="bg-slate-900/95 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 backdrop-blur-md h-[86vh] flex flex-col justify-between">
+      <div class="bg-slate-900/60 border border-slate-800 p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] space-y-6 backdrop-blur-xl h-[86vh] flex flex-col justify-between relative overflow-hidden">
         
-        <!-- CABECERA PRINCIPAL DE KPIS -->
+        <!-- CABECERA PRINCIPAL DE KPIS (TARJETAS CON BORDES DE NEÓN SUPERIORES REALES) -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 pb-4 border-b border-slate-800/60">
-          <div class="bg-slate-950/80 border border-slate-850 p-4 rounded-xl flex items-center space-x-3 shadow-inner">
+          <!-- KPI: Activos -->
+          <div class="bg-slate-950/80 border-t-2 border-t-emerald-500 border-x border-b border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-lg hover:scale-[1.02] transition-all duration-300">
             <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-lg text-lg"><i class="fa-solid fa-users"></i></div>
             <div>
               <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Activos</p>
               <h3 id="kpi-activos" class="text-xl font-black text-white">...</h3>
             </div>
           </div>
-          <div class="bg-slate-950/80 border border-slate-850 p-4 rounded-xl flex items-center space-x-3 shadow-inner">
+          <!-- KPI: Asistencias -->
+          <div class="bg-slate-950/80 border-t-2 border-t-blue-500 border-x border-b border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-lg hover:scale-[1.02] transition-all duration-300">
             <div class="p-3 bg-blue-500/10 text-blue-400 rounded-lg text-lg"><i class="fa-solid fa-calendar-check"></i></div>
             <div>
               <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Asistencias</p>
               <h3 id="kpi-hoy" class="text-xl font-black text-white">...</h3>
             </div>
           </div>
-          <div onclick="abrirModalDentroGym()" class="bg-slate-950/80 border border-slate-850 p-4 rounded-xl flex items-center space-x-3 shadow-inner cursor-pointer hover:border-amber-500/35 transition-all duration-300 ease-out active:scale-98" title="Ver quiénes están dentro del gym">
+          <!-- KPI: Dentro -->
+          <div onclick="abrirModalDentroGym()" class="bg-slate-950/80 border-t-2 border-t-amber-500 border-x border-b border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-lg cursor-pointer hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(245,158,11,0.15)] transition-all duration-300" title="Ver quiénes están dentro del gym">
             <div class="p-3 bg-amber-500/10 text-amber-400 rounded-lg text-lg animate-pulse"><i class="fa-solid fa-person-running"></i></div>
             <div>
               <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Dentro GYM</p>
               <h3 id="kpi-dentro" class="text-xl font-black text-white">...</h3>
             </div>
           </div>
-          <div class="bg-slate-950/80 border border-slate-850 p-4 rounded-xl flex items-center space-x-3 shadow-inner">
+          <!-- KPI: Vencidos -->
+          <div class="bg-slate-950/80 border-t-2 border-t-rose-500 border-x border-b border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-lg hover:scale-[1.02] transition-all duration-300">
             <div class="p-3 bg-rose-500/10 text-rose-400 rounded-lg text-lg"><i class="fa-solid fa-circle-exclamation"></i></div>
             <div>
               <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Vencidos</p>
@@ -275,27 +318,27 @@
           </div>
         </div>
 
-        <!-- LAYOUT DE DOS COLUMNAS -->
+        <!-- LAYOUT DE DOS COLUMNAS: MENÚ LATERAL IZQUIERDO Y CONTENIDO DINÁMICO DERECHO -->
         <div class="flex-grow flex flex-col md:flex-row gap-6 mt-4 overflow-hidden">
           
-          <!-- MENÚ LATERAL IZQUIERDO -->
-          <div class="w-full md:w-1/5 flex flex-col gap-2 bg-slate-950/40 p-3 rounded-2xl border border-slate-850/50 h-full">
-            <button onclick="cambiarSeccionAdmin('buscador')" id="btn-sec-buscador" class="w-full px-4 py-3.5 rounded-xl font-bold text-xs uppercase flex items-center transition-all duration-200 active:scale-95 shadow-md">
+          <!-- MENÚ LATERAL IZQUIERDO (Botonera modular con efectos de pestañas de neón) -->
+          <div class="w-full md:w-1/5 flex flex-col gap-2.5 bg-slate-950/60 p-3 rounded-2xl border border-slate-800/80 h-full">
+            <button onclick="cambiarSeccionAdmin('buscador')" id="btn-sec-buscador" class="w-full px-4 py-3.5 rounded-xl font-bold text-xs uppercase flex items-center transition-all duration-300 active:scale-95 shadow-md">
               <i class="fa-solid fa-magnifying-glass mr-3 text-sm"></i>Buscador y Recientes
             </button>
-            <button onclick="cambiarSeccionAdmin('graficas')" id="btn-sec-graficas" class="w-full px-4 py-3.5 rounded-xl font-bold text-xs uppercase flex items-center transition-all duration-200 active:scale-95">
+            <button onclick="cambiarSeccionAdmin('graficas')" id="btn-sec-graficas" class="w-full px-4 py-3.5 rounded-xl font-bold text-xs uppercase flex items-center transition-all duration-300 active:scale-95">
               <i class="fa-solid fa-chart-pie mr-3 text-sm"></i>Gráficas de Flujo
             </button>
-            <button onclick="cambiarSeccionAdmin('alertas')" id="btn-sec-alertas" class="w-full px-4 py-3.5 rounded-xl font-bold text-xs uppercase flex items-center transition-all duration-200 active:scale-95">
+            <button onclick="cambiarSeccionAdmin('alertas')" id="btn-sec-alertas" class="w-full px-4 py-3.5 rounded-xl font-bold text-xs uppercase flex items-center transition-all duration-300 active:scale-95">
               <i class="fa-solid fa-bell mr-3 text-sm"></i>Membresías por Vencer
             </button>
-            <button onclick="cambiarSeccionAdmin('inactivos')" id="btn-sec-inactivos" class="w-full px-4 py-3.5 rounded-xl font-bold text-xs uppercase flex items-center transition-all duration-200 active:scale-95">
+            <button onclick="cambiarSeccionAdmin('inactivos')" id="btn-sec-inactivos" class="w-full px-4 py-3.5 rounded-xl font-bold text-xs uppercase flex items-center transition-all duration-300 active:scale-95">
               <i class="fa-solid fa-user-slash mr-3 text-sm"></i>Ausentes (>7 días)
             </button>
           </div>
 
-          <!-- PANEL DE CONTENIDO DINÁMICO DERECHO -->
-          <div class="w-full md:w-4/5 bg-slate-950/50 border border-slate-800/80 p-6 rounded-2xl shadow-inner overflow-y-auto h-full max-h-[52vh]">
+          <!-- PANEL DE CONTENIDO DINÁMICO DERECHO (Con altura fija y scroll interno profesional) -->
+          <div class="w-full md:w-4/5 bg-slate-950/70 border border-slate-800/80 p-6 rounded-2xl shadow-inner overflow-y-auto h-full max-h-[52vh]">
             
             <!-- SUBSECCIÓN 1: BUSCADOR Y ÚLTIMOS INGRESOS (30 REGISTROS) -->
             <div id="sub-admin-buscador" class="space-y-6">
@@ -306,9 +349,9 @@
                   id="admin-search-input" 
                   oninput="filtrarMiembrosBuscador()"
                   placeholder="Escriba DNI o Nombre para buscar y editar miembro..." 
-                  class="w-full bg-slate-900/80 text-white placeholder-slate-700 border border-slate-800 focus:border-emerald-500 focus:shadow-[0_0_15px_rgba(16,185,129,0.15)] rounded-xl px-4 py-3 font-semibold outline-none transition-all duration-200 text-sm"
+                  class="w-full bg-slate-900 text-white placeholder-slate-700 border border-slate-800/80 focus:border-emerald-500 focus:shadow-[0_0_15px_rgba(16,185,129,0.15)] rounded-xl px-4 py-3.5 font-semibold outline-none transition text-sm"
                 >
-                <div id="search-results-container" class="max-h-48 overflow-y-auto space-y-1 divide-y divide-slate-900 hidden bg-slate-950/90 border border-slate-800 p-2 rounded-xl">
+                <div id="search-results-container" class="max-h-48 overflow-y-auto space-y-1 divide-y divide-slate-900 hidden bg-slate-950 border border-slate-800 p-2 rounded-xl">
                   <!-- Coincidencias de búsqueda -->
                 </div>
               </div>
@@ -318,11 +361,11 @@
                 <div class="overflow-x-auto">
                   <table class="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr class="border-b border-slate-800/60 text-slate-500 font-bold uppercase tracking-wider">
-                        <th class="pb-3">Hora</th>
+                      <tr class="border-b border-slate-800/80 text-slate-500 font-bold uppercase tracking-wider">
+                        <th class="pb-3 pl-3">Hora</th>
                         <th class="pb-3">DNI</th>
                         <th class="pb-3">Nombre Completo</th>
-                        <th class="pb-3 text-right">Movimiento</th>
+                        <th class="pb-3 text-right pr-3">Movimiento</th>
                       </tr>
                     </thead>
                     <tbody id="table-recent-body" class="divide-y divide-slate-900 text-slate-300">
@@ -336,13 +379,13 @@
             <!-- SUBSECCIÓN 2: GRÁFICAS OPERATIVAS -->
             <div id="sub-admin-graficas" class="hidden space-y-6">
               <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-slate-900/50 p-5 rounded-xl border border-slate-800/60 shadow-md">
+                <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800/80 shadow-md">
                   <h4 class="text-[11px] font-bold text-slate-400 mb-4 uppercase tracking-wider">Horas Pico de Ingreso</h4>
                   <div id="container-canvas-hours" class="relative h-48 w-full">
                     <canvas id="chartHours" class="w-full h-full"></canvas>
                   </div>
                 </div>
-                <div class="bg-slate-900/50 p-5 rounded-xl border border-slate-800/60 shadow-md">
+                <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800/80 shadow-md">
                   <h4 class="text-[11px] font-bold text-slate-400 mb-4 uppercase tracking-wider">Flujo por Día</h4>
                   <div id="container-canvas-days" class="relative h-48 w-full">
                     <canvas id="chartDays" class="w-full h-full"></canvas>
@@ -369,11 +412,11 @@
               <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr class="border-b border-slate-800/60 text-slate-500 font-bold uppercase tracking-wider">
-                      <th class="pb-3">Ausencia</th>
+                    <tr class="border-b border-slate-800/80 text-slate-500 font-bold uppercase tracking-wider">
+                      <th class="pb-3 pl-3">Ausencia</th>
                       <th class="pb-3">Miembro</th>
                       <th class="pb-3">Última Visita</th>
-                      <th class="pb-3 text-right">Contacto WhatsApp</th>
+                      <th class="pb-3 text-right pr-3">Contacto WhatsApp</th>
                     </tr>
                   </thead>
                   <tbody id="table-inactivos-body" class="divide-y divide-slate-900 text-slate-300">
@@ -393,10 +436,10 @@
 
   <!-- ================= VENTANA MODAL FLOTANTE: EDITOR DE MIEMBROS ================= -->
   <div id="modal-editor" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800/80 w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row">
       
       <!-- Columna Izquierda: Foto y Cámara -->
-      <div class="w-full md:w-2/5 bg-slate-950/60 p-6 flex flex-col items-center justify-between border-b md:border-b-0 md:border-r border-slate-800/60 gap-6">
+      <div class="w-full md:w-2/5 bg-slate-950 p-6 flex flex-col items-center justify-between border-b md:border-b-0 md:border-r border-slate-800 gap-6">
         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Fotografía del Miembro</h3>
         
         <div class="w-48 h-48 rounded-2xl overflow-hidden border-4 border-slate-800 bg-slate-900 shadow-inner flex items-center justify-center relative">
@@ -406,30 +449,30 @@
 
         <!-- Botones de Cámara en Editor -->
         <div class="w-full space-y-2">
-          <button type="button" id="btn-editor-cam" onclick="activarCamaraEditor()" class="w-full bg-slate-850 hover:bg-slate-800 hover:text-white text-slate-300 text-xs font-bold py-3 rounded-xl uppercase transition-all duration-200 active:scale-95 border border-slate-800">
+          <button type="button" id="btn-editor-cam" onclick="activarCamaraEditor()" class="w-full bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold py-3 rounded-xl uppercase transition-all duration-300 active:scale-95 border border-slate-700/50">
             <i class="fa-solid fa-camera mr-2"></i>Tomar Nueva Foto
           </button>
-          <button type="button" id="btn-editor-shutter" onclick="capturarFotoEditor()" class="hidden w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black py-3 rounded-xl uppercase transition-all duration-200 active:scale-95 shadow-lg">
+          <button type="button" id="btn-editor-shutter" onclick="capturarFotoEditor()" class="hidden w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black py-3 rounded-xl uppercase transition-all duration-300 active:scale-95 shadow-lg">
             <i class="fa-solid fa-shutter-button mr-2"></i>Capturar Cuadro
           </button>
-          <button type="button" id="btn-editor-retry" onclick="cancelarNuevaFotoEditor()" class="hidden w-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold py-3 rounded-xl uppercase transition-all duration-200 active:scale-95">
+          <button type="button" id="btn-editor-retry" onclick="cancelarNuevaFotoEditor()" class="hidden w-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold py-3 rounded-xl uppercase transition-all duration-300 active:scale-95">
             <i class="fa-solid fa-rotate-left mr-2"></i>Descartar Foto
           </button>
         </div>
       </div>
 
       <!-- Columna Derecha: Formulario de Datos -->
-      <div class="w-full md:w-3/5 p-8 space-y-6 bg-slate-900">
+      <div class="w-full md:w-3/5 p-8 space-y-6">
         <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-          <h3 class="text-md font-bold text-white uppercase tracking-wider">Modificar Miembro</h3>
-          <button onclick="cerrarEditorModal()" class="text-slate-500 hover:text-white transition active:scale-90 text-lg"><i class="fa-solid fa-xmark"></i></button>
+          <h3 class="text-lg font-bold text-white uppercase tracking-wider">Modificar Miembro</h3>
+          <button onclick="cerrarEditorModal()" class="text-slate-500 hover:text-white transition duration-200 active:scale-90 text-lg"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
         <form id="form-editor" onsubmit="guardarCambiosEditor(event)" class="grid grid-cols-2 gap-4">
           <!-- DNI (Solo lectura) -->
           <div class="col-span-2 sm:col-span-1">
             <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">DNI (No editable)</label>
-            <input type="text" id="edit-dni" readonly class="w-full bg-slate-950 text-slate-500 border border-slate-800/80 rounded-xl p-3 text-sm font-bold outline-none">
+            <input type="text" id="edit-dni" readonly class="w-full bg-slate-950 text-slate-500 border border-slate-800 rounded-xl p-3 text-sm font-bold outline-none">
           </div>
           <!-- Nombre -->
           <div class="col-span-2 sm:col-span-1">
@@ -471,7 +514,7 @@
           </div>
 
           <!-- Botón de guardado -->
-          <button type="submit" class="col-span-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-4 rounded-xl text-xs uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(16,185,129,0.35)] active:scale-95 mt-4">
+          <button type="submit" class="col-span-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-3.5 rounded-xl text-xs uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(16,185,129,0.35)] active:scale-95 mt-4">
             <i class="fa-solid fa-floppy-disk mr-2"></i>Guardar Cambios de Miembro
           </button>
         </form>
@@ -483,7 +526,7 @@
   <!-- ================= NUEVO: MODAL LISTADO "DENTRO GYM" ================= -->
   <div id="modal-dentro-gym" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur z-50 flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[80vh]">
-      <div class="flex justify-between items-center border-b border-slate-800/80 px-6 py-4">
+      <div class="flex justify-between items-center border-b border-slate-800 px-6 py-4">
         <h3 class="text-sm font-bold text-white uppercase tracking-wider">
           <i class="fa-solid fa-person-running text-amber-400 mr-2"></i>Personas Dentro del Gym
         </h3>
@@ -547,21 +590,21 @@
       if (tab === "registro") {
         regSection.classList.remove("hidden");
         adminSection.classList.add("hidden");
-        regBtn.className = "px-5 py-2.5 rounded-xl font-bold text-xs uppercase bg-emerald-500 text-slate-950 hover:bg-emerald-400 hover:shadow-[0_0_15px_rgba(16,185,129,0.35)] transition-all duration-300 ease-out active:scale-95";
-        adminBtn.className = "px-5 py-2.5 rounded-xl font-bold text-xs uppercase bg-slate-850 text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-300 ease-out active:scale-95 border border-slate-800";
+        regBtn.className = "px-5 py-2.5 rounded-xl font-bold text-xs uppercase bg-emerald-500 text-slate-950 hover:bg-emerald-400 hover:shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-all duration-300 ease-out active:scale-95";
+        adminBtn.className = "px-5 py-2.5 rounded-xl font-bold text-xs uppercase bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-all duration-300 ease-out active:scale-95 border border-slate-700/50";
         document.getElementById("input-dni").focus();
       } else {
         regSection.classList.add("hidden");
         adminSection.classList.remove("hidden");
-        adminBtn.className = "px-5 py-2.5 rounded-xl font-bold text-xs uppercase bg-emerald-500 text-slate-950 hover:bg-emerald-400 hover:shadow-[0_0_15px_rgba(16,185,129,0.35)] transition-all duration-300 ease-out active:scale-95";
-        regBtn.className = "px-5 py-2.5 rounded-xl font-bold text-xs uppercase bg-slate-850 text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-300 ease-out active:scale-95 border border-slate-800";
+        adminBtn.className = "px-5 py-2.5 rounded-xl font-bold text-xs uppercase bg-emerald-500 text-slate-950 hover:bg-emerald-400 hover:shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-all duration-300 ease-out active:scale-95";
+        regBtn.className = "px-5 py-2.5 rounded-xl font-bold text-xs uppercase bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-all duration-300 ease-out active:scale-95 border border-slate-700/50";
         // Resetear a sub-sección buscador por defecto al entrar
         cambiarSeccionAdmin('buscador');
         consultarDatosAdmin();
       }
     }
 
-    // 2. Navegación entre sub-pestañas del Administrador (Sidebar modular)
+    // 2. Navegación entre sub-pestañas del Administrador (Sidebar modular con iluminación neon)
     function cambiarSeccionAdmin(seccion) {
       const secciones = ['buscador', 'graficas', 'alertas', 'inactivos'];
       
@@ -571,10 +614,10 @@
         
         if (sec === seccion) {
           divSeccion.classList.remove("hidden");
-          btnSeccion.className = "w-full px-4 py-3.5 rounded-xl font-bold text-xs uppercase flex items-center bg-emerald-500 text-slate-950 transition-all duration-300 ease-out active:scale-95 shadow-lg hover:bg-emerald-400 hover:shadow-[0_0_15px_rgba(16,185,129,0.35)]";
+          btnSeccion.className = "w-full px-4 py-3.5 rounded-xl font-bold text-xs uppercase flex items-center bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 transition-all duration-300 ease-out active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.35)]";
         } else {
           divSeccion.classList.add("hidden");
-          btnSeccion.className = "w-full px-4 py-3.5 rounded-xl font-bold text-xs uppercase flex items-center bg-slate-850 hover:bg-slate-800 text-slate-300 transition-all duration-300 ease-out active:scale-95 border border-slate-800/40 hover:text-white";
+          btnSeccion.className = "w-full px-4 py-3.5 rounded-xl font-bold text-xs uppercase flex items-center bg-slate-900/50 hover:bg-slate-800 hover:text-white hover:border-slate-700 transition-all duration-300 ease-out active:scale-95 border border-slate-800/60 text-slate-300";
         }
       });
 
@@ -947,7 +990,7 @@
           cachedChartsData = res.charts; 
           listadoPersonasDentro = res.personasDentroList || []; // NUEVO: guardar detalle de quiénes están dentro del gym
 
-          // Cargar Tabla de últimos ingresos
+          // Cargar Tabla de últimos ingresos (CON FILAS CUSTOM-ROW DE EFECTO NEÓN)
           const recentBody = document.getElementById("table-recent-body");
           recentBody.innerHTML = "";
           if (res.ultimosIngresos.length === 0) {
@@ -964,11 +1007,11 @@
               }
 
               recentBody.innerHTML += `
-                <tr class="hover:bg-slate-900/40 transition duration-150">
-                  <td class="py-3 font-semibold text-slate-400">${ingreso.hora}</td>
-                  <td class="py-3 font-semibold text-slate-400">${ingreso.dni}</td>
-                  <td class="py-3 font-extrabold capitalize text-white">${ingreso.nombre}</td>
-                  <td class="py-3 text-right">
+                <tr class="custom-row cursor-pointer">
+                  <td class="py-3.5 pl-3 font-semibold text-slate-400">${ingreso.hora}</td>
+                  <td class="py-3.5 font-semibold text-slate-400">${ingreso.dni}</td>
+                  <td class="py-3.5 font-extrabold capitalize text-white">${ingreso.nombre}</td>
+                  <td class="py-3.5 text-right pr-3">
                     <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest ${badgeColor}">
                       ${ingreso.movimiento}
                     </span>
@@ -997,7 +1040,7 @@
             });
           }
 
-          // Cargar Tabla de Clientes Ausentes (>7 días)
+          // Cargar Tabla de Clientes Ausentes (>7 días) (CON FILAS CUSTOM-ROW DE EFECTO NEÓN)
           const inactivosBody = document.getElementById("table-inactivos-body");
           inactivosBody.innerHTML = "";
           if (!res.inactivosList || res.inactivosList.length === 0) {
@@ -1007,12 +1050,12 @@
               const waLink = `https://wa.me/51${c.celular}?text=Hola%20${encodeURIComponent(c.nombre)}%2C%20te%20escribimos%20de%20VibraFitness.%20Notamos%20que%20no%20nos%20visitas%20hace%20${c.diasInactivo}%20d%C3%ADas.%20%C2%A1Te%20esperamos%20pronto%20para%20seguir%20entrenando!`;
               
               inactivosBody.innerHTML += `
-                <tr class="hover:bg-slate-900/40 transition duration-150">
-                  <td class="py-3 font-extrabold text-rose-400 text-xs uppercase tracking-widest">${c.diasInactivo} días</td>
-                  <td class="py-3 font-extrabold text-white capitalize">${c.nombre}</td>
-                  <td class="py-3 font-semibold text-slate-500">${c.ultimoRegistro}</td>
-                  <td class="py-3 text-right">
-                    <a href="${waLink}" target="_blank" class="inline-flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-3 py-2 rounded-lg text-[10px] uppercase tracking-wider transition-all duration-200 active:scale-95 gap-1">
+                <tr class="custom-row cursor-pointer">
+                  <td class="py-3.5 pl-3 font-extrabold text-rose-400 text-xs uppercase tracking-widest">${c.diasInactivo} días</td>
+                  <td class="py-3.5 font-extrabold text-white capitalize">${c.nombre}</td>
+                  <td class="py-3.5 font-semibold text-slate-500">${c.ultimoRegistro}</td>
+                  <td class="py-3.5 text-right pr-3">
+                    <a href="${waLink}" target="_blank" class="inline-flex items-center justify-center bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3 py-2 rounded-lg text-[10px] uppercase tracking-wider transition-all duration-300 active:scale-95 gap-1 shadow-md hover:shadow-[0_0_15px_rgba(16,185,129,0.35)]">
                       <i class="fa-brands fa-whatsapp text-xs"></i> Contactar
                     </a>
                   </td>
@@ -1108,6 +1151,7 @@
       document.getElementById("modal-editor").classList.remove("hidden");
     }
 
+    // Cerrar el modal del editor de miembros
     function cerrarEditorModal() {
       cancelarNuevaFotoEditor();
       document.getElementById("modal-editor").classList.add("hidden");
