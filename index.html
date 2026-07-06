@@ -3,89 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Control de Acceso Premium</title>
+  <title>Control de Acceso Premium - Fitness Club</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome para Iconos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts for premium sport & tech typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Chart.js para los gráficos del administrador -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Canvas Confetti para la explosión de festejo -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Bebas+Neue&family=JetBrains+Mono:wght@400;600;700&display=swap');
     body {
       font-family: 'Montserrat', sans-serif;
     }
-
-    /* NUEVO: Tipografía de impacto para números protagonistas (KPIs, nombre en pantalla de bienvenida) */
-    .font-display {
-      font-family: 'Bebas Neue', 'Montserrat', sans-serif;
-      letter-spacing: 0.04em;
-    }
-    /* NUEVO: Tipografía monoespaciada para datos (DNI, horas, timestamps) — sensación de sistema de control preciso */
-    .font-data {
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    /* NUEVO: Scrollbar personalizada acorde a la identidad oscura/verde de la app */
+    
+    /* Custom Premium Scrollbar */
     ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: rgba(2, 6, 23, 0.4);
-      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 9999px;
     }
     ::-webkit-scrollbar-thumb {
-      background: rgba(16, 185, 129, 0.35);
-      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.25);
+      border-radius: 9999px;
+      border: 1px solid rgba(16, 185, 129, 0.1);
+      transition: all 0.3s ease;
     }
     ::-webkit-scrollbar-thumb:hover {
       background: rgba(16, 185, 129, 0.6);
-    }
-    * {
-      scrollbar-width: thin;
-      scrollbar-color: rgba(16, 185, 129, 0.35) rgba(2, 6, 23, 0.4);
-    }
-
-    /* NUEVO: Textura sutil de fondo (rejilla + glow radial) para que las pantallas no se sientan vacías */
-    .textura-fondo {
-      background-image:
-        radial-gradient(circle at 50% 20%, rgba(16, 185, 129, 0.08) 0%, rgba(0,0,0,0) 55%),
-        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-      background-size: 100% 100%, 42px 42px, 42px 42px;
-    }
-
-    /* NUEVO: Ítem de navegación del sidebar admin con indicador lateral (en vez de botón sólido) */
-    .admin-nav-item {
-      position: relative;
-      background: transparent;
-      color: #94a3b8; /* slate-400 */
-      border-left: 3px solid transparent;
-      transition: all 0.2s ease;
-    }
-    .admin-nav-item:hover {
-      background: rgba(16, 185, 129, 0.06);
-      color: #e2e8f0;
-    }
-    .admin-nav-item.active {
-      background: rgba(16, 185, 129, 0.1);
-      border-left: 3px solid #10b981;
-      color: #ffffff;
-      box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.06);
-    }
-
-    /* NUEVO: Micro-interacción de elevación en botones principales */
-    .btn-hover-lift {
-      transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
-    }
-    .btn-hover-lift:hover {
-      transform: translateY(-2px);
-    }
-    .btn-hover-lift:active {
-      transform: translateY(0px);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
     }
 
     /* Animación del Logo en 3D sobre el eje Y */
@@ -93,14 +47,13 @@
       perspective: 1200px;
     }
     .logo-3d {
-      width: 180px;
-      height: 180px;
       transform-style: preserve-3d;
-      animation: spin3D 2.2s infinite linear;
+      animation: spin3D 4s infinite cubic-bezier(0.4, 0, 0.2, 1);
     }
     @keyframes spin3D {
-      0% { transform: rotateY(0deg); }
-      100% { transform: rotateY(360deg); }
+      0% { transform: rotateY(0deg) scale(1); }
+      50% { transform: rotateY(180deg) scale(1.05); }
+      100% { transform: rotateY(360deg) scale(1); }
     }
 
     /* Transiciones suaves */
@@ -120,7 +73,7 @@
       to { opacity: 1; transform: scale(1); }
     }
 
-    /* NUEVO: Marco circular con luz neón verde parpadeante para la foto de "Dentro GYM" */
+    /* Marco circular con luz neón verde parpadeante para la foto de "Dentro GYM" */
     .neon-green-frame {
       position: relative;
       display: flex;
@@ -133,7 +86,7 @@
       inset: -10px;
       border-radius: 9999px;
       background: radial-gradient(circle, rgba(16,185,129,0.55) 0%, rgba(16,185,129,0.15) 55%, rgba(16,185,129,0) 75%);
-      animation: neonPulseGreen 1.4s ease-in-out infinite;
+      animation: neonPulseGreen 2s ease-in-out infinite;
       z-index: 0;
     }
     .neon-green-frame img {
@@ -158,28 +111,31 @@
     .fila-persona-dentro:hover {
       background-color: rgba(16, 185, 129, 0.08);
     }
-
-    /* NUEVO: Alerta visual de membresía vencida — más llamativa para que la asistente la note de inmediato */
-    @keyframes strobeAlertaRoja {
-      0%, 100% { opacity: 0; }
-      15% { opacity: 0.55; }
-      30% { opacity: 0; }
-      45% { opacity: 0.55; }
-      60% { opacity: 0; }
+    
+    /* Efecto Glassmorphism Premium */
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
-    .strobe-alerta-vencido {
-      animation: strobeAlertaRoja 1.1s ease-in-out 1;
+    
+    .animate-pulse-slow {
+      animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
-    @keyframes pulseBadgeUrgente {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 0px rgba(220,38,38,0); }
-      50% { transform: scale(1.07); box-shadow: 0 0 30px rgba(220,38,38,0.75); }
-    }
-    .badge-urgente {
-      animation: pulseBadgeUrgente 0.55s ease-in-out infinite;
+    @keyframes pulse-slow {
+      0%, 100% { opacity: 1; filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.2)); }
+      50% { opacity: 0.8; filter: drop-shadow(0 0 25px rgba(16, 185, 129, 0.5)); }
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between overflow-hidden">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-emerald-500 selection:text-slate-950 relative">
+
+  <!-- CAPAS DE LUCES DE FONDO DE TECNOLOGÍA -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="absolute top-1/4 -left-64 w-[500px] h-[500px] rounded-full bg-emerald-500/5 blur-[120px] animate-pulse-slow"></div>
+    <div class="absolute bottom-1/4 -right-64 w-[500px] h-[500px] rounded-full bg-indigo-500/5 blur-[120px] animate-pulse"></div>
+  </div>
 
   <!-- CONFIGURACIÓN DE LINKS -->
   <script>
@@ -191,203 +147,248 @@
   </script>
 
   <!-- NAVBAR / MENÚ SUPERIOR -->
-  <header class="bg-slate-900/80 backdrop-blur border-b border-slate-800/60 px-6 py-4 flex justify-between items-center shadow-lg z-10">
-    <div class="flex items-center space-x-3">
-      <img id="nav-logo" src="" alt="Logo" class="h-8 w-auto object-contain">
-      <span class="text-sm font-extrabold uppercase tracking-widest text-slate-400">FITNESS CLUB</span>
+  <header class="bg-slate-900/60 backdrop-blur-xl border-b border-slate-800/40 px-6 py-4 flex justify-between items-center shadow-lg z-10 sticky top-0">
+    <div class="flex items-center space-x-3 group cursor-pointer">
+      <div class="bg-emerald-500/10 p-2 rounded-xl border border-emerald-500/20 group-hover:border-emerald-500/40 transition duration-300 flex items-center justify-center">
+        <img id="nav-logo" src="" alt="Logo" class="h-8 w-auto object-contain" onerror="handleLogoError(this)">
+        <i id="nav-logo-fallback" class="hidden fa-solid fa-circle-nodes text-emerald-400 text-lg animate-pulse"></i>
+      </div>
+      <span class="text-sm font-extrabold uppercase tracking-widest text-slate-200 group-hover:text-emerald-400 transition duration-300 font-display">FITNESS CLUB</span>
     </div>
     <nav class="flex space-x-2">
-      <button onclick="switchTab('registro')" id="tab-registro-btn" class="btn-hover-lift px-4 py-2 rounded-lg font-bold text-xs uppercase bg-emerald-500 text-slate-950 transition duration-300">
-        <i class="fa-solid fa-id-card mr-2"></i>Asistencia
+      <button onclick="switchTab('registro')" id="tab-registro-btn" class="px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 shadow-[0_0_20px_rgba(16,185,129,0.35)] transition duration-300 active:scale-95 cursor-pointer">
+        <i class="fa-solid fa-id-card"></i>Asistencia
       </button>
-      <button onclick="switchTab('admin')" id="tab-admin-btn" class="btn-hover-lift px-4 py-2 rounded-lg font-bold text-xs uppercase bg-slate-800 text-slate-300 hover:bg-slate-700 transition duration-300">
-        <i class="fa-solid fa-lock mr-2"></i>Admin
+      <button onclick="switchTab('admin')" id="tab-admin-btn" class="px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-100 hover:border-slate-700 transition duration-300 active:scale-95 cursor-pointer">
+        <i class="fa-solid fa-lock"></i>Admin
       </button>
     </nav>
   </header>
 
   <!-- CONTENEDOR PRINCIPAL -->
-  <main class="textura-fondo flex-grow flex items-center justify-center p-4 lg:p-6 relative">
+  <main class="flex-grow flex items-center justify-center p-4 lg:p-6 relative z-10">
     
     <!-- ================= VISTA DE REGISTRO (PANTALLA DE ESPERA) ================= -->
-    <section id="section-registro" class="w-full max-w-xl flex flex-col items-center z-10 transition-all duration-300">
+    <section id="section-registro" class="w-full max-w-xl flex flex-col items-center transition-all duration-300">
       
       <!-- Contenedor del Input de DNI -->
-      <div class="w-full bg-slate-900/95 border border-slate-800 p-12 rounded-3xl shadow-2xl text-center backdrop-blur-md">
-        <!-- Logo estático -->
-        <img id="form-logo" src="" alt="Gym Logo" class="h-36 mx-auto mb-10 object-contain">
+      <div class="w-full glass-panel border border-slate-800/80 p-10 md:p-12 rounded-[32px] text-center shadow-2xl relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-500">
+        <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
         
-        <h2 class="text-sm font-bold tracking-[0.25em] text-slate-400 uppercase mb-5">Control de Acceso</h2>
-        <form onsubmit="registrarAsistencia(event)" class="relative">
+        <!-- Contenedor de Logo con fallback inteligente -->
+        <div class="w-24 h-24 mx-auto mb-8 flex items-center justify-center relative">
+          <img id="form-logo" src="" alt="Gym Logo" class="max-h-24 max-w-24 object-contain transition duration-500 hover:scale-105" onerror="handleLogoError(this)">
+          <div id="form-logo-fallback" class="hidden w-24 h-24 bg-gradient-to-br from-slate-950 to-slate-900 rounded-full border border-slate-800/80 items-center justify-center relative shadow-inner group-hover:border-emerald-500/30 transition duration-500">
+            <i class="fa-solid fa-dumbbell text-3xl text-emerald-400 animate-pulse"></i>
+          </div>
+        </div>
+        
+        <h2 class="text-xs font-bold tracking-[0.35em] text-emerald-400 uppercase mb-3">Control de Acceso</h2>
+        <h3 class="text-lg font-bold text-slate-400 mb-8 uppercase tracking-wider">Bienvenido al Club</h3>
+        
+        <form onsubmit="registrarAsistencia(event)" class="relative group/form">
           <input 
             type="text" 
             id="input-dni" 
             placeholder="COLOQUE SU DNI" 
             maxlength="9"
             inputmode="numeric"
-            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+            oninput="handleDniInput(this)"
             autofocus
             required
             autocomplete="off"
-            class="font-data w-full bg-slate-950 text-white placeholder-slate-700 border-2 border-slate-800 focus:border-emerald-500 rounded-2xl pl-6 pr-20 py-5 text-center text-2xl font-black tracking-wide outline-none transition duration-300 shadow-inner"
+            class="w-full bg-slate-950/80 text-white placeholder-slate-700 border-2 border-slate-800/80 focus:border-emerald-500 rounded-2xl pl-6 pr-20 py-5 text-center text-3xl font-black tracking-[0.15em] outline-none transition duration-300 shadow-inner group-hover/form:border-slate-700/80 focus:shadow-[0_0_25px_rgba(16,185,129,0.15)] font-mono"
           >
-          <button type="submit" class="btn-hover-lift absolute right-3 top-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 w-14 h-14 rounded-xl flex items-center justify-center font-bold transition shadow-lg">
-            <i class="fa-solid fa-arrow-right text-xl"></i>
+          <button type="submit" onclick="playSound('click')" class="absolute right-3 top-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 w-14 h-14 rounded-xl flex items-center justify-center font-bold transition-all duration-300 shadow-lg hover:shadow-[0_0_15px_rgba(16,185,129,0.4)] active:scale-95 group/btn cursor-pointer">
+            <i class="fa-solid fa-arrow-right text-xl group-hover/btn:translate-x-1 transition duration-300"></i>
           </button>
         </form>
-        <p class="text-[10px] text-slate-500 mt-5 uppercase tracking-[0.2em]">Alinee su código o digite manualmente</p>
+        <p class="text-[9px] text-slate-500 mt-6 uppercase tracking-[0.2em] font-medium">Alinee su código o digite manualmente</p>
       </div>
 
     </section>
 
     <!-- ================= PANTALLA COMPLETA DE LOADER (LOGO 3D) ================= -->
-    <div id="loader-overlay" class="hidden fixed inset-0 bg-slate-950 flex flex-col items-center justify-center z-50">
-      <div class="logo-container-3d mb-10">
-        <img id="loader-logo" src="" alt="Cargando..." class="logo-3d object-contain">
+    <div id="loader-overlay" class="hidden fixed inset-0 bg-slate-950/95 flex flex-col items-center justify-center z-50 backdrop-blur-sm">
+      <div class="logo-container-3d mb-8">
+        <img id="loader-logo" src="" alt="Cargando..." class="logo-3d max-h-24 max-w-24 object-contain" onerror="handleLogoError(this)">
+        <div id="loader-logo-fallback" class="hidden w-24 h-24 bg-gradient-to-br from-slate-950 to-slate-900 rounded-full border border-slate-800 items-center justify-center relative logo-3d shadow-xl">
+          <i class="fa-solid fa-spinner text-3xl text-emerald-400 animate-spin"></i>
+        </div>
       </div>
-      <p class="text-slate-400 text-lg uppercase tracking-[0.35em] font-semibold animate-pulse">Procesando Membresía</p>
+      <p id="loader-text" class="text-emerald-400 text-xs uppercase tracking-[0.35em] font-black animate-pulse">Procesando Membresía</p>
     </div>
 
     <!-- ================= PANTALLA GIGANTE DE BIENVENIDA (MODAL FULLSCREEN) ================= -->
-    <div id="pantalla-gigante" class="hidden fixed inset-0 z-40 flex items-center justify-center transition-all duration-500 bg-slate-950">
+    <div id="pantalla-gigante" class="hidden fixed inset-0 z-40 flex items-center justify-center transition-all duration-500 bg-slate-950/98">
       
       <!-- Capa de fondo con desfoque y brillo radial dinámico -->
-      <div id="glow-bg" class="absolute inset-0 transition-all duration-700 opacity-90"></div>
-      
-      <!-- NUEVO: Destello rojo de alerta, exclusivo para membresía vencida -->
-      <div id="alerta-strobe-overlay" class="hidden absolute inset-0 bg-red-600 pointer-events-none z-20"></div>
+      <div id="glow-bg" class="absolute inset-0 transition-all duration-1000 opacity-80"></div>
       
       <!-- Contenido de Pantalla Gigante Organizado -->
-      <div class="relative w-full max-w-6xl mx-auto px-10 py-12 flex flex-col lg:flex-row items-center justify-between gap-16 z-10">
+      <div class="relative w-full max-w-5xl mx-auto px-6 md:px-12 py-10 flex flex-col md:flex-row items-center justify-between gap-12 md:gap-16 z-10">
         
         <!-- Lado Izquierdo: Foto Gigante con Marco Neón -->
         <div class="flex-shrink-0 scale-up">
-          <div id="neon-photo-border" class="w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-emerald-500 shadow-[0_0_60px_rgba(16,185,129,0.25)] flex items-center justify-center transition-all">
+          <div id="neon-photo-border" class="w-64 h-64 md:w-80 md:h-80 lg:w-[380px] lg:h-[380px] rounded-[38px] overflow-hidden border-[6px] bg-slate-900 flex items-center justify-center transition-all duration-700 shadow-2xl relative">
             <img id="giant-photo" src="" alt="Miembro" class="w-full h-full object-cover" onerror="this.onerror=null; this.src=DEFAULT_AVATAR;">
           </div>
         </div>
 
         <!-- Lado Derecho: Textos Informativos Ampliados -->
-        <div class="flex-grow w-full text-center lg:text-left space-y-8 slide-in-right">
+        <div class="flex-grow w-full text-center md:text-left space-y-6 slide-in-right">
           <div>
-            <span id="giant-status-badge" class="px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-md">
+            <span id="giant-status-badge" class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-md">
               ACCESO AUTORIZADO
             </span>
             <!-- Nombre capitalizado -->
-            <h1 id="giant-name" class="font-display text-5xl md:text-6xl lg:text-7xl mt-6 leading-snug text-white capitalize">
-              aaron ivan carrillo marchan
+            <h1 id="giant-name" class="text-3xl md:text-4xl lg:text-5xl font-black mt-5 tracking-wide leading-tight text-white capitalize font-display">
+              -
             </h1>
           </div>
 
           <!-- Bloques de datos técnicos simplificados a 2 columnas (Sin celular) -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
-            <div class="bg-slate-900/90 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-md shadow-lg">
-              <span class="text-xs text-slate-500 block uppercase font-bold tracking-widest">Plan Contratado</span>
-              <span id="giant-plan" class="text-xl font-extrabold text-white uppercase mt-2 block">VIP TRIMESTRAL</span>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+            <div class="bg-slate-900/60 border border-slate-800/60 p-4 rounded-2xl backdrop-blur-md shadow-md">
+              <span class="text-[10px] text-slate-500 block uppercase font-bold tracking-widest">Plan Contratado</span>
+              <span id="giant-plan" class="text-lg font-black text-white uppercase mt-1 block tracking-wide">-</span>
             </div>
-            <div class="bg-slate-900/90 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-md shadow-lg">
-              <span class="text-xs text-slate-500 block uppercase font-bold tracking-widest">Vence el Día</span>
-              <span id="giant-expiry" class="font-data text-xl font-extrabold text-slate-200 mt-2 block">24/12/2026</span>
+            <div class="bg-slate-900/60 border border-slate-800/60 p-4 rounded-2xl backdrop-blur-md shadow-md">
+              <span class="text-[10px] text-slate-500 block uppercase font-bold tracking-widest">Vence el Día</span>
+              <span id="giant-expiry" class="text-lg font-black mt-1 block tracking-wide font-mono">-</span>
             </div>
           </div>
 
           <!-- Mensaje Motivacional Ampliado -->
-          <div class="bg-slate-900/70 p-6 rounded-2xl border-l-8 border-emerald-500 italic text-slate-300 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4">
+          <div id="motivational-wrapper" class="bg-emerald-950/20 border-l-[6px] border-emerald-500 p-5 rounded-2xl italic text-slate-200 text-base md:text-lg backdrop-blur-md shadow-md mt-4">
             "<span id="giant-message">¡El único entrenamiento malo es el que no se hace!</span>"
+          </div>
+          
+          <div class="text-[9px] text-slate-600 uppercase tracking-[0.25em] pt-2">
+            Cerrando automáticamente en unos segundos...
           </div>
         </div>
 
       </div>
     </div>
 
-    <!-- ================= VISTA DE ADMINISTRACIÓN EN TIEMPO REAL (PANTALLA COMPLETA AL 96%) ================= -->
+    <!-- ================= VISTA DE ADMINISTRACIÓN EN TIEMPO REAL ================= -->
     <section id="section-admin" class="hidden w-full max-w-[98%] xl:max-w-[96%] z-10 transition-all duration-300">
-      <div class="bg-slate-900/95 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 backdrop-blur-md h-[86vh] flex flex-col justify-between">
+      <div class="bg-slate-900/40 border border-slate-800/80 rounded-[32px] p-6 md:p-8 shadow-2xl relative overflow-hidden backdrop-blur-2xl h-[86vh] flex flex-col justify-between">
         
-        <!-- CABECERA PRINCIPAL DE KPIS (SIEMPRE VISIBLE EN EL ENCABEZADO) -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 pb-4 border-b border-slate-800">
-          <div onclick="abrirModalDentroGym()" class="bg-slate-950 border border-amber-500/30 p-4 rounded-xl flex items-center space-x-3 shadow-inner cursor-pointer hover:border-amber-500/60 transition relative overflow-hidden" title="Ver quiénes están dentro del gym">
-            <div class="absolute inset-0 bg-amber-500/5 animate-pulse pointer-events-none"></div>
-            <div class="p-3 bg-amber-500/10 text-amber-400 rounded-lg text-lg relative"><i class="fa-solid fa-person-running"></i></div>
-            <div class="relative">
-              <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Dentro GYM</p>
-              <h3 id="kpi-dentro" class="font-display text-3xl text-white leading-none mt-1">...</h3>
+        <!-- AMBIENT LIGHT DECORATION INSIDE CARD -->
+        <div class="absolute -top-32 -right-32 w-64 h-64 rounded-full bg-emerald-500/5 blur-[80px]"></div>
+
+        <!-- CABECERA PRINCIPAL DE KPIS (Bento Grid Style) -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 pb-4 border-b border-slate-800/50">
+          <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl flex items-center space-x-3.5 shadow-inner hover:border-slate-700 hover:bg-slate-950 transition duration-300">
+            <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl text-lg border border-emerald-500/20">
+              <i class="fa-solid fa-users"></i>
+            </div>
+            <div>
+              <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Activos</p>
+              <h3 id="kpi-activos" class="text-xl font-black text-white">...</h3>
             </div>
           </div>
-          <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner">
-            <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-lg text-lg"><i class="fa-solid fa-users"></i></div>
+          <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl flex items-center space-x-3.5 shadow-inner hover:border-slate-700 hover:bg-slate-950 transition duration-300">
+            <div class="p-3 bg-blue-500/10 text-blue-400 rounded-xl text-lg border border-blue-500/20">
+              <i class="fa-solid fa-calendar-check"></i>
+            </div>
             <div>
-              <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Activos</p>
-              <h3 id="kpi-activos" class="font-display text-3xl text-white leading-none mt-1">...</h3>
+              <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Asistencias</p>
+              <h3 id="kpi-hoy" class="text-xl font-black text-white">...</h3>
             </div>
           </div>
-          <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner">
-            <div class="p-3 bg-blue-500/10 text-blue-400 rounded-lg text-lg"><i class="fa-solid fa-calendar-check"></i></div>
-            <div>
-              <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Asistencias</p>
-              <h3 id="kpi-hoy" class="font-display text-3xl text-white leading-none mt-1">...</h3>
+          <div onclick="playSound('click'); abrirModalDentroGym()" class="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl flex items-center space-x-3.5 shadow-inner cursor-pointer hover:border-amber-500/40 hover:bg-slate-950/90 transition-all duration-300 group" title="Ver quiénes están dentro del gym">
+            <div class="p-3 bg-amber-500/10 text-amber-400 rounded-xl text-lg border border-amber-500/20 group-hover:scale-105 transition duration-300">
+              <i class="fa-solid fa-person-running animate-pulse"></i>
+            </div>
+            <div class="flex-grow">
+              <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1">
+                Dentro GYM
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping inline-block"></span>
+              </p>
+              <h3 class="text-xl font-black text-white flex items-center justify-between">
+                <span id="kpi-dentro">...</span>
+                <i class="fa-solid fa-eye text-slate-600 text-[11px] group-hover:text-amber-400 transition"></i>
+              </h3>
             </div>
           </div>
-          <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner">
-            <div class="p-3 bg-red-600/15 text-red-500 rounded-lg text-lg"><i class="fa-solid fa-circle-exclamation"></i></div>
+          <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl flex items-center space-x-3.5 shadow-inner hover:border-slate-700 hover:bg-slate-950 transition duration-300">
+            <div class="p-3 bg-rose-500/10 text-rose-400 rounded-xl text-lg border border-rose-500/20">
+              <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
             <div>
-              <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Vencidos</p>
-              <h3 id="kpi-vencidos" class="font-display text-3xl text-white leading-none mt-1">...</h3>
+              <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Vencidos</p>
+              <h3 id="kpi-vencidos" class="text-xl font-black text-white">...</h3>
             </div>
           </div>
         </div>
 
         <!-- LAYOUT DE DOS COLUMNAS: MENÚ LATERAL IZQUIERDO Y CONTENIDO DINÁMICO DERECHO -->
-        <div class="flex-grow flex flex-col md:flex-row gap-6 mt-4 overflow-hidden">
+        <div class="flex-grow flex flex-col md:flex-row gap-6 mt-5 overflow-hidden h-full">
           
           <!-- MENÚ LATERAL IZQUIERDO (Botonera modular para la Asistente) -->
-          <div class="w-full md:w-1/5 flex flex-col gap-3 bg-slate-950/40 p-3 rounded-2xl border border-slate-800/40 h-full">
-            <button onclick="cambiarSeccionAdmin('buscador')" id="btn-sec-buscador" class="admin-nav-item active w-full px-4 py-3 rounded-lg font-bold text-xs uppercase flex items-center">
-              <i class="fa-solid fa-magnifying-glass mr-3 text-sm"></i>Buscador y Recientes
+          <div class="w-full md:w-1/4 lg:w-1/5 flex flex-row md:flex-col gap-2 bg-slate-950/40 p-2.5 rounded-2xl border border-slate-800/40 h-auto md:h-full overflow-x-auto md:overflow-x-visible">
+            <button onclick="playSound('click'); cambiarSeccionAdmin('buscador')" id="btn-sec-buscador" class="w-full px-4 py-3 rounded-xl font-extrabold text-xs uppercase tracking-wider flex items-center gap-3 transition-all duration-300 whitespace-nowrap bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 shadow-[0_4px_15px_rgba(16,185,129,0.25)] font-black">
+              <i class="fa-solid fa-magnifying-glass text-sm"></i>Buscador
             </button>
-            <button onclick="cambiarSeccionAdmin('graficas')" id="btn-sec-graficas" class="admin-nav-item w-full px-4 py-3 rounded-lg font-bold text-xs uppercase flex items-center">
-              <i class="fa-solid fa-chart-pie mr-3 text-sm"></i>Gráficas de Flujo
+            <button onclick="playSound('click'); cambiarSeccionAdmin('graficas')" id="btn-sec-graficas" class="w-full px-4 py-3 rounded-xl font-extrabold text-xs uppercase tracking-wider flex items-center gap-3 transition-all duration-300 whitespace-nowrap text-slate-400 hover:text-slate-200 hover:bg-slate-900/50">
+              <i class="fa-solid fa-chart-pie text-sm"></i>Gráficas
             </button>
-            <button onclick="cambiarSeccionAdmin('alertas')" id="btn-sec-alertas" class="admin-nav-item w-full px-4 py-3 rounded-lg font-bold text-xs uppercase flex items-center">
-              <i class="fa-solid fa-bell mr-3 text-sm"></i>Membresías por Vencer
+            <button onclick="playSound('click'); cambiarSeccionAdmin('alertas')" id="btn-sec-alertas" class="w-full px-4 py-3 rounded-xl font-extrabold text-xs uppercase tracking-wider flex items-center gap-3 transition-all duration-300 whitespace-nowrap text-slate-400 hover:text-slate-200 hover:bg-slate-900/50">
+              <i class="fa-solid fa-bell text-sm"></i>Alertas
             </button>
-            <button onclick="cambiarSeccionAdmin('inactivos')" id="btn-sec-inactivos" class="admin-nav-item w-full px-4 py-3 rounded-lg font-bold text-xs uppercase flex items-center">
-              <i class="fa-solid fa-user-slash mr-3 text-sm"></i>Ausentes (>7 días)
+            <button onclick="playSound('click'); cambiarSeccionAdmin('inactivos')" id="btn-sec-inactivos" class="w-full px-4 py-3 rounded-xl font-extrabold text-xs uppercase tracking-wider flex items-center gap-3 transition-all duration-300 whitespace-nowrap text-slate-400 hover:text-slate-200 hover:bg-slate-900/50">
+              <i class="fa-solid fa-user-slash text-sm"></i>Inactivos
             </button>
+            
+            <div class="hidden md:flex flex-grow flex-col justify-end p-2.5">
+              <button onclick="playSound('click'); consultarDatosAdmin()" class="w-full py-2.5 border border-slate-800/80 hover:border-slate-700 rounded-xl text-[10px] uppercase font-bold tracking-widest text-slate-500 hover:text-slate-300 flex items-center justify-center gap-2 transition duration-300 active:scale-95 cursor-pointer">
+                <i class="fa-solid fa-rotate animate-spin-slow"></i>Sincronizar
+              </button>
+            </div>
           </div>
 
           <!-- PANEL DE CONTENIDO DINÁMICO DERECHO (Con altura fija y scroll interno profesional) -->
-          <div class="w-full md:w-4/5 bg-slate-950/70 border border-slate-800 p-6 rounded-2xl shadow-inner overflow-y-auto h-full max-h-[52vh]">
+          <div class="w-full md:w-3/4 lg:w-4/5 bg-slate-950/50 border border-slate-800/80 p-5 md:p-6 rounded-2xl shadow-inner overflow-y-auto h-full max-h-[56vh]">
             
             <!-- SUBSECCIÓN 1: BUSCADOR Y ÚLTIMOS INGRESOS (30 REGISTROS) -->
             <div id="sub-admin-buscador" class="space-y-6">
-              <div class="space-y-3">
-                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest"><i class="fa-solid fa-magnifying-glass text-emerald-400 mr-2"></i>Buscador en Tiempo Real</h4>
-                <input 
-                  type="text" 
-                  id="admin-search-input" 
-                  oninput="filtrarMiembrosBuscador()"
-                  placeholder="Escriba DNI o Nombre para buscar y editar miembro..." 
-                  class="w-full bg-slate-900 text-white placeholder-slate-700 border border-slate-800 focus:border-emerald-500 rounded-xl px-4 py-3 font-semibold outline-none transition text-sm"
-                >
-                <div id="search-results-container" class="max-h-48 overflow-y-auto space-y-1 divide-y divide-slate-900 hidden bg-slate-950 border border-slate-800 p-2 rounded-xl">
+              <div class="space-y-2.5">
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 font-display">
+                  <i class="fa-solid fa-magnifying-glass text-emerald-400"></i>Buscador en Tiempo Real
+                </h4>
+                <div class="relative">
+                  <input 
+                    type="text" 
+                    id="admin-search-input" 
+                    oninput="filtrarMiembrosBuscador(this.value)"
+                    placeholder="Escriba DNI o Nombre para buscar y editar miembro..." 
+                    class="w-full bg-slate-900/80 text-white placeholder-slate-700 border border-slate-800 focus:border-emerald-500 rounded-xl pl-12 pr-4 py-3.5 font-semibold outline-none transition text-sm shadow-inner animate-fade-in"
+                  >
+                  <i class="fa-solid fa-search absolute left-4 top-4.5 text-slate-600"></i>
+                </div>
+                <div id="search-results-container" class="max-h-52 overflow-y-auto space-y-1 divide-y divide-slate-900/60 hidden bg-slate-950/90 border border-slate-800/80 p-2.5 rounded-2xl shadow-2xl relative z-20">
                   <!-- Coincidencias de búsqueda -->
                 </div>
               </div>
 
-              <div class="space-y-3">
-                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest"><i class="fa-solid fa-clock-rotate-left text-emerald-400 mr-2"></i>Últimos 30 Ingresos Recientes</h4>
-                <div class="overflow-x-auto">
+              <div class="space-y-3 pt-2">
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 font-display">
+                  <i class="fa-solid fa-clock-rotate-left text-emerald-400"></i>Últimos 30 Ingresos Recientes
+                </h4>
+                <div class="overflow-x-auto rounded-2xl border border-slate-800/40 bg-slate-950/30">
                   <table class="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr class="border-b border-slate-800 text-slate-500 font-bold uppercase tracking-wider">
-                        <th class="pb-2">Hora</th>
-                        <th class="pb-2">DNI</th>
-                        <th class="pb-2">Nombre Completo</th>
-                        <th class="pb-2 text-right">Movimiento</th>
+                      <tr class="border-b border-slate-800/60 bg-slate-900/30 text-slate-500 font-bold uppercase tracking-wider">
+                        <th class="px-4 py-3.5">Hora</th>
+                        <th class="px-4 py-3.5">DNI</th>
+                        <th class="px-4 py-3.5">Nombre Completo</th>
+                        <th class="px-4 py-3.5 text-right">Movimiento</th>
                       </tr>
                     </thead>
-                    <tbody id="table-recent-body" class="divide-y divide-slate-900 text-slate-300">
+                    <tbody id="table-recent-body" class="divide-y divide-slate-900/60 text-slate-300">
                       <!-- Dinámico -->
                     </tbody>
                   </table>
@@ -395,19 +396,21 @@
               </div>
             </div>
 
-            <!-- SUBSECCIÓN 2: GRÁFICAS OPERATIVAS (CON RECREACIÓN DE CANVAS DE SEGURIDAD) -->
+            <!-- SUBSECCIÓN 2: GRÁFICAS OPERATIVAS -->
             <div id="sub-admin-graficas" class="hidden space-y-6">
               <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800/80 shadow-md">
-                  <h4 class="text-[11px] font-bold text-slate-400 mb-4 uppercase tracking-wider">Horas Pico de Ingreso</h4>
-                  <!-- Contenedor relativo para el canvas horas -->
+                <div class="bg-slate-950/75 p-5 rounded-2xl border border-slate-800/80 shadow-md">
+                  <h4 class="text-[11px] font-bold text-slate-400 mb-4 uppercase tracking-wider font-display flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-emerald-400"></i>Horas Pico de Ingreso
+                  </h4>
                   <div id="container-canvas-hours" class="relative h-48 w-full">
                     <canvas id="chartHours" class="w-full h-full"></canvas>
                   </div>
                 </div>
-                <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800/80 shadow-md">
-                  <h4 class="text-[11px] font-bold text-slate-400 mb-4 uppercase tracking-wider">Flujo por Día</h4>
-                  <!-- Contenedor relativo para el canvas días -->
+                <div class="bg-slate-950/75 p-5 rounded-2xl border border-slate-800/80 shadow-md">
+                  <h4 class="text-[11px] font-bold text-slate-400 mb-4 uppercase tracking-wider font-display flex items-center gap-2">
+                    <i class="fa-solid fa-chart-bar text-emerald-400"></i>Flujo por Día
+                  </h4>
                   <div id="container-canvas-days" class="relative h-48 w-full">
                     <canvas id="chartDays" class="w-full h-full"></canvas>
                   </div>
@@ -417,30 +420,30 @@
 
             <!-- SUBSECCIÓN 3: MEMBRESÍAS POR VENCER (7 DÍAS) -->
             <div id="sub-admin-alertas" class="hidden space-y-4">
-              <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center">
-                <i class="fa-solid fa-bell text-orange-400 mr-2"></i>Próximos Vencimientos (Siguientes 7 días)
+              <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <i class="fa-solid fa-bell text-orange-400 animate-bounce"></i>Próximos Vencimientos (Siguientes 7 días)
               </h4>
               <div id="list-alerts" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <!-- Dinámico -->
               </div>
             </div>
 
-            <!-- SUBSECCIÓN 4: CLIENTES INACTIVOS (>7 DÍAS CON CELULAR Y ACCION DE WHATSAPP) -->
+            <!-- SUBSECCIÓN 4: CLIENTES INACTIVOS -->
             <div id="sub-admin-inactivos" class="hidden space-y-4">
-              <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center">
-                <i class="fa-solid fa-user-slash text-rose-400 mr-2"></i>Clientes Ausentes (>7 días de inactividad)
+              <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <i class="fa-solid fa-user-slash text-rose-400"></i>Clientes Ausentes (>7 días de inactividad)
               </h4>
-              <div class="overflow-x-auto">
+              <div class="overflow-x-auto rounded-2xl border border-slate-800/40 bg-slate-950/30">
                 <table class="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr class="border-b border-slate-800 text-slate-500 font-bold uppercase tracking-wider">
-                      <th class="pb-2">Ausencia</th>
-                      <th class="pb-2">Miembro</th>
-                      <th class="pb-2">Última Visita</th>
-                      <th class="pb-2 text-right">Contacto WhatsApp</th>
+                    <tr class="border-b border-slate-800/60 bg-slate-900/30 text-slate-500 font-bold uppercase tracking-wider">
+                      <th class="px-4 py-3.5">Ausencia</th>
+                      <th class="px-4 py-3.5">Miembro</th>
+                      <th class="px-4 py-3.5">Última Visita</th>
+                      <th class="px-4 py-3.5 text-right">Contacto WhatsApp</th>
                     </tr>
                   </thead>
-                  <tbody id="table-inactivos-body" class="divide-y divide-slate-900 text-slate-300">
+                  <tbody id="table-inactivos-body" class="divide-y divide-slate-900/60 text-slate-300">
                     <!-- Dinámico -->
                   </tbody>
                 </table>
@@ -456,11 +459,11 @@
   </main>
 
   <!-- ================= VENTANA MODAL FLOTANTE: EDITOR DE MIEMBROS ================= -->
-  <div id="modal-editor" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row">
+  <div id="modal-editor" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row relative animate-scale-up">
       
       <!-- Columna Izquierda: Foto y Cámara -->
-      <div class="w-full md:w-2/5 bg-slate-950 p-6 flex flex-col items-center justify-between border-b md:border-b-0 md:border-r border-slate-800 gap-6">
+      <div class="w-full md:w-2/5 bg-slate-950 p-6 flex flex-col items-center justify-between border-b md:border-b-0 md:border-r border-slate-800/80 gap-6">
         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Fotografía del Miembro</h3>
         
         <div class="w-48 h-48 rounded-2xl overflow-hidden border-4 border-slate-800 bg-slate-900 shadow-inner flex items-center justify-center relative">
@@ -470,13 +473,13 @@
 
         <!-- Botones de Cámara en Editor -->
         <div class="w-full space-y-2">
-          <button type="button" id="btn-editor-cam" onclick="activarCamaraEditor()" class="w-full bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold py-2.5 rounded-xl uppercase transition">
+          <button type="button" id="btn-editor-cam" onclick="activarCamaraEditor()" class="w-full bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold py-3 rounded-xl uppercase transition tracking-wider cursor-pointer">
             <i class="fa-solid fa-camera mr-2"></i>Tomar Nueva Foto
           </button>
-          <button type="button" id="btn-editor-shutter" onclick="capturarFotoEditor()" class="hidden w-full bg-emerald-500 text-slate-950 text-xs font-black py-2.5 rounded-xl uppercase transition shadow-lg">
+          <button type="button" id="btn-editor-shutter" onclick="capturarFotoEditor()" class="hidden w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 text-xs font-black py-3 rounded-xl uppercase transition shadow-lg cursor-pointer">
             <i class="fa-solid fa-shutter-button mr-2"></i>Capturar Cuadro
           </button>
-          <button type="button" id="btn-editor-retry" onclick="cancelarNuevaFotoEditor()" class="hidden w-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold py-2.5 rounded-xl uppercase transition">
+          <button type="button" id="btn-editor-retry" onclick="cancelarNuevaFotoEditor()" class="hidden w-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold py-3 rounded-xl uppercase transition cursor-pointer">
             <i class="fa-solid fa-rotate-left mr-2"></i>Descartar Foto
           </button>
         </div>
@@ -484,58 +487,58 @@
 
       <!-- Columna Derecha: Formulario de Datos -->
       <div class="w-full md:w-3/5 p-8 space-y-6">
-        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-          <h3 class="text-lg font-bold text-white uppercase tracking-wider">Modificar Miembro</h3>
-          <button onclick="cerrarEditorModal()" class="text-slate-500 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex justify-between items-center border-b border-slate-800/80 pb-4">
+          <h3 class="text-lg font-bold text-white uppercase tracking-wider font-display">Modificar Miembro</h3>
+          <button onclick="cerrarEditorModal()" class="text-slate-500 hover:text-white text-lg cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
         <form id="form-editor" onsubmit="guardarCambiosEditor(event)" class="grid grid-cols-2 gap-4">
           <!-- DNI (Solo lectura) -->
           <div class="col-span-2 sm:col-span-1">
-            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">DNI (No editable)</label>
-            <input type="text" id="edit-dni" readonly class="w-full bg-slate-950 text-slate-500 border border-slate-800 rounded-xl p-3 text-sm font-bold outline-none">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 font-display">DNI (No editable)</label>
+            <input type="text" id="edit-dni" readonly class="w-full bg-slate-950 text-slate-500 border border-slate-800/80 rounded-xl p-3 text-sm font-bold outline-none font-mono">
           </div>
           <!-- Nombre -->
           <div class="col-span-2 sm:col-span-1">
-            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nombre Completo</label>
-            <input type="text" id="edit-nombre" required class="w-full bg-slate-950 text-white border border-slate-800 focus:border-emerald-500 rounded-xl p-3 text-sm font-bold outline-none capitalize">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 font-display">Nombre Completo</label>
+            <input type="text" id="edit-nombre" required class="w-full bg-slate-950 text-white border border-slate-800/80 focus:border-emerald-500 rounded-xl p-3 text-sm font-bold outline-none capitalize">
           </div>
           <!-- Nacimiento -->
           <div class="col-span-2 sm:col-span-1">
-            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">F. de Nacimiento</label>
-            <input type="text" id="edit-nacimiento" placeholder="DD/MM/AAAA" required class="w-full bg-slate-950 text-white border border-slate-800 focus:border-emerald-500 rounded-xl p-3 text-sm font-bold outline-none">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 font-display">F. de Nacimiento</label>
+            <input type="text" id="edit-nacimiento" placeholder="DD/MM/AAAA" required class="w-full bg-slate-950 text-white border border-slate-800/80 focus:border-emerald-500 rounded-xl p-3 text-sm font-bold outline-none font-mono">
           </div>
           <!-- Celular -->
           <div class="col-span-2 sm:col-span-1">
-            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Número Celular</label>
-            <input type="text" id="edit-celular" maxlength="9" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required class="w-full bg-slate-950 text-white border border-slate-800 focus:border-emerald-500 rounded-xl p-3 text-sm font-bold outline-none">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 font-display">Número Celular</label>
+            <input type="text" id="edit-celular" maxlength="9" inputmode="numeric" oninput="handleCelularInput(this)" required class="w-full bg-slate-950 text-white border border-slate-800/80 focus:border-emerald-500 rounded-xl p-3 text-sm font-bold outline-none font-mono">
           </div>
           <!-- Plan select -->
           <div class="col-span-2 sm:col-span-1">
-            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Plan contratado</label>
-            <select id="edit-plan" onchange="calcularVencimientoEditor()" class="w-full bg-slate-950 text-white border border-slate-800 rounded-xl p-3 text-sm font-bold outline-none cursor-pointer"></select>
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 font-display">Plan contratado</label>
+            <select id="edit-plan" onchange="calcularVencimientoEditor()" class="w-full bg-slate-950 text-white border border-slate-800/80 rounded-xl p-3 text-sm font-bold outline-none cursor-pointer"></select>
           </div>
           <!-- Estado select -->
           <div class="col-span-2 sm:col-span-1">
-            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Estado de Membresía</label>
-            <select id="edit-estado" class="w-full bg-slate-950 text-white border border-slate-800 rounded-xl p-3 text-sm font-bold outline-none cursor-pointer">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 font-display">Estado de Membresía</label>
+            <select id="edit-estado" class="w-full bg-slate-950 text-white border border-slate-800/80 rounded-xl p-3 text-sm font-bold outline-none cursor-pointer">
               <option value="Activo">ACTIVO</option>
               <option value="Vencido">VENCIDO</option>
             </select>
           </div>
           <!-- Fecha de inicio -->
           <div class="col-span-2 sm:col-span-1">
-            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Fecha de Inicio</label>
-            <input type="text" id="edit-inicio" oninput="calcularVencimientoEditor()" placeholder="DD/MM/AAAA" required class="w-full bg-slate-950 text-white border border-slate-800 focus:border-emerald-500 rounded-xl p-3 text-sm font-bold outline-none">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 font-display">Fecha de Inicio</label>
+            <input type="text" id="edit-inicio" oninput="calcularVencimientoEditor()" placeholder="DD/MM/AAAA" required class="w-full bg-slate-950 text-white border border-slate-800/80 focus:border-emerald-500 rounded-xl p-3 text-sm font-bold outline-none font-mono">
           </div>
           <!-- Vencimiento -->
           <div class="col-span-2 sm:col-span-1">
-            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Vencimiento</label>
-            <input type="text" id="edit-vencimiento" placeholder="AUTOMÁTICO" required class="w-full bg-slate-900 text-emerald-400 border border-slate-800 rounded-xl p-3 text-sm font-black text-center outline-none">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 font-display">Vencimiento</label>
+            <input type="text" id="edit-vencimiento" placeholder="AUTOMÁTICO" required class="w-full bg-slate-900 text-emerald-400 border border-slate-800/80 rounded-xl p-3 text-sm font-black text-center outline-none font-mono">
           </div>
 
           <!-- Botón de guardado -->
-          <button type="submit" class="col-span-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-3.5 rounded-xl text-xs uppercase tracking-wider transition shadow-lg mt-4">
+          <button type="submit" onclick="playSound('click')" class="col-span-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-black py-4 rounded-xl text-xs uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-[0_4px_20px_rgba(16,185,129,0.3)] mt-4 cursor-pointer">
             <i class="fa-solid fa-floppy-disk mr-2"></i>Guardar Cambios de Miembro
           </button>
         </form>
@@ -545,13 +548,13 @@
   </div>
 
   <!-- ================= NUEVO: MODAL LISTADO "DENTRO GYM" ================= -->
-  <div id="modal-dentro-gym" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[80vh]">
-      <div class="flex justify-between items-center border-b border-slate-800 px-6 py-4">
-        <h3 class="text-sm font-bold text-white uppercase tracking-wider">
-          <i class="fa-solid fa-person-running text-amber-400 mr-2"></i>Personas Dentro del Gym
+  <div id="modal-dentro-gym" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[80vh] animate-scale-up">
+      <div class="flex justify-between items-center border-b border-slate-800/80 px-6 py-4">
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider font-display">
+          <i class="fa-solid fa-person-running text-amber-400 mr-2 animate-pulse"></i>Personas Dentro del Gym
         </h3>
-        <button onclick="cerrarModalDentroGym()" class="text-slate-500 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+        <button onclick="cerrarModalDentroGym()" class="text-slate-500 hover:text-white text-lg cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div id="lista-dentro-gym" class="overflow-y-auto px-4 py-3 space-y-2">
         <!-- Dinámico -->
@@ -560,9 +563,9 @@
   </div>
 
   <!-- ================= NUEVO: MODAL FOTO INDIVIDUAL CON MARCO NEÓN VERDE ================= -->
-  <div id="modal-foto-dentro" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur z-[60] flex items-center justify-center p-4">
-    <div class="relative flex flex-col items-center gap-6">
-      <button onclick="cerrarModalFotoDentro()" class="absolute -top-4 -right-4 md:top-0 md:-right-10 text-slate-400 hover:text-white text-2xl bg-slate-900 rounded-full w-10 h-10 flex items-center justify-center border border-slate-800">
+  <div id="modal-foto-dentro" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[60] flex items-center justify-center p-4">
+    <div class="relative flex flex-col items-center gap-6 animate-scale-up">
+      <button onclick="cerrarModalFotoDentro()" class="absolute -top-4 -right-4 md:top-0 md:-right-12 text-slate-400 hover:text-white text-2xl bg-slate-900 rounded-full w-10 h-10 flex items-center justify-center border border-slate-800/80 cursor-pointer">
         <i class="fa-solid fa-xmark"></i>
       </button>
 
@@ -571,8 +574,8 @@
       </div>
 
       <div class="text-center space-y-1">
-        <h4 id="foto-dentro-nombre" class="text-2xl font-black text-white capitalize"></h4>
-        <p id="foto-dentro-tiempo" class="text-sm font-bold text-emerald-400 uppercase tracking-wider"></p>
+        <h4 id="foto-dentro-nombre" class="text-2xl font-black text-white capitalize font-display"></h4>
+        <p id="foto-dentro-tiempo" class="text-sm font-bold text-emerald-400 uppercase tracking-wider font-mono"></p>
       </div>
     </div>
   </div>
@@ -581,23 +584,44 @@
   <canvas id="hidden-editor-canvas" class="hidden" width="600" height="600"></canvas>
 
   <!-- FOOTER -->
-  <footer class="bg-slate-900 border-t border-slate-800/50 px-6 py-4 text-center text-xs text-slate-500">
+  <footer class="bg-slate-900 border-t border-slate-800/40 px-6 py-4 text-center text-xs text-slate-500 z-10">
     &copy; 2026 Fitness Club Control Hub. Todos los derechos reservados.
   </footer>
 
   <script>
-    // Inyectar imágenes del logo
+    // Inicializar logos
     document.getElementById("nav-logo").src = LOGO_URL;
     document.getElementById("form-logo").src = LOGO_URL;
     document.getElementById("loader-logo").src = LOGO_URL;
+
+    // Controladores de fallback para el logotipo
+    function handleLogoError(imgElement) {
+      imgElement.style.display = "none";
+      const id = imgElement.id;
+      const fallback = document.getElementById(id + "-fallback");
+      if (fallback) fallback.classList.remove("hidden");
+    }
+
+    // Filtros de teclas y audios en Inputs
+    function handleDniInput(input) {
+      const val = input.value.replace(/[^0-9]/g, '');
+      input.value = val;
+      if (val.length > 0) playSound('keyboard');
+    }
+
+    function handleCelularInput(input) {
+      const val = input.value.replace(/[^0-9]/g, '');
+      input.value = val;
+      if (val.length > 0) playSound('keyboard');
+    }
 
     // Variables globales de administración
     let listadoCompletoClientes = [];
     let listadoCompletoPlanes = [];
     let streamEditor = null;
     let fotoBase64Editor = "";
-    let cachedChartsData = null; // Guardar datos para renderizado al vuelo
-    let listadoPersonasDentro = []; // NUEVO: personas actualmente dentro del gym (para el popup)
+    let cachedChartsData = null; 
+    let listadoPersonasDentro = []; 
 
     // 1. Navegación entre pestañas principales
     function switchTab(tab) {
@@ -611,21 +635,20 @@
       if (tab === "registro") {
         regSection.classList.remove("hidden");
         adminSection.classList.add("hidden");
-        regBtn.className = "btn-hover-lift px-4 py-2 rounded-lg font-bold text-xs uppercase bg-emerald-500 text-slate-950 transition duration-300";
-        adminBtn.className = "btn-hover-lift px-4 py-2 rounded-lg font-bold text-xs uppercase bg-slate-800 text-slate-300 hover:bg-slate-700 transition duration-300";
-        document.getElementById("input-dni").focus();
+        regBtn.className = "px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 shadow-[0_0_20px_rgba(16,185,129,0.35)] transition duration-300 active:scale-95 cursor-pointer";
+        adminBtn.className = "px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-100 hover:border-slate-700 transition duration-300 active:scale-95 cursor-pointer";
+        setTimeout(() => document.getElementById("input-dni").focus(), 300);
       } else {
         regSection.classList.add("hidden");
         adminSection.classList.remove("hidden");
-        adminBtn.className = "btn-hover-lift px-4 py-2 rounded-lg font-bold text-xs uppercase bg-emerald-500 text-slate-950 transition duration-300";
-        regBtn.className = "btn-hover-lift px-4 py-2 rounded-lg font-bold text-xs uppercase bg-slate-800 text-slate-300 hover:bg-slate-700 transition duration-300";
-        // Resetear a sub-sección buscador por defecto al entrar
+        adminBtn.className = "px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 shadow-[0_0_20px_rgba(16,185,129,0.35)] transition duration-300 active:scale-95 cursor-pointer";
+        regBtn.className = "px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-100 hover:border-slate-700 transition duration-300 active:scale-95 cursor-pointer";
         cambiarSeccionAdmin('buscador');
         consultarDatosAdmin();
       }
     }
 
-    // 2. Navegación entre sub-pestañas del Administrador (Sidebar modular)
+    // 2. Navegación entre sub-pestañas del Administrador
     function cambiarSeccionAdmin(seccion) {
       const secciones = ['buscador', 'graficas', 'alertas', 'inactivos'];
       
@@ -635,69 +658,109 @@
         
         if (sec === seccion) {
           divSeccion.classList.remove("hidden");
-          btnSeccion.className = "admin-nav-item active w-full px-4 py-3 rounded-lg font-bold text-xs uppercase flex items-center";
+          btnSeccion.className = "w-full px-4 py-3 rounded-xl font-extrabold text-xs uppercase tracking-wider flex items-center gap-3 transition-all duration-300 whitespace-nowrap bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 shadow-[0_4px_15px_rgba(16,185,129,0.25)] font-black";
         } else {
           divSeccion.classList.add("hidden");
-          btnSeccion.className = "admin-nav-item w-full px-4 py-3 rounded-lg font-bold text-xs uppercase flex items-center";
+          btnSeccion.className = "w-full px-4 py-3 rounded-xl font-extrabold text-xs uppercase tracking-wider flex items-center gap-3 transition-all duration-300 whitespace-nowrap text-slate-400 hover:text-slate-200 hover:bg-slate-900/50";
         }
       });
 
-      // SOLUCIÓN RENDERIZADO: Crear las gráficas únicamente cuando la sección ya está visible
       if (seccion === 'graficas' && cachedChartsData) {
         setTimeout(() => {
           inicializarGraficos(cachedChartsData);
-        }, 50); // Pequeña pausa para asegurar que el DOM quitó el hidden
+        }, 80); 
       }
     }
 
-    // 3. Sintetizador de Sonidos
+    // 3. Sintetizador de Sonidos Premium (Sin depender de archivos externos)
     function playSound(type) {
       try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        const audioCtx = new AudioContextClass();
 
-        if (type === "success") {
-          // NUEVO: Sonido de ingreso más llamativo — campanilla ascendente de dos notas (estilo "acceso concedido")
-          const notas = [880, 1318.51]; // A5 -> E6 (quinta ascendente, sensación positiva y notoria)
-          notas.forEach((freq, idx) => {
-            const oscillator = audioCtx.createOscillator();
+        if (type === "click") {
+          const osc = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          osc.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
+          gainNode.gain.setValueAtTime(0.04, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.08);
+        } else if (type === "keyboard") {
+          const osc = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          osc.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(500 + Math.random() * 200, audioCtx.currentTime);
+          gainNode.gain.setValueAtTime(0.02, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.05);
+        } else if (type === "success") {
+          const now = audioCtx.currentTime;
+          [880, 1318.51].forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
-            oscillator.connect(gainNode);
+            osc.connect(gainNode);
             gainNode.connect(audioCtx.destination);
-
-            const startTime = audioCtx.currentTime + idx * 0.13;
-            oscillator.type = "sine";
-            oscillator.frequency.setValueAtTime(freq, startTime);
-            gainNode.gain.setValueAtTime(0.32, startTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.32);
-            oscillator.start(startTime);
-            oscillator.stop(startTime + 0.32);
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+            gainNode.gain.setValueAtTime(0.12, now + idx * 0.08);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.35);
+            osc.start(now + idx * 0.08);
+            osc.stop(now + idx * 0.08 + 0.35);
           });
-        } else {
-          // NUEVO: Sonido de alerta más urgente — doble bocinazo grave para que la asistente lo note sin mirar la pantalla
-          const inicios = [0, 0.24];
-          inicios.forEach((delay) => {
-            const oscillator = audioCtx.createOscillator();
+        } else if (type === "error") {
+          const now = audioCtx.currentTime;
+          const osc = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          osc.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(240, now);
+          osc.frequency.exponentialRampToValueAtTime(120, now + 0.4);
+          gainNode.gain.setValueAtTime(0.18, now);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+          osc.start();
+          osc.stop(now + 0.4);
+        } else if (type === "birthday") {
+          const notes = [
+            {f: 261.63, d: 0.25}, 
+            {f: 261.63, d: 0.25}, 
+            {f: 293.66, d: 0.50}, 
+            {f: 261.63, d: 0.50}, 
+            {f: 349.23, d: 0.50}, 
+            {f: 329.63, d: 1.00}  
+          ];
+          let tempo = audioCtx.currentTime;
+          notes.forEach(nota => {
+            const osc = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
-            oscillator.connect(gainNode);
+            osc.connect(gainNode);
             gainNode.connect(audioCtx.destination);
-
-            const startTime = audioCtx.currentTime + delay;
-            oscillator.type = "square";
-            oscillator.frequency.setValueAtTime(190, startTime);
-            gainNode.gain.setValueAtTime(0.38, startTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.2);
-            oscillator.start(startTime);
-            oscillator.stop(startTime + 0.2);
+            osc.type = "triangle";
+            osc.frequency.setValueAtTime(nota.f, tempo);
+            gainNode.gain.setValueAtTime(0, tempo);
+            gainNode.gain.linearRampToValueAtTime(0.1, tempo + 0.02);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, tempo + nota.d - 0.02);
+            osc.start(tempo);
+            osc.stop(tempo + nota.d);
+            tempo += nota.d + 0.05; 
           });
         }
       } catch (e) {
-        console.warn("Audio silenciado por políticas del navegador.", e);
+        console.warn("Fallo en sintetizador de sonidos", e);
       }
     }
 
     let hideScreenTimer;
 
-    // 4. Petición y Registro de Asistencias
+    // 4. Registro de Asistencias
     function registrarAsistencia(event) {
       event.preventDefault();
       
@@ -743,7 +806,7 @@
       const bg = document.getElementById("glow-bg");
       const border = document.getElementById("neon-photo-border");
       const badge = document.getElementById("giant-status-badge");
-      const motivationalBox = document.getElementById("giant-message").parentNode;
+      const motivationalWrapper = document.getElementById("motivational-wrapper");
 
       const imgElem = document.getElementById("giant-photo");
       imgElem.src = usuario.foto || "";
@@ -757,50 +820,38 @@
         
         // EVALUAR SI ES SU CUMPLEAÑOS
         if (usuario.esCumpleanos) {
-          bg.style.background = "radial-gradient(circle, rgba(245,158,11,0.3) 0%, rgba(2,6,23,1) 80%)";
-          border.className = "w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-amber-500 shadow-[0_0_60px_rgba(245,158,11,0.5)] flex items-center justify-center transition-all";
-          badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-amber-500/20 text-amber-400 border border-amber-500/40 shadow-md animate-bounce";
-          badge.textContent = "🎂 ¡FELIZ CUMPLEAÑOS! 🎂";
-          motivationalBox.className = "bg-slate-900/70 p-6 rounded-2xl border-l-8 border-amber-500 italic text-slate-200 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4";
+          bg.style.background = "radial-gradient(circle, rgba(245,158,11,0.18) 0%, rgba(2,6,23,1) 80%)";
+          border.className = "w-64 h-64 md:w-80 md:h-80 lg:w-[380px] lg:h-[380px] rounded-[38px] overflow-hidden border-[6px] bg-slate-900 border-amber-500 shadow-[0_0_50px_rgba(245,158,11,0.45)] flex items-center justify-center transition-all duration-700 shadow-2xl relative scale-up";
+          badge.className = "inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-[0.2em] bg-amber-500/20 text-amber-400 border border-amber-500/40 shadow-lg animate-bounce";
+          badge.innerHTML = '<i class="fa-solid fa-cake-candles animate-spin"></i> 🎂 ¡FELIZ CUMPLEAÑOS! 🎂';
+          motivationalWrapper.className = "bg-amber-950/20 border-l-[6px] border-amber-500 p-5 rounded-2xl italic text-slate-200 text-base md:text-lg backdrop-blur-md shadow-md mt-4";
           
           lanzarExplosionConfeti();
           crearGlobosFlotantes();
-          playBirthdayMelody();
+          playSound("birthday");
         } else {
-          bg.style.background = "radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(2,6,23,1) 80%)";
-          border.className = "w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-emerald-500 shadow-[0_0_60px_rgba(16,185,129,0.35)] flex items-center justify-center transition-all";
-          badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-md";
+          bg.style.background = "radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(2,6,23,1) 80%)";
+          border.className = "w-64 h-64 md:w-80 md:h-80 lg:w-[380px] lg:h-[380px] rounded-[38px] overflow-hidden border-[6px] bg-slate-900 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.35)] flex items-center justify-center transition-all duration-700 shadow-2xl relative scale-up";
           
           if (usuario.movimiento === "IN") {
+            badge.className = "px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-md";
             badge.textContent = "ACCESO AUTORIZADO • INGRESO (IN)";
-          } else if (usuario.movimiento === "OUT") {
-            badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-orange-500/15 text-orange-400 border border-orange-500/30 shadow-md";
-            badge.textContent = "ACCESO AUTORIZADO • SALIDA (OUT)";
           } else {
-            badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-red-600/20 text-red-400 border border-red-500/40 shadow-md badge-urgente";
-            badge.textContent = "MEMBRESÍA VENCIDA";
+            badge.className = "px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-orange-500/15 text-orange-400 border border-orange-500/30 shadow-md";
+            badge.textContent = "ACCESO AUTORIZADO • SALIDA (OUT)";
           }
-          motivationalBox.className = "bg-slate-900/70 p-6 rounded-2xl border-l-8 border-emerald-500 italic text-slate-200 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4";
+          motivationalWrapper.className = "bg-emerald-950/20 border-l-[6px] border-emerald-500 p-5 rounded-2xl italic text-slate-200 text-base md:text-lg backdrop-blur-md shadow-md mt-4";
           playSound("success");
         }
 
       } else {
-        // Estilos para acceso Denegado/Vencido (Rojo Radial) — MÁS LLAMATIVO para que la recepcionista lo note de inmediato
-        bg.style.background = "radial-gradient(circle, rgba(220,38,38,0.4) 0%, rgba(2,6,23,1) 75%)";
-        border.className = "w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-red-600 shadow-[0_0_80px_rgba(220,38,38,0.55)] flex items-center justify-center transition-all badge-urgente";
-        badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-red-600/25 text-red-400 border border-red-500/50 shadow-md badge-urgente";
-        badge.textContent = "⚠ MEMBRESÍA VENCIDA";
-        motivationalBox.className = "bg-slate-900/70 p-6 rounded-2xl border-l-8 border-red-600 italic text-slate-200 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4";
+        // Estilos para acceso Denegado/Vencido (Rojo Radial)
+        bg.style.background = "radial-gradient(circle, rgba(244,63,94,0.15) 0%, rgba(2,6,23,1) 80%)";
+        border.className = "w-64 h-64 md:w-80 md:h-80 lg:w-[380px] lg:h-[380px] rounded-[38px] overflow-hidden border-[6px] bg-slate-900 border-rose-500 shadow-[0_0_50px_rgba(244,63,94,0.35)] flex items-center justify-center transition-all duration-700 shadow-2xl relative scale-up";
+        badge.className = "px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-md animate-pulse";
+        badge.textContent = "ALERTA • ACCESO RECHAZADO";
+        motivationalWrapper.className = "bg-rose-950/20 border-l-[6px] border-rose-500 p-5 rounded-2xl italic text-slate-200 text-base md:text-lg backdrop-blur-md shadow-md mt-4";
         playSound("error");
-
-        // NUEVO: destello rojo de pantalla completa, exclusivo de este caso, para máxima visibilidad
-        const strobeOverlay = document.getElementById("alerta-strobe-overlay");
-        strobeOverlay.classList.remove("hidden");
-        strobeOverlay.classList.add("strobe-alerta-vencido");
-        setTimeout(() => {
-          strobeOverlay.classList.add("hidden");
-          strobeOverlay.classList.remove("strobe-alerta-vencido");
-        }, 1200);
       }
 
       modal.classList.remove("hidden");
@@ -818,19 +869,19 @@
       const bg = document.getElementById("glow-bg");
       const border = document.getElementById("neon-photo-border");
       const badge = document.getElementById("giant-status-badge");
-      const motivationalBox = document.getElementById("giant-message").parentNode;
+      const motivationalWrapper = document.getElementById("motivational-wrapper");
 
       document.getElementById("giant-photo").src = DEFAULT_AVATAR;
-      document.getElementById("giant-name").textContent = "ACCESO RECHAZADO";
-      document.getElementById("giant-plan").textContent = "REGISTRO INVÁLIDO";
+      document.getElementById("giant-name").textContent = "ERROR DE REGISTRO";
+      document.getElementById("giant-plan").textContent = "---";
       document.getElementById("giant-expiry").textContent = "---";
       document.getElementById("giant-message").textContent = mensaje;
 
-      bg.style.background = "radial-gradient(circle, rgba(239,68,68,0.2) 0%, rgba(2,6,23,1) 80%)";
-      border.className = "w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-rose-500 shadow-[0_0_60px_rgba(239,68,68,0.35)] flex items-center justify-center transition-all";
-      badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-md";
-      badge.textContent = "ALERTA EN ACCESO";
-      motivationalBox.className = "bg-slate-900/70 p-6 rounded-2xl border-l-8 border-rose-500 italic text-slate-200 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4";
+      bg.style.background = "radial-gradient(circle, rgba(244,63,94,0.15) 0%, rgba(2,6,23,1) 80%)";
+      border.className = "w-64 h-64 md:w-80 md:h-80 lg:w-[380px] lg:h-[380px] rounded-[38px] overflow-hidden border-[6px] bg-slate-900 border-rose-500 shadow-[0_0_50px_rgba(244,63,94,0.35)] flex items-center justify-center transition-all duration-700 shadow-2xl relative scale-up";
+      badge.className = "px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-md animate-pulse";
+      badge.textContent = "ALERTA • ACCESO RECHAZADO";
+      motivationalWrapper.className = "bg-rose-950/20 border-l-[6px] border-rose-500 p-5 rounded-2xl italic text-slate-200 text-base md:text-lg backdrop-blur-md shadow-md mt-4";
 
       playSound("error");
       modal.classList.remove("hidden");
@@ -842,19 +893,13 @@
       }, 5000);
     }
 
-    // 6. Configuración de Gráficos del Administrador (RECREACIÓN DE CANVAS PARA FIJAR RENDERING)
+    // 6. Configuración de Gráficos del Administrador
     let myChartHours, myChartDays;
     function inicializarGraficos(chartsData) {
-      if (myChartHours) {
-        myChartHours.destroy();
-        myChartHours = null;
-      }
-      if (myChartDays) {
-        myChartDays.destroy();
-        myChartDays = null;
-      }
+      if (myChartHours) myChartHours.destroy();
+      if (myChartDays) myChartDays.destroy();
 
-      // Recreación limpia de los elementos canvas en el DOM para borrar memorias de gráficos ocultos
+      // Recreación limpia de los elementos canvas en el DOM
       const containerHours = document.getElementById('container-canvas-hours');
       const containerDays = document.getElementById('container-canvas-days');
       
@@ -872,18 +917,22 @@
             label: 'Asistencias',
             data: chartsData ? chartsData.horasValores : [0, 0, 0, 0, 0, 0, 0, 0, 0],
             borderColor: '#10b981',
-            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            backgroundColor: 'rgba(16, 185, 129, 0.08)',
             borderWidth: 3,
             fill: true,
-            tension: 0.3
+            tension: 0.35,
+            pointBackgroundColor: "#10b981",
+            pointBorderColor: "#ffffff",
+            pointHoverRadius: 6,
+            pointRadius: 4
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           scales: {
-            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
-            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+            y: { grid: { color: 'rgba(30, 41, 59, 0.5)' }, ticks: { color: '#94a3b8', font: { family: 'Montserrat', size: 10 } } },
+            x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { family: 'Montserrat', size: 10 } } }
           },
           plugins: { legend: { display: false } }
         }
@@ -898,55 +947,20 @@
             label: 'Usuarios',
             data: chartsData ? chartsData.diasValores : [0, 0, 0, 0, 0, 0, 0],
             backgroundColor: '#10b981',
-            borderRadius: 6
+            borderRadius: 6,
+            hoverBackgroundColor: "#34d399"
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           scales: {
-            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
-            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+            y: { grid: { color: 'rgba(30, 41, 59, 0.5)' }, ticks: { color: '#94a3b8', font: { family: 'Montserrat', size: 10 } } },
+            x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { family: 'Montserrat', size: 10 } } }
           },
           plugins: { legend: { display: false } }
         }
       });
-    }
-
-    // Sintetizador de la melodía de Feliz Cumpleaños
-    function playBirthdayMelody() {
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const notas = [
-          {f: 261.63, d: 0.25}, 
-          {f: 261.63, d: 0.25}, 
-          {f: 293.66, d: 0.50}, 
-          {f: 261.63, d: 0.50}, 
-          {f: 349.23, d: 0.50}, 
-          {f: 329.63, d: 1.00}  
-        ];
-        let tiempo = audioCtx.currentTime;
-        notas.forEach(nota => {
-          const osc = audioCtx.createOscillator();
-          const gainNode = audioCtx.createGain();
-          
-          osc.connect(gainNode);
-          gainNode.connect(audioCtx.destination);
-          
-          osc.type = "triangle";
-          osc.frequency.setValueAtTime(nota.f, tiempo);
-          
-          gainNode.gain.setValueAtTime(0, tiempo);
-          gainNode.gain.linearRampToValueAtTime(0.15, tiempo + 0.02);
-          gainNode.gain.exponentialRampToValueAtTime(0.01, tiempo + nota.d - 0.02);
-          
-          osc.start(tiempo);
-          osc.stop(tiempo + nota.d);
-          tiempo += nota.d + 0.05; 
-        });
-      } catch (e) {
-        console.warn("Fallo de melodía: ", e);
-      }
     }
 
     // Explosión de Confeti continua en ráfagas
@@ -969,7 +983,7 @@
       }, 250);
     }
 
-    // Creación y elevación de Globos animada en 3D
+    // Creación y elevación de Globos animada
     function crearGlobosFlotantes() {
       const container = document.createElement("div");
       container.id = "birthday-balloons";
@@ -982,7 +996,7 @@
         const globo = document.createElement("div");
         const colorRandom = colores[Math.floor(Math.random() * colores.length)];
         
-        globo.className = "absolute bottom-0 w-12 h-16 rounded-full opacity-85 shadow-[inset_-5px_-5px_0_rgba(0,0,0,0.15)] flex flex-col items-center justify-end";
+        globo.className = "absolute bottom-0 w-12 h-16 rounded-full opacity-80 shadow-[inset_-5px_-5px_0_rgba(0,0,0,0.15)] flex flex-col items-center justify-end";
         globo.style.backgroundColor = colorRandom;
         globo.style.left = Math.random() * 90 + "vw";
         
@@ -1034,7 +1048,7 @@
           // Guardar listado de clientes y gráficos en memoria
           listadoCompletoClientes = res.clientesList || [];
           cachedChartsData = res.charts; 
-          listadoPersonasDentro = res.personasDentroList || []; // NUEVO: guardar detalle de quiénes están dentro del gym
+          listadoPersonasDentro = res.personasDentroList || []; 
 
           // Cargar Tabla de últimos ingresos
           const recentBody = document.getElementById("table-recent-body");
@@ -1049,15 +1063,15 @@
               } else if (ingreso.movimiento === "OUT") {
                 badgeColor = "bg-orange-500/10 text-orange-400 border border-orange-500/20";
               } else {
-                badgeColor = "bg-red-600/15 text-red-400 border border-red-500/30 font-black";
+                badgeColor = "bg-rose-500/10 text-rose-400 border border-rose-500/20";
               }
 
               recentBody.innerHTML += `
                 <tr class="hover:bg-slate-900/40 transition duration-150">
-                  <td class="py-3 font-data font-semibold text-slate-400">${ingreso.hora}</td>
-                  <td class="py-3 font-data font-semibold text-slate-400">${ingreso.dni}</td>
-                  <td class="py-3 font-extrabold capitalize text-white">${ingreso.nombre}</td>
-                  <td class="py-3 text-right">
+                  <td class="px-4 py-3 font-semibold text-slate-400">${ingreso.hora}</td>
+                  <td class="px-4 py-3 font-semibold text-slate-400 font-mono">${ingreso.dni}</td>
+                  <td class="px-4 py-3 font-extrabold capitalize text-white">${ingreso.nombre}</td>
+                  <td class="px-4 py-3 text-right">
                     <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest ${badgeColor}">
                       ${ingreso.movimiento}
                     </span>
@@ -1071,16 +1085,16 @@
           const alertsContainer = document.getElementById("list-alerts");
           alertsContainer.innerHTML = "";
           if (res.proximosVencer.length === 0) {
-            alertsContainer.innerHTML = `<p class="text-xs text-center text-slate-600 py-4 uppercase tracking-wider">No hay avisos urgentes</p>`;
+            alertsContainer.innerHTML = `<div class="col-span-2 text-xs text-center text-slate-600 py-4 uppercase tracking-wider">No hay avisos urgentes</div>`;
           } else {
             res.proximosVencer.forEach(alert => {
               alertsContainer.innerHTML += `
-                <div class="bg-slate-900/80 border-l-4 border-orange-500 p-3 rounded-r-xl flex justify-between items-center transition">
+                <div class="bg-slate-900/80 border-l-4 border-orange-500 p-4 rounded-r-2xl flex justify-between items-center transition shadow-lg">
                   <div class="space-y-1">
                     <h5 class="text-xs font-black text-white capitalize truncate max-w-[150px]">${alert.nombre}</h5>
                     <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">${alert.plan} • Vence: ${alert.vencimiento}</p>
                   </div>
-                  <span class="text-xs text-orange-400 font-black uppercase tracking-wider"><i class="fa-solid fa-bell animate-swing"></i></span>
+                  <span class="text-xs text-orange-400 font-black uppercase tracking-wider"><i class="fa-solid fa-bell animate-bounce"></i></span>
                 </div>
               `;
             });
@@ -1097,11 +1111,11 @@
               
               inactivosBody.innerHTML += `
                 <tr class="hover:bg-slate-900/40 transition duration-150">
-                  <td class="py-3 font-extrabold text-rose-400 text-xs uppercase tracking-widest">${c.diasInactivo} días</td>
-                  <td class="py-3 font-extrabold text-white capitalize">${c.nombre}</td>
-                  <td class="py-3 font-semibold text-slate-500">${c.ultimoRegistro}</td>
-                  <td class="py-3 text-right">
-                    <a href="${waLink}" target="_blank" class="inline-flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-[10px] uppercase tracking-wider transition gap-1">
+                  <td class="px-4 py-3 font-extrabold text-rose-400 text-xs uppercase tracking-widest">${c.diasInactivo} días</td>
+                  <td class="px-4 py-3 font-extrabold text-white capitalize">${c.nombre}</td>
+                  <td class="px-4 py-3 font-semibold text-slate-500 font-mono">${c.ultimoRegistro}</td>
+                  <td class="px-4 py-3 text-right">
+                    <a href="${waLink}" target="_blank" onclick="playSound('click')" class="inline-flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-[10px] uppercase tracking-wider transition gap-1.5 cursor-pointer">
                       <i class="fa-brands fa-whatsapp text-xs"></i> Contactar
                     </a>
                   </td>
@@ -1139,8 +1153,8 @@
     }
 
     // 8. BUSCADOR EN TIEMPO REAL
-    function filtrarMiembrosBuscador() {
-      const input = document.getElementById("admin-search-input").value.trim().toUpperCase();
+    function filtrarMiembrosBuscador(query) {
+      const input = query.trim().toUpperCase();
       const resultsContainer = document.getElementById("search-results-container");
       
       if (!input) {
@@ -1155,24 +1169,36 @@
 
       resultsContainer.innerHTML = "";
       if (filtrados.length === 0) {
-        resultsContainer.innerHTML = `<p class="text-xs text-slate-600 text-center py-3">No se encontraron miembros con ese término de búsqueda.</p>`;
+        resultsContainer.innerHTML = `<p class="text-xs text-slate-600 text-center py-4 font-semibold uppercase tracking-wider">No se encontraron miembros</p>`;
       } else {
         filtrados.forEach(c => {
-          const badgeColor = c.estado === "Activo" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-red-600/15 text-red-400 border border-red-500/30";
-          resultsContainer.innerHTML += `
-            <div onclick="abrirEditorModal(${JSON.stringify(c).replace(/"/g, '&quot;')})" class="flex justify-between items-center p-3 hover:bg-slate-900 rounded-xl cursor-pointer transition text-left">
-              <div>
-                <p class="text-sm font-extrabold text-white capitalize">${c.nombre}</p>
-                <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">DNI: ${c.dni} • Plan: ${c.plan} • Vence: ${c.fechaVencimiento}</p>
-              </div>
-              <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest ${badgeColor}">
-                ${c.estado.toUpperCase()}
-              </span>
+          const badgeColor = c.estado === "Activo" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border border-rose-500/20";
+          
+          // Crear div contenedor sanitizado para evitar problemas de comillas en JSON stringify
+          const itemDiv = document.createElement("div");
+          itemDiv.className = "flex justify-between items-center p-3.5 hover:bg-slate-900 rounded-xl cursor-pointer transition text-left";
+          itemDiv.onclick = () => abrirEditorModal(c);
+          itemDiv.innerHTML = `
+            <div>
+              <p class="text-sm font-extrabold text-white capitalize">${c.nombre}</p>
+              <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider font-mono">DNI: ${c.dni} • Plan: ${c.plan} • Vence: ${c.fechaVencimiento}</p>
             </div>
+            <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest ${badgeColor}">
+              ${c.estado.toUpperCase()}
+            </span>
           `;
+          resultsContainer.appendChild(itemDiv);
         });
       }
       resultsContainer.classList.remove("hidden");
+    }
+
+    // Helper de formateo de fechas
+    function utilFormatearFecha(date) {
+      const diaStr = String(date.getDate()).padStart(2, '0');
+      const mesStr = String(date.getMonth() + 1).padStart(2, '0');
+      const anioStr = date.getFullYear();
+      return `${diaStr}/${mesStr}/${anioStr}`;
     }
 
     // 9. MODAL EDITOR: CONTROL Y ASIGNACIÓN DE VALORES
@@ -1181,11 +1207,11 @@
       
       document.getElementById("edit-dni").value = cliente.dni;
       document.getElementById("edit-nombre").value = cliente.nombre;
-      document.getElementById("edit-nacimiento").value = cliente.fechaNacimiento;
-      document.getElementById("edit-celular").value = cliente.celular;
-      document.getElementById("edit-estado").value = cliente.estado;
-      document.getElementById("edit-inicio").value = cliente.fechaInicio;
-      document.getElementById("edit-vencimiento").value = cliente.fechaVencimiento;
+      document.getElementById("edit-nacimiento").value = cliente.fechaNacimiento || "";
+      document.getElementById("edit-celular").value = cliente.celular || "";
+      document.getElementById("edit-estado").value = cliente.estado || "Activo";
+      document.getElementById("edit-inicio").value = cliente.fechaInicio || "";
+      document.getElementById("edit-vencimiento").value = cliente.fechaVencimiento || "";
       
       document.getElementById("editor-photo-preview").src = cliente.foto || DEFAULT_AVATAR;
       fotoBase64Editor = ""; 
@@ -1346,9 +1372,7 @@
       });
     }
 
-    // ================= NUEVO: MODAL "DENTRO GYM" (LISTADO + FOTO CON MARCO NEÓN) =================
-
-    // Formatea minutos totales en un texto legible "Xh Ymin" o "Ymin"
+    // Formatear minutos totales en un texto legible
     function formatearTiempoDentro(minutosTotales) {
       minutosTotales = minutosTotales || 0;
       const horas = Math.floor(minutosTotales / 60);
@@ -1359,32 +1383,35 @@
       return `${minutos} min`;
     }
 
-    // Abre el popup con la relación de personal dentro del gym y su tiempo dentro
+    // Abre el popup con la relación de personal dentro del gym
     function abrirModalDentroGym() {
       const contenedor = document.getElementById("lista-dentro-gym");
       contenedor.innerHTML = "";
 
       if (!listadoPersonasDentro || listadoPersonasDentro.length === 0) {
-        contenedor.innerHTML = `<p class="text-xs text-center text-slate-600 py-6 uppercase tracking-wider">No hay nadie dentro del gym en este momento.</p>`;
+        contenedor.innerHTML = `<p class="text-xs text-center text-slate-600 py-6 uppercase tracking-wider font-semibold">No hay nadie en el gym en este momento.</p>`;
       } else {
         listadoPersonasDentro.forEach((persona, index) => {
           const tiempoTexto = formatearTiempoDentro(persona.minutosDentro);
-          contenedor.innerHTML += `
-            <div onclick="mostrarFotoPersonaDentro(${index})" class="fila-persona-dentro flex justify-between items-center p-3 rounded-xl cursor-pointer transition border border-slate-800/60 bg-slate-950/60">
-              <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                  <i class="fa-solid fa-person"></i>
-                </div>
-                <div>
-                  <p class="text-sm font-extrabold text-white capitalize">${persona.nombre}</p>
-                  <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Ingresó: ${persona.horaIngreso || "--:--"}</p>
-                </div>
+          
+          const pDiv = document.createElement("div");
+          pDiv.className = "fila-persona-dentro flex justify-between items-center p-3 rounded-2xl cursor-pointer transition border border-slate-800/60 bg-slate-950/60 shadow-md";
+          pDiv.onclick = () => { playSound('click'); mostrarFotoPersonaDentro(index); };
+          pDiv.innerHTML = `
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                <i class="fa-solid fa-person"></i>
               </div>
-              <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                ${tiempoTexto}
-              </span>
+              <div>
+                <p class="text-sm font-extrabold text-white capitalize">${persona.nombre}</p>
+                <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider font-mono">Ingresó: ${persona.horaIngreso || "--:--"}</p>
+              </div>
             </div>
+            <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest bg-amber-500/10 text-amber-400 border border-amber-500/20">
+              ${tiempoTexto}
+            </span>
           `;
+          contenedor.appendChild(pDiv);
         });
       }
 
@@ -1410,15 +1437,6 @@
     function cerrarModalFotoDentro() {
       document.getElementById("modal-foto-dentro").classList.add("hidden");
     }
-
-    // Reescritura limpia del switchTab para jalar datos reales al abrir admin
-    const switchTabOriginal = switchTab;
-    switchTab = function(tab) {
-      switchTabOriginal(tab);
-      if (tab === 'admin') {
-        consultarDatosAdmin();
-      }
-    };
   </script>
 </body>
 </html>
