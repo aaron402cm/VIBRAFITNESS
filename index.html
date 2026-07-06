@@ -167,6 +167,10 @@
     <div class="flex items-center space-x-3">
       <img id="nav-logo" src="" alt="Logo" class="h-8 w-auto object-contain">
       <span class="text-sm font-extrabold uppercase tracking-widest text-slate-400">FITNESS CLUB</span>
+      <!-- INDICADOR DE PANTALLA SIEMPRE ENCENDIDA (WAKE LOCK INDICATOR) -->
+      <span id="wake-lock-indicator" class="hidden sm:inline-flex items-center px-3 py-1.5 rounded-full text-[9px] font-black tracking-widest bg-slate-850 text-slate-500 border border-slate-800/50 transition-all duration-300">
+        <i class="fa-solid fa-moon mr-2 text-slate-600"></i>Pantalla Normal
+      </span>
     </div>
     <nav class="flex space-x-2">
       <button onclick="switchTab('registro')" id="tab-registro-btn" class="px-5 py-2.5 rounded-xl font-bold text-xs uppercase bg-emerald-500 text-slate-950 hover:bg-emerald-400 hover:shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-all duration-300 ease-out active:scale-95">
@@ -556,6 +560,35 @@
     </div>
   </div>
 
+  <!-- ================= NUEVO: MODAL DE CONFIGURACIÓN DE PANTALLA (SIEMPRE ENCENDIDA) ================= -->
+  <div id="modal-wake-lock" class="fixed inset-0 bg-slate-950/90 backdrop-blur-lg z-[100] flex items-center justify-center p-4 transition-all duration-500">
+    <div class="bg-slate-900/90 border border-slate-800 w-full max-w-md rounded-3xl p-8 text-center space-y-6 relative overflow-hidden shadow-[0_0_50px_rgba(16,185,129,0.15)]">
+      
+      <!-- Efecto luz de fondo interna del modal -->
+      <div class="absolute -top-12 -left-12 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <div class="w-20 h-20 mx-auto rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-emerald-400 text-3xl animate-pulse">
+        <i class="fa-solid fa-desktop"></i>
+      </div>
+
+      <div class="space-y-2">
+        <h3 class="text-lg font-black text-white uppercase tracking-wider">Modo Kiosco Activo</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Para evitar que el monitor de recepción se apague, se suspenda o active el protector de pantalla, habilite el bloqueo de reposo automático del navegador.
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-2 pt-2">
+        <button onclick="permitirWakeLock()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-3.5 rounded-xl text-xs uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-95">
+          <i class="fa-solid fa-sun mr-2"></i>Mantener Pantalla Encendida
+        </button>
+        <button onclick="denegarWakeLock()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition active:scale-95">
+          Usar Configuración de PC
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- CANVAS OCULTO PARA FOTOS DEL EDITOR -->
   <canvas id="hidden-editor-canvas" class="hidden" width="600" height="600"></canvas>
 
@@ -577,6 +610,55 @@
     let fotoBase64Editor = "";
     let cachedChartsData = null; // Guardar datos para renderizado al vuelo
     let listadoPersonasDentro = []; // NUEVO: personas actualmente dentro del gym (para el popup)
+    let wakeLock = null; // Guardará el centinela del bloqueo de pantalla
+
+    // CONTROL DE MANTENER PANTALLA ACTIVA (WAKE LOCK)
+    function permitirWakeLock() {
+      document.getElementById("modal-wake-lock").classList.add("hidden");
+      document.getElementById("wake-lock-indicator").classList.remove("hidden");
+      activarWakeLock();
+    }
+
+    function denegarWakeLock() {
+      document.getElementById("modal-wake-lock").classList.add("hidden");
+      document.getElementById("wake-lock-indicator").classList.remove("hidden");
+    }
+
+    async function activarWakeLock() {
+      if ('wakeLock' in navigator) {
+        try {
+          wakeLock = await navigator.wakeLock.request('screen');
+          
+          const wakeLockIndicator = document.getElementById("wake-lock-indicator");
+          if (wakeLockIndicator) {
+            wakeLockIndicator.innerHTML = `<i class="fa-solid fa-sun text-amber-400 animate-spin mr-2"></i>Pantalla Siempre Activa`;
+            wakeLockIndicator.className = "hidden sm:inline-flex items-center px-3 py-1.5 rounded-full text-[9px] font-black tracking-widest bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.2)]";
+          }
+          
+          wakeLock.addEventListener('release', () => {
+            restaurarUIWakeLock();
+          });
+
+        } catch (err) {
+          console.warn("Fallo de Wake Lock o contexto inseguro (Requiere HTTPS):", err);
+        }
+      }
+    }
+
+    function restaurarUIWakeLock() {
+      const wakeLockIndicator = document.getElementById("wake-lock-indicator");
+      if (wakeLockIndicator) {
+        wakeLockIndicator.innerHTML = `<i class="fa-solid fa-moon text-slate-500 mr-2"></i>Pantalla Normal`;
+        wakeLockIndicator.className = "hidden sm:inline-flex items-center px-3 py-1.5 rounded-full text-[9px] font-black tracking-widest bg-slate-850 text-slate-500 border border-slate-800/50";
+      }
+    }
+
+    // Escuchar si la aplicación vuelve a estar en primer plano para re-bloquear la suspensión
+    document.addEventListener('visibilitychange', async () => {
+      if (wakeLock !== null && document.visibilityState === 'visible') {
+        await activarWakeLock();
+      }
+    });
 
     // 1. Navegación entre pestañas principales
     function switchTab(tab) {
@@ -1305,7 +1387,7 @@
 
     // Formatea minutos totales en un texto legible "Xh Ymin" o "Ymin"
     function formatearTiempoDentro(minutosTotales) {
-      minutosTotales = minutosTotales || 0;
+      minutosTotales = minutesTotales || 0;
       const horas = Math.floor(minutosTotales / 60);
       const minutos = minutosTotales % 60;
       if (horas > 0) {
@@ -1374,6 +1456,17 @@
         consultarDatosAdmin();
       }
     };
+
+    // Helpers de formateo
+    function utilFormatearFecha(date) {
+      var d = new Date(date),
+          month = '' + (d.getMonth() + 1),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+      return [day, month, year].join('/');
+    }
   </script>
 </body>
 </html>
