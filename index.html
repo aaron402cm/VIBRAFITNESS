@@ -114,10 +114,19 @@
     
     /* Efecto Glassmorphism Premium */
     .glass-panel {
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Resplandor y elevación de la tarjeta en Hover */
+    .glass-panel-glow:hover {
+      border-color: rgba(16, 185, 129, 0.3);
+      box-shadow: 0 0 50px rgba(16, 185, 129, 0.15), 
+                  0 25px 60px -15px rgba(0, 0, 0, 0.9);
+      transform: translateY(-4px);
     }
     
     .animate-pulse-slow {
@@ -126,6 +135,50 @@
     @keyframes pulse-slow {
       0%, 100% { opacity: 1; filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.2)); }
       50% { opacity: 0.8; filter: drop-shadow(0 0 25px rgba(16, 185, 129, 0.5)); }
+    }
+
+    /* Glows ambientales y orgánicos traseros */
+    .glow-sphere {
+      position: absolute;
+      border-radius: 9999px;
+      pointer-events: none;
+      z-index: -1;
+      filter: blur(110px);
+      opacity: 0.6;
+      animation: pulseGlow 12s ease-in-out infinite alternate;
+    }
+    
+    .glow-sphere-1 {
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, rgba(20, 184, 166, 0.03) 70%, transparent 100%);
+      width: 450px;
+      height: 450px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .glow-sphere-2 {
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.14) 0%, rgba(59, 130, 246, 0.02) 70%, transparent 100%);
+      width: 380px;
+      height: 380px;
+      top: 40%;
+      left: 30%;
+      animation-delay: -6s;
+    }
+
+    @keyframes pulseGlow {
+      0% {
+        transform: translate(-50%, -50%) scale(0.9) rotate(0deg);
+        opacity: 0.45;
+      }
+      50% {
+        transform: translate(-47%, -53%) scale(1.1) rotate(60deg);
+        opacity: 0.75;
+      }
+      100% {
+        transform: translate(-53%, -47%) scale(0.95) rotate(120deg);
+        opacity: 0.55;
+      }
     }
   </style>
 </head>
@@ -169,11 +222,18 @@
   <main class="flex-grow flex items-center justify-center p-4 lg:p-6 relative z-10">
     
     <!-- ================= VISTA DE REGISTRO (PANTALLA DE ESPERA) ================= -->
-    <section id="section-registro" class="w-full max-w-xl flex flex-col items-center transition-all duration-300">
+    <section id="section-registro" class="w-full max-w-xl flex flex-col items-center transition-all duration-300 relative py-8 px-2">
       
-      <!-- Contenedor del Input de DNI -->
-      <div class="w-full glass-panel border border-slate-800/80 p-10 md:p-12 rounded-[32px] text-center shadow-2xl relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-500">
+      <!-- Efecto de luz ambiental trasero (Glow) exclusivo de la sección -->
+      <div class="absolute inset-0 flex items-center justify-center pointer-events-none -z-10">
+        <div class="glow-sphere glow-sphere-1"></div>
+        <div class="glow-sphere glow-sphere-2"></div>
+      </div>
+      
+      <!-- Contenedor del Input de DNI con efectos premium -->
+      <div class="w-full glass-panel glass-panel-glow border border-slate-800/80 p-10 md:p-12 rounded-[32px] text-center shadow-2xl relative overflow-hidden group">
         <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition duration-700 pointer-events-none"></div>
         
         <!-- Contenedor de Logo con fallback inteligente -->
         <div class="w-24 h-24 mx-auto mb-8 flex items-center justify-center relative">
@@ -183,7 +243,7 @@
           </div>
         </div>
         
-        <h2 class="text-xs font-bold tracking-[0.35em] text-emerald-400 uppercase mb-3">Control de Acceso</h2>
+        <h2 class="text-xs font-bold tracking-[0.35em] text-emerald-400 uppercase mb-3 font-display">Control de Acceso</h2>
         <h3 class="text-lg font-bold text-slate-400 mb-8 uppercase tracking-wider">Bienvenido al Club</h3>
         
         <form onsubmit="registrarAsistencia(event)" class="relative group/form">
@@ -197,7 +257,7 @@
             autofocus
             required
             autocomplete="off"
-            class="w-full bg-slate-950/80 text-white placeholder-slate-700 border-2 border-slate-800/80 focus:border-emerald-500 rounded-2xl pl-6 pr-20 py-5 text-center text-3xl font-black tracking-[0.15em] outline-none transition duration-300 shadow-inner group-hover/form:border-slate-700/80 focus:shadow-[0_0_25px_rgba(16,185,129,0.15)] font-mono"
+            class="w-full bg-slate-950/85 text-white placeholder-slate-700 border-2 border-slate-800/80 focus:border-emerald-500 rounded-2xl pl-6 pr-20 py-5 text-center text-3xl font-black tracking-[0.15em] outline-none transition duration-300 shadow-inner group-hover/form:border-slate-700/80 focus:shadow-[0_0_25px_rgba(16,185,129,0.15)] font-mono"
           >
           <button type="submit" onclick="playSound('click')" class="absolute right-3 top-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 w-14 h-14 rounded-xl flex items-center justify-center font-bold transition-all duration-300 shadow-lg hover:shadow-[0_0_15px_rgba(16,185,129,0.4)] active:scale-95 group/btn cursor-pointer">
             <i class="fa-solid fa-arrow-right text-xl group-hover/btn:translate-x-1 transition duration-300"></i>
@@ -328,7 +388,7 @@
         <!-- LAYOUT DE DOS COLUMNAS: MENÚ LATERAL IZQUIERDO Y CONTENIDO DINÁMICO DERECHO -->
         <div class="flex-grow flex flex-col md:flex-row gap-6 mt-5 overflow-hidden h-full">
           
-          <!-- MENÚ LATERAL IZQUIERDO (Botonera modular para la Asistente) -->
+          <!-- MENÚ LATERAL IZQUIERDO (Botonera modular) -->
           <div class="w-full md:w-1/4 lg:w-1/5 flex flex-row md:flex-col gap-2 bg-slate-950/40 p-2.5 rounded-2xl border border-slate-800/40 h-auto md:h-full overflow-x-auto md:overflow-x-visible">
             <button onclick="playSound('click'); cambiarSeccionAdmin('buscador')" id="btn-sec-buscador" class="w-full px-4 py-3 rounded-xl font-extrabold text-xs uppercase tracking-wider flex items-center gap-3 transition-all duration-300 whitespace-nowrap bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 shadow-[0_4px_15px_rgba(16,185,129,0.25)] font-black">
               <i class="fa-solid fa-magnifying-glass text-sm"></i>Buscador
@@ -350,7 +410,7 @@
             </div>
           </div>
 
-          <!-- PANEL DE CONTENIDO DINÁMICO DERECHO (Con altura fija y scroll interno profesional) -->
+          <!-- PANEL DE CONTENIDO DINÁMICO DERECHO -->
           <div class="w-full md:w-3/4 lg:w-4/5 bg-slate-950/50 border border-slate-800/80 p-5 md:p-6 rounded-2xl shadow-inner overflow-y-auto h-full max-h-[56vh]">
             
             <!-- SUBSECCIÓN 1: BUSCADOR Y ÚLTIMOS INGRESOS (30 REGISTROS) -->
@@ -609,6 +669,7 @@
       if (val.length > 0) playSound('keyboard');
     }
 
+    // Filtrar celular
     function handleCelularInput(input) {
       const val = input.value.replace(/[^0-9]/g, '');
       input.value = val;
@@ -863,7 +924,7 @@
       }, 5000);
     }
 
-    // 5. Presentar Alertas o Errores en Pantalla Gigante
+    // Presentar Alertas o Errores en Pantalla Gigante
     function presentarErrorPantallaGigante(mensaje) {
       const modal = document.getElementById("pantalla-gigante");
       const bg = document.getElementById("glow-bg");
@@ -1174,7 +1235,6 @@
         filtrados.forEach(c => {
           const badgeColor = c.estado === "Activo" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border border-rose-500/20";
           
-          // Crear div contenedor sanitizado para evitar problemas de comillas en JSON stringify
           const itemDiv = document.createElement("div");
           itemDiv.className = "flex justify-between items-center p-3.5 hover:bg-slate-900 rounded-xl cursor-pointer transition text-left";
           itemDiv.onclick = () => abrirEditorModal(c);
@@ -1228,7 +1288,7 @@
       document.getElementById("modal-editor").classList.add("hidden");
     }
 
-    // Recalcular vencimiento de manera interactiva dentro del editor
+    // Recalcular vencimiento interactivo en editor
     function calcularVencimientoEditor() {
       const selectPlan = document.getElementById("edit-plan").value;
       const fInicioStr = document.getElementById("edit-inicio").value;
@@ -1372,7 +1432,7 @@
       });
     }
 
-    // Formatear minutos totales en un texto legible
+    // Formatear minutos en texto legible
     function formatearTiempoDentro(minutosTotales) {
       minutosTotales = minutosTotales || 0;
       const horas = Math.floor(minutosTotales / 60);
@@ -1383,7 +1443,7 @@
       return `${minutos} min`;
     }
 
-    // Abre el popup con la relación de personal dentro del gym
+    // Abre el popup con personas dentro
     function abrirModalDentroGym() {
       const contenedor = document.getElementById("lista-dentro-gym");
       contenedor.innerHTML = "";
@@ -1422,7 +1482,7 @@
       document.getElementById("modal-dentro-gym").classList.add("hidden");
     }
 
-    // Muestra la foto de la persona seleccionada con marco redondo y luz neón verde parpadeante
+    // Muestra foto con marco de neón verde parpadeante
     function mostrarFotoPersonaDentro(index) {
       const persona = listadoPersonasDentro[index];
       if (!persona) return;
