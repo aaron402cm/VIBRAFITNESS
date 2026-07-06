@@ -57,10 +57,42 @@
       cursor: none !important;
     }
 
-    /* ANIMACIONES ASÍNCRONAS PARA EL BACKLIGHT TRASERO */
+    /* Animación del Logo en 3D sobre el eje Y */
+    .logo-container-3d {
+      perspective: 1200px;
+    }
+    .logo-3d {
+      width: 180px;
+      height: 180px;
+      transform-style: preserve-3d;
+      animation: spin3D 2.2s infinite linear;
+    }
+    @keyframes spin3D {
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
+    }
+
+    /* Transiciones suaves */
+    .slide-in-right {
+      animation: slideInRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(60px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .scale-up {
+      animation: scaleUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes scaleUp {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* NUEVO: ANIMACIONES FLUIDAS PARA FONDO EN MOVIMIENTO "VIVO" (AURORAS) */
     @keyframes pulseSlow {
       0%, 100% {
-        opacity: 0.45;
+        opacity: 0.4;
         transform: translate(-50%, -50%) translate(-25px, -15px) scale(0.9);
         filter: blur(85px);
       }
@@ -89,7 +121,7 @@
       animation: pulseFast 6s ease-in-out infinite;
     }
 
-    /* LATIDO EN BORDES PARA SENTIR EL SISTEMA "VIVO" */
+    /* NUEVO: LATIDO EN BORDES PARA SENTIR EL SISTEMA "VIVO" */
     @keyframes borderPulse {
       0%, 100% {
         border-color: rgba(30, 41, 59, 0.8);
@@ -104,7 +136,7 @@
       animation: borderPulse 3.5s ease-in-out infinite;
     }
 
-    /* DESTELLO ORGÁNICO DE ESTADO ACTIVO (BEACON) */
+    /* NUEVO: DESTELLO ORGÁNICO DE ESTADO ACTIVO (BEACON) */
     @keyframes beaconPulse {
       0%, 100% {
         transform: scale(1);
@@ -120,81 +152,6 @@
     .animate-beacon {
       animation: beaconPulse 2s ease-in-out infinite;
     }
-
-    /* ================= ANIMACIONES EXCLUSIVAS DEL MASCOTA 3D "FLEX" ================= */
-    
-    /* Respiración general del cuerpo */
-    @keyframes foxBreathe {
-      0%, 100% { transform: scale(1) translateY(0); }
-      50% { transform: scale(1.02) translateY(-4px); }
-    }
-    .fox-breathe {
-      transform-origin: bottom center;
-      animation: foxBreathe 3s ease-in-out infinite;
-    }
-
-    /* Parpadeo de ojos Pixar */
-    @keyframes foxBlink {
-      0%, 90%, 100% { transform: scaleY(1); }
-      95% { transform: scaleY(0.08); }
-    }
-    .fox-eye {
-      transform-origin: center;
-      animation: foxBlink 4.2s infinite;
-    }
-
-    /* Estado 1: Saludo (Waving) */
-    @keyframes waveHand {
-      0%, 100% { transform: rotate(0deg); }
-      50% { transform: rotate(35deg); }
-    }
-    .state-salute .left-arm {
-      animation: waveHand 1s ease-in-out infinite;
-    }
-
-    /* Estado 2: Señalamiento (Pointing) */
-    @keyframes pointInput {
-      0%, 100% { transform: rotate(-15deg) translateY(0); }
-      50% { transform: rotate(-26deg) translateY(4px); }
-    }
-    .state-point .left-arm {
-      animation: pointInput 1.3s ease-in-out infinite;
-    }
-
-    /* Estado 3: Entrenamiento (Bicep dumbbell curls de alta fluidez) */
-    @keyframes bicepCurl {
-      0%, 100% { transform: rotate(20deg); }
-      50% { transform: rotate(-40deg); }
-    }
-    .state-workout .right-arm {
-      animation: bicepCurl 1.6s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
-    }
-    @keyframes shoulderIdle {
-      0%, 100% { transform: rotate(0deg); }
-      50% { transform: rotate(6deg); }
-    }
-    .state-workout .left-arm {
-      animation: shoulderIdle 3s ease-in-out infinite;
-    }
-
-    /* Estado 4: Thumbs Up (Pulgar arriba activo) */
-    @keyframes thumbsUpBounce {
-      0% { transform: scale(1) rotate(0deg); }
-      40% { transform: scale(1.15) rotate(28deg); }
-      100% { transform: scale(1.05) rotate(18deg); }
-    }
-    .state-thumbsup .left-arm {
-      animation: thumbsUpBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
-
-    /* Controladores de visibilidad de las capas de la mano izquierda */
-    #hand-normal, #hand-pointing, #hand-thumbsup {
-      display: none;
-    }
-    .state-salute #hand-normal { display: block !important; }
-    .state-workout #hand-normal { display: block !important; }
-    .state-point #hand-pointing { display: block !important; }
-    .state-thumbsup #hand-thumbsup { display: block !important; }
 
     /* Marco circular con luz neón verde parpadeante para la foto de "Dentro GYM" */
     .neon-green-frame {
@@ -251,7 +208,7 @@
   <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800/60 px-6 py-4 flex justify-between items-center shadow-lg z-10">
     <div class="flex items-center space-x-3">
       <img id="nav-logo" src="" alt="Logo" class="h-8 w-auto object-contain">
-      <span class="text-sm font-extrabold uppercase tracking-widest text-slate-400">FITNESS CLUB</span>
+      <span class="text-sm font-extrabold uppercase tracking-widest text-slate-400">VIBRAFITNESS</span>
       <!-- INDICADOR DE PANTALLA SIEMPRE ENCENDIDA (WAKE LOCK INDICATOR) -->
       <span id="wake-lock-indicator" class="hidden sm:inline-flex items-center px-3 py-1.5 rounded-full text-[9px] font-black tracking-widest bg-slate-850 text-slate-500 border border-slate-800/50 transition-all duration-300">
         <i class="fa-solid fa-moon mr-2 text-slate-600"></i>Pantalla Normal
@@ -271,178 +228,44 @@
   <main class="flex-grow flex items-center justify-center p-4 lg:p-6 relative">
     
     <!-- ================= VISTA DE REGISTRO (PANTALLA DE ESPERA) ================= -->
-    <section id="section-registro" class="w-full max-w-2xl flex flex-col items-center z-10 transition-all duration-500 relative py-12 mt-12">
-      
-      <!-- GENERADORES DE ILUMINACIÓN DE FONDO DINÁMICOS -->
-      <div class="absolute top-1/2 left-1/2 w-[480px] h-[480px] bg-emerald-500/20 rounded-full pointer-events-none animate-pulse-slow"></div>
-      <div class="absolute top-1/2 left-1/2 w-[380px] h-[380px] bg-cyan-500/15 rounded-full pointer-events-none animate-pulse-fast"></div>
-      
-      <!-- ================= NUEVO: MASCOTA VECTORIAL CON ENFOQUE VOLUMÉTRICO 3D REAL (CGI/PIXAR) ================= -->
-      <div id="mascot-3d-container" class="absolute -top-52 left-1/2 -translate-x-1/2 w-80 h-80 z-0 pointer-events-none transition-all duration-1000 ease-out transform translate-y-36 opacity-0">
-        <svg viewBox="0 0 400 400" class="w-full h-full fox-breathe">
-          <!-- Definición de gradientes esféricos 3D premium (Materiales Pixar) -->
-          <defs>
-            <radialGradient id="fox-head-3d" cx="35%" cy="35%" r="65%">
-              <stop offset="0%" stop-color="#ff9a1f" />
-              <stop offset="60%" stop-color="#e15000" />
-              <stop offset="100%" stop-color="#962800" />
-            </radialGradient>
-            <radialGradient id="fox-white-3d" cx="35%" cy="35%" r="60%">
-              <stop offset="0%" stop-color="#ffffff" />
-              <stop offset="70%" stop-color="#eceff1" />
-              <stop offset="100%" stop-color="#b0bec5" />
-            </radialGradient>
-            <radialGradient id="bicep-3d-left" cx="30%" cy="30%" r="70%">
-              <stop offset="0%" stop-color="#ff9a1f" />
-              <stop offset="70%" stop-color="#d63f00" />
-              <stop offset="100%" stop-color="#801c00" />
-            </radialGradient>
-            <radialGradient id="bicep-3d-right" cx="30%" cy="30%" r="70%">
-              <stop offset="0%" stop-color="#ff9a1f" />
-              <stop offset="70%" stop-color="#d63f00" />
-              <stop offset="100%" stop-color="#801c00" />
-            </radialGradient>
-            <linearGradient id="dumbbell-metallic" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#f1f2f6" />
-              <stop offset="35%" stop-color="#747d8c" />
-              <stop offset="70%" stop-color="#2f3542" />
-              <stop offset="100%" stop-color="#11141a" />
-            </linearGradient>
-            <radialGradient id="shirt-3d" cx="40%" cy="30%" r="75%">
-              <stop offset="0%" stop-color="#54a0ff" />
-              <stop offset="70%" stop-color="#1d2d50" />
-              <stop offset="100%" stop-color="#0a1931" />
-            </radialGradient>
-            <radialGradient id="inner-ear-3d" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#fda4af" />
-              <stop offset="100%" stop-color="#f43f5e" />
-            </radialGradient>
-            <!-- Filtro de oclusión ambiental suave -->
-            <filter id="pixar-shadow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="12" stdDeviation="8" flood-color="#020617" flood-opacity="0.6" />
-            </filter>
-          </defs>
+<section id="section-registro" class="w-full max-w-4xl flex flex-col items-center z-10 transition-all duration-500 relative py-12 overflow-hidden">
 
-          <!-- Grupo de renderizado con sombra suave -->
-          <g filter="url(#pixar-shadow)">
-            
-            <!-- Torso (Hombros anchos musculosos y camiseta deportiva con volumen) -->
-            <g class="torso">
-              <path d="M 115 225 Q 200 185 285 225 L 265 380 L 135 380 Z" fill="url(#shirt-3d)" />
-              <!-- Costuras de oclusión de la camiseta -->
-              <path d="M 155 225 Q 200 242 245 225" stroke="#ffffff" stroke-width="4.5" fill="none" opacity="0.8" />
-              <path d="M 194 225 L 194 380" stroke="rgba(255, 255, 255, 0.08)" stroke-width="14" fill="none" />
-            </g>
+  <!-- AURORA VERDE -->
+  <div
+    class="absolute top-1/2 left-1/2
+           -translate-x-1/2 -translate-y-1/2
+           w-[900px] h-[900px]
+           rounded-full
+           bg-emerald-400/35
+           blur-[180px]
+           animate-pulse
+           pointer-events-none">
+  </div>
 
-            <!-- BRAZO DERECHO: Levantamiento de Mancuerna (Bicep dumbbell curls con oclusión) -->
-            <g class="right-arm" style="transform-origin: 275px 235px;">
-              <!-- Bíceps y antebrazo musculoso de apariencia 3D -->
-              <path d="M 275 235 Q 325 242 335 292" stroke="url(#bicep-right-3d)" stroke-width="38" stroke-linecap="round" fill="none" />
-              <!-- Sombra de contacto del codo -->
-              <circle cx="335" cy="292" r="21" fill="url(#bicep-right-3d)" />
-              <!-- Mancuerna Volumétrica -->
-              <g id="dumbbell">
-                <!-- Barra de acero pulido -->
-                <rect x="295" y="287" width="80" height="10" rx="3" fill="#cbd5e1" transform="rotate(-8 335 292)" />
-                <!-- Disco Izquierdo -->
-                <rect x="284" y="262" width="18" height="60" rx="5" fill="url(#dumbbell-metallic)" transform="rotate(-8 335 292)" />
-                <rect x="276" y="272" width="8" height="40" rx="3" fill="#11141a" transform="rotate(-8 335 292)" />
-                <!-- Disco Derecho -->
-                <rect x="368" y="262" width="18" height="60" rx="5" fill="url(#dumbbell-metallic)" transform="rotate(-8 335 292)" />
-                <rect x="386" y="272" width="8" height="40" rx="3" fill="#11141a" transform="rotate(-8 335 292)" />
-              </g>
-            </g>
+  <!-- AURORA AZUL -->
+  <div
+    class="absolute top-[40%] left-[60%]
+           -translate-x-1/2 -translate-y-1/2
+           w-[700px] h-[700px]
+           rounded-full
+           bg-cyan-400/30
+           blur-[160px]
+           animate-pulse
+           pointer-events-none">
+  </div>
 
-            <!-- BRAZO IZQUIERDO: Interactivo (Saluda / Señala / Thumbs Up) -->
-            <g class="left-arm" style="transform-origin: 125px 235px;">
-              <!-- Articulación de hombro a mano con oclusión esférica -->
-              <path d="M 125 235 Q 75 242 65 292" stroke="url(#bicep-left-3d)" stroke-width="38" stroke-linecap="round" fill="none" />
-              
-              <!-- Gesto 1: Mano Abierta (Saludo / Descanso) -->
-              <g id="hand-normal">
-                <circle cx="65" cy="292" r="21" fill="url(#bicep-left-3d)" />
-                <circle cx="55" cy="297" r="7" fill="url(#bicep-left-3d)" />
-                <circle cx="65" cy="306" r="7" fill="url(#bicep-left-3d)" />
-                <circle cx="75" cy="300" r="7" fill="url(#bicep-left-3d)" />
-              </g>
+  <!-- Contenedor principal -->
+  <div class="w-full bg-slate-900/45 border border-emerald-500/20 p-16 rounded-[40px] text-center backdrop-blur-3xl relative z-10 overflow-hidden">
 
-              <!-- Gesto 2: Mano Señalando (Dedo apuntando hacia abajo) -->
-              <g id="hand-pointing">
-                <circle cx="65" cy="292" r="21" fill="url(#bicep-left-3d)" />
-                <!-- Dedo apuntador extendido hacia abajo -->
-                <path d="M 65 297 L 70 324" stroke="url(#bicep-left-3d)" stroke-width="12" stroke-linecap="round" />
-              </g>
+    <!-- Reflejo -->
+    <div class="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 pointer-events-none"></div>
 
-              <!-- Gesto 3: Pulgar Arriba 👍 -->
-              <g id="hand-thumbsup">
-                <circle cx="65" cy="292" r="21" fill="url(#bicep-left-3d)" />
-                <!-- Pulgar apuntando hacia arriba -->
-                <path d="M 65 287 L 73 262" stroke="url(#bicep-left-3d)" stroke-width="13" stroke-linecap="round" />
-                <path d="M 54 292 L 48 292" stroke="rgba(0,0,0,0.15)" stroke-width="4" stroke-linecap="round" />
-              </g>
-            </g>
-
-            <!-- CABEZA (Facciones Pixar, orejas y ojos parpadeantes) -->
-            <g class="head" style="transform-origin: 200px 180px;">
-              <!-- Oreja Izquierda -->
-              <polygon points="125,170 105,75 165,120" fill="url(#fox-head-3d)" />
-              <polygon points="130,160 115,90 158,124" fill="url(#inner-ear-3d)" />
-              
-              <!-- Oreja Derecha -->
-              <polygon points="275,170 295,75 235,120" fill="url(#fox-head-3d)" />
-              <polygon points="270,160 285,90 242,124" fill="url(#inner-ear-3d)" />
-
-              <!-- Sombra de contacto del cuello -->
-              <ellipse cx="200" cy="216" rx="42" ry="12" fill="#801c00" opacity="0.6" />
-
-              <!-- Estructura principal de la cara (Gradiente 3D Radial) -->
-              <path d="M 130 165 Q 200 120 270 165 Q 285 210 200 225 Q 115 210 130 165 Z" fill="url(#fox-head-3d)" />
-              
-              <!-- Mejillas blancas peludas (Estilo Pixar) -->
-              <path d="M 130 165 Q 155 198 200 198 Q 245 198 270 165 Q 295 210 200 225 Q 105 210 130 165 Z" fill="url(#fox-white-3d)" />
-
-              <!-- Hocico Blanco -->
-              <path d="M 172 185 Q 200 172 228 185 Q 200 215 172 185 Z" fill="url(#fox-white-3d)" />
-              <!-- Nariz -->
-              <polygon points="192,180 208,180 200,192" fill="#1e293b" />
-
-              <!-- Ojos grandes de cristal con parpadeo dinámico -->
-              <g class="eyes">
-                <!-- Ojo Izquierdo -->
-                <g class="fox-eye">
-                  <ellipse cx="168" cy="150" rx="16" ry="21" fill="#ffffff" />
-                  <ellipse cx="170" cy="150" rx="9" ry="13" fill="#0f172a" />
-                  <circle cx="166" cy="144" r="3.5" fill="#ffffff" />
-                  <circle cx="173" cy="154" r="1.5" fill="#ffffff" />
-                  <ellipse cx="168" cy="150" rx="16" ry="21" fill="none" stroke="#cfd8dc" stroke-width="1.5" />
-                </g>
-
-                <!-- Ojo Derecho -->
-                <g class="fox-eye">
-                  <ellipse cx="232" cy="150" rx="16" ry="21" fill="#ffffff" />
-                  <ellipse cx="230" cy="150" rx="9" ry="13" fill="#0f172a" />
-                  <circle cx="226" cy="144" r="3.5" fill="#ffffff" />
-                  <circle cx="233" cy="154" r="1.5" fill="#ffffff" />
-                  <ellipse cx="232" cy="150" rx="16" ry="21" fill="none" stroke="#cfd8dc" stroke-width="1.5" />
-                </g>
-              </g>
-
-              <!-- Sonrisa tierna -->
-              <path d="M 188 198 Q 200 208 212 198" stroke="#1e293b" stroke-width="3" stroke-linecap="round" fill="none" />
-            </g>
-
-          </g>
-        </svg>
-      </div>
-      
-      <!-- Contenedor del Input de DNI -->
-      <div class="w-full bg-slate-900/60 border border-slate-800 p-16 rounded-[40px] text-center backdrop-blur-2xl relative z-10 overflow-hidden animate-border-pulse">
-        
-        <!-- Reflejo interior oblicuo (Glass shine) -->
-        <div class="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 pointer-events-none"></div>
-
-        <!-- Logo estático (Escalado para mayor visualización) -->
-        <img id="form-logo" src="" alt="Gym Logo" class="h-44 mx-auto mb-12 object-contain relative z-10 hover:scale-105 transition duration-500">
+    <!-- Logo -->
+    <img
+      id="form-logo"
+      src=""
+      alt="Gym Logo"
+      class="h-44 mx-auto mb-12 object-contain relative z-10 hover:scale-105 transition duration-500">
         
         <!-- ENCABEZADO CON BOTÓN DE ENFOQUE Y FARO ACTIVO (BEACON) -->
         <div class="flex justify-between items-center mb-8 relative z-10">
@@ -583,10 +406,10 @@
           </div>
         </div>
 
-        <!-- LAYOUT DE DOS COLUMNAS: MENÚ LATERAL IZQUIERDO Y CONTENIDO DINÁMICO DERECHO -->
+        <!-- LAYOUT DE DOS COLUMNAS -->
         <div class="flex-grow flex flex-col md:flex-row gap-6 mt-4 overflow-hidden">
           
-          <!-- MENÚ LATERAL IZQUIERDO (Botonera modular con efectos de pestañas de neón) -->
+          <!-- MENÚ LATERAL IZQUIERDO -->
           <div class="w-full md:w-1/5 flex flex-col gap-2.5 bg-slate-950/60 p-3 rounded-2xl border border-slate-800/80 h-full">
             <button onclick="cambiarSeccionAdmin('buscador')" id="btn-sec-buscador" class="w-full px-4 py-3.5 rounded-xl font-bold text-xs uppercase flex items-center transition-all duration-300 active:scale-95 shadow-md">
               <i class="fa-solid fa-magnifying-glass mr-3 text-sm"></i>Buscador y Recientes
@@ -602,7 +425,7 @@
             </button>
           </div>
 
-          <!-- PANEL DE CONTENIDO DINÁMICO DERECHO (Con altura fija y scroll interno profesional) -->
+          <!-- PANEL DE CONTENIDO DINÁMICO DERECHO -->
           <div class="w-full md:w-4/5 bg-slate-950/70 border border-slate-800/80 p-6 rounded-2xl shadow-inner overflow-y-auto h-full max-h-[52vh]">
             
             <!-- SUBSECCIÓN 1: BUSCADOR Y ÚLTIMOS INGRESOS (30 REGISTROS) -->
@@ -855,7 +678,7 @@
 
   <!-- FOOTER -->
   <footer class="bg-slate-900 border-t border-slate-800/50 px-6 py-4 text-center text-xs text-slate-500">
-    &copy; 2026 Fitness Club Control Hub. Todos los derechos reservados.
+    &copy; 2026 VIBRAFITNESS. Todos los derechos reservados.
   </footer>
 
   <script>
@@ -873,155 +696,6 @@
     let listadoPersonasDentro = []; // NUEVO: personas actualmente dentro del gym (para el popup)
     let wakeLock = null; // Guardará el centinela del bloqueo de pantalla
     let kioskModeActive = false; // Indica si el modo de enfoque total está activo
-    let thumbsUpTimeout = null; // Controla la duración del gesto 👍 del zorro
-
-    // VARIABLES DE GESTIÓN DE LA MASCOTA 3D INTERMITENTE
-    let mascotTimer = null;
-    let mascotDurationTimeout = null;
-    let idleCounter = 0;
-    const MASCOT_COOLDOWN = 30000; // Aparece cada 30 segundos de inactividad
-    const MASCOT_DURATION = 15000; // Se queda visible por 15 segundos antes de ocultarse
-
-    window.addEventListener("DOMContentLoaded", () => {
-      // Iniciar el zorro inmediatamente al cargar como demostración de bienvenida
-      presentarMascotaAlCargar();
-      
-      // Iniciar el vigilante de inactividad para asomar la mascota intermitentemente
-      iniciarControlMascota();
-    });
-
-    function presentarMascotaAlCargar() {
-      setTimeout(() => {
-        const container = document.getElementById("mascot-3d-container");
-        if (container) {
-          // 1. Asomar lentamente al inicio (Entrada)
-          container.classList.remove("translate-y-36", "opacity-0");
-          container.classList.add("translate-y-0", "opacity-100");
-          setFoxState("salute");
-
-          // 2. Señalar a los 2.5 segundos
-          setTimeout(() => {
-            setFoxState("point");
-
-            // 3. Hacer ejercicio a los 5 segundos
-            setTimeout(() => {
-              setFoxState("workout");
-
-              // 4. Ocultarse a los 8.5 segundos para dejar la pantalla limpia
-              setTimeout(() => {
-                ocultarMascota3D();
-              }, 3500);
-            }, 2500);
-          }, 2500);
-        }
-      }, 1000);
-    }
-
-    function iniciarControlMascota() {
-      // Monitorear actividad del usuario para reiniciar el contador de inactividad
-      document.addEventListener("keypress", resetInactividad);
-      document.addEventListener("click", resetInactividad);
-      document.addEventListener("mousemove", resetInactividad);
-
-      reiniciarTemporizadorMascota();
-    }
-
-    function resetInactividad() {
-      idleCounter = 0;
-      // Ocultar al zorro de inmediato si el usuario interactúa para no interferir en su vista
-      const container = document.getElementById("mascot-3d-container");
-      if (container && container.classList.contains("translate-y-0")) {
-        ocultarMascota3D();
-      }
-    }
-
-    function reiniciarTemporizadorMascota() {
-      clearInterval(mascotTimer);
-      mascotTimer = setInterval(() => {
-        idleCounter += 5000;
-        // Si el terminal lleva inactivo el tiempo establecido, asoma la mascota
-        if (idleCounter >= MASCOT_COOLDOWN) {
-          mostrarMascota3D();
-        }
-      }, 5000);
-    }
-
-    function mostrarMascota3D() {
-      const container = document.getElementById("mascot-3d-container");
-      if (!container) return;
-
-      // Restablecer el acumulador para evitar múltiples disparos
-      idleCounter = 0;
-
-      // 1. Asomar lentamente (Animación de entrada)
-      container.classList.remove("translate-y-36", "opacity-0");
-      container.classList.add("translate-y-0", "opacity-100");
-
-      // Iniciar ciclo de secuencias para el bucle de espera
-      setFoxState("salute");
-      setTimeout(() => {
-        setFoxState("point");
-        setTimeout(() => {
-          setFoxState("workout");
-        }, 2500);
-      }, 2500);
-
-      // 2. Programar la salida automática tras expirar la duración de la animación
-      clearTimeout(mascotDurationTimeout);
-      mascotDurationTimeout = setTimeout(() => {
-        ocultarMascota3D();
-      }, MASCOT_DURATION);
-    }
-
-    function ocultarMascota3D() {
-      const container = document.getElementById("mascot-3d-container");
-      if (!container) return;
-
-      // Salida: Deslizar hacia abajo detrás de la tarjeta y desvanecer
-      container.classList.remove("translate-y-0", "opacity-100");
-      container.classList.add("translate-y-36", "opacity-0");
-    }
-
-    // Cambiador de estados del Zorro 3D
-    function setFoxState(state) {
-      const mascot = document.getElementById("mascot-3d-container");
-      if (!mascot) return;
-
-      // Quitar clases previas de animación
-      mascot.classList.remove("state-salute", "state-point", "state-workout", "state-thumbsup");
-
-      // Asignar clase de estado actual
-      if (state === "salute") mascot.classList.add("state-salute");
-      else if (state === "point") mascot.classList.add("state-point");
-      else if (state === "workout") mascot.classList.add("state-workout");
-      else if (state === "thumbsup") mascot.classList.add("state-thumbsup");
-    }
-
-    // Gesto 👍 interactivo al escribir números en el DNI (Solo si la mascota es visible)
-    const inputDniElement = document.getElementById("input-dni");
-    if (inputDniElement) {
-      inputDniElement.addEventListener("input", (e) => {
-        const container = document.getElementById("mascot-3d-container");
-        if (!container || container.classList.contains("opacity-0")) return;
-        
-        // No gesticular si se borra el contenido por completo
-        if (!e.target.value.trim()) return;
-
-        triggerFoxThumbsUp();
-      });
-    }
-
-    function triggerFoxThumbsUp() {
-      clearTimeout(thumbsUpTimeout);
-
-      // 👍 Gesto de aprobación temporal
-      setFoxState("thumbsup");
-
-      // Revertir de regreso al entrenamiento luego de 1.2 segundos de inactividad
-      thumbsUpTimeout = setTimeout(() => {
-        setFoxState("workout");
-      }, 1200);
-    }
 
     // CONTROL DE MANTENER PANTALLA ACTIVA (WAKE LOCK)
     function permitirWakeLock() {
