@@ -88,6 +88,25 @@
     .fila-persona-dentro:hover {
       background-color: rgba(16, 185, 129, 0.08);
     }
+
+    /* NUEVO: Alerta visual de membresía vencida — más llamativa para que la asistente la note de inmediato */
+    @keyframes strobeAlertaRoja {
+      0%, 100% { opacity: 0; }
+      15% { opacity: 0.55; }
+      30% { opacity: 0; }
+      45% { opacity: 0.55; }
+      60% { opacity: 0; }
+    }
+    .strobe-alerta-vencido {
+      animation: strobeAlertaRoja 1.1s ease-in-out 1;
+    }
+    @keyframes pulseBadgeUrgente {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0px rgba(220,38,38,0); }
+      50% { transform: scale(1.07); box-shadow: 0 0 30px rgba(220,38,38,0.75); }
+    }
+    .badge-urgente {
+      animation: pulseBadgeUrgente 0.55s ease-in-out infinite;
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between overflow-hidden">
@@ -165,6 +184,9 @@
       <!-- Capa de fondo con desfoque y brillo radial dinámico -->
       <div id="glow-bg" class="absolute inset-0 transition-all duration-700 opacity-90"></div>
       
+      <!-- NUEVO: Destello rojo de alerta, exclusivo para membresía vencida -->
+      <div id="alerta-strobe-overlay" class="hidden absolute inset-0 bg-red-600 pointer-events-none z-20"></div>
+      
       <!-- Contenido de Pantalla Gigante Organizado -->
       <div class="relative w-full max-w-6xl mx-auto px-10 py-12 flex flex-col lg:flex-row items-center justify-between gap-16 z-10">
         
@@ -236,7 +258,7 @@
             </div>
           </div>
           <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner">
-            <div class="p-3 bg-rose-500/10 text-rose-400 rounded-lg text-lg"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <div class="p-3 bg-red-600/15 text-red-500 rounded-lg text-lg"><i class="fa-solid fa-circle-exclamation"></i></div>
             <div>
               <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Vencidos</p>
               <h3 id="kpi-vencidos" class="text-xl font-black text-white">...</h3>
@@ -561,25 +583,41 @@
     function playSound(type) {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
 
         if (type === "success") {
-          oscillator.type = "sine";
-          oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
-          gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
-          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
-          oscillator.start();
-          oscillator.stop(audioCtx.currentTime + 0.35);
+          // NUEVO: Sonido de ingreso más llamativo — campanilla ascendente de dos notas (estilo "acceso concedido")
+          const notas = [880, 1318.51]; // A5 -> E6 (quinta ascendente, sensación positiva y notoria)
+          notas.forEach((freq, idx) => {
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            const startTime = audioCtx.currentTime + idx * 0.13;
+            oscillator.type = "sine";
+            oscillator.frequency.setValueAtTime(freq, startTime);
+            gainNode.gain.setValueAtTime(0.32, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.32);
+            oscillator.start(startTime);
+            oscillator.stop(startTime + 0.32);
+          });
         } else {
-          oscillator.type = "sawtooth";
-          oscillator.frequency.setValueAtTime(140, audioCtx.currentTime);
-          gainNode.gain.setValueAtTime(0.25, audioCtx.currentTime);
-          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
-          oscillator.start();
-          oscillator.stop(audioCtx.currentTime + 0.6);
+          // NUEVO: Sonido de alerta más urgente — doble bocinazo grave para que la asistente lo note sin mirar la pantalla
+          const inicios = [0, 0.24];
+          inicios.forEach((delay) => {
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            const startTime = audioCtx.currentTime + delay;
+            oscillator.type = "square";
+            oscillator.frequency.setValueAtTime(190, startTime);
+            gainNode.gain.setValueAtTime(0.38, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.2);
+            oscillator.start(startTime);
+            oscillator.stop(startTime + 0.2);
+          });
         }
       } catch (e) {
         console.warn("Audio silenciado por políticas del navegador.", e);
@@ -668,7 +706,7 @@
             badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-orange-500/15 text-orange-400 border border-orange-500/30 shadow-md";
             badge.textContent = "ACCESO AUTORIZADO • SALIDA (OUT)";
           } else {
-            badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-md animate-pulse";
+            badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-red-600/20 text-red-400 border border-red-500/40 shadow-md badge-urgente";
             badge.textContent = "MEMBRESÍA VENCIDA";
           }
           motivationalBox.className = "bg-slate-900/70 p-6 rounded-2xl border-l-8 border-emerald-500 italic text-slate-200 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4";
@@ -676,13 +714,22 @@
         }
 
       } else {
-        // Estilos para acceso Denegado/Vencido (Rojo Radial)
-        bg.style.background = "radial-gradient(circle, rgba(239,68,68,0.2) 0%, rgba(2,6,23,1) 80%)";
-        border.className = "w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-rose-500 shadow-[0_0_60px_rgba(239,68,68,0.35)] flex items-center justify-center transition-all";
-        badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-md";
-        badge.textContent = "MEMBRESÍA VENCIDA";
-        motivationalBox.className = "bg-slate-900/70 p-6 rounded-2xl border-l-8 border-rose-500 italic text-slate-200 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4";
+        // Estilos para acceso Denegado/Vencido (Rojo Radial) — MÁS LLAMATIVO para que la recepcionista lo note de inmediato
+        bg.style.background = "radial-gradient(circle, rgba(220,38,38,0.4) 0%, rgba(2,6,23,1) 75%)";
+        border.className = "w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-[32px] overflow-hidden border-[8px] bg-slate-900 border-red-600 shadow-[0_0_80px_rgba(220,38,38,0.55)] flex items-center justify-center transition-all badge-urgente";
+        badge.className = "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] bg-red-600/25 text-red-400 border border-red-500/50 shadow-md badge-urgente";
+        badge.textContent = "⚠ MEMBRESÍA VENCIDA";
+        motivationalBox.className = "bg-slate-900/70 p-6 rounded-2xl border-l-8 border-red-600 italic text-slate-200 text-lg md:text-xl lg:text-2xl backdrop-blur-md shadow-md mt-4";
         playSound("error");
+
+        // NUEVO: destello rojo de pantalla completa, exclusivo de este caso, para máxima visibilidad
+        const strobeOverlay = document.getElementById("alerta-strobe-overlay");
+        strobeOverlay.classList.remove("hidden");
+        strobeOverlay.classList.add("strobe-alerta-vencido");
+        setTimeout(() => {
+          strobeOverlay.classList.add("hidden");
+          strobeOverlay.classList.remove("strobe-alerta-vencido");
+        }, 1200);
       }
 
       modal.classList.remove("hidden");
@@ -931,7 +978,7 @@
               } else if (ingreso.movimiento === "OUT") {
                 badgeColor = "bg-orange-500/10 text-orange-400 border border-orange-500/20";
               } else {
-                badgeColor = "bg-rose-500/10 text-rose-400 border border-rose-500/20";
+                badgeColor = "bg-red-600/15 text-red-400 border border-red-500/30 font-black";
               }
 
               recentBody.innerHTML += `
@@ -1040,7 +1087,7 @@
         resultsContainer.innerHTML = `<p class="text-xs text-slate-600 text-center py-3">No se encontraron miembros con ese término de búsqueda.</p>`;
       } else {
         filtrados.forEach(c => {
-          const badgeColor = c.estado === "Activo" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border border-rose-500/20";
+          const badgeColor = c.estado === "Activo" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-red-600/15 text-red-400 border border-red-500/30";
           resultsContainer.innerHTML += `
             <div onclick="abrirEditorModal(${JSON.stringify(c).replace(/"/g, '&quot;')})" class="flex justify-between items-center p-3 hover:bg-slate-900 rounded-xl cursor-pointer transition text-left">
               <div>
