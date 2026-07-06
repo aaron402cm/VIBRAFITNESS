@@ -47,6 +47,16 @@
       transform: translateX(4px);
     }
 
+    /* Ocultar cursor en modo de enfoque total */
+    .kiosk-focus-active {
+      cursor: none !important;
+    }
+    .kiosk-focus-active a, 
+    .kiosk-focus-active button, 
+    .kiosk-focus-active input {
+      cursor: none !important;
+    }
+
     /* Animación del Logo en 3D sobre el eje Y */
     .logo-container-3d {
       perspective: 1200px;
@@ -201,7 +211,14 @@
         <!-- Logo estático -->
         <img id="form-logo" src="" alt="Gym Logo" class="h-36 mx-auto mb-10 object-contain relative z-10 hover:scale-105 transition duration-500">
         
-        <h2 class="text-xs font-bold tracking-[0.3em] text-slate-400 uppercase mb-5 relative z-10">Control de Acceso</h2>
+        <!-- ENCABEZADO CON BOTÓN DE ENFOQUE / PANTALLA COMPLETA -->
+        <div class="flex justify-between items-center mb-5 relative z-10">
+          <div class="w-6"></div> <!-- Espaciador para balancear alineación central -->
+          <h2 class="text-xs font-bold tracking-[0.3em] text-slate-400 uppercase">Control de Acceso</h2>
+          <button type="button" onclick="entrarModoKioscoCompleto()" class="text-slate-500 hover:text-emerald-400 hover:scale-110 active:scale-95 transition-all duration-300 p-1" title="Modo Enfoque Total">
+            <i class="fa-solid fa-expand text-sm animate-pulse"></i>
+          </button>
+        </div>
         
         <form onsubmit="registrarAsistencia(event)" class="relative z-10">
           <input 
@@ -611,6 +628,7 @@
     let cachedChartsData = null; // Guardar datos para renderizado al vuelo
     let listadoPersonasDentro = []; // NUEVO: personas actualmente dentro del gym (para el popup)
     let wakeLock = null; // Guardará el centinela del bloqueo de pantalla
+    let kioskModeActive = false; // Indica si el modo de enfoque total está activo
 
     // CONTROL DE MANTENER PANTALLA ACTIVA (WAKE LOCK)
     function permitirWakeLock() {
@@ -657,6 +675,81 @@
     document.addEventListener('visibilitychange', async () => {
       if (wakeLock !== null && document.visibilityState === 'visible') {
         await activarWakeLock();
+      }
+    });
+
+    // SISTEMA DE ENFOQUE TOTAL / MODO KIOSCO EN PANTALLA COMPLETA
+    function entrarModoKioscoCompleto() {
+      const element = document.documentElement; // Usamos todo el documento para pantalla completa
+      
+      if (element.requestFullscreen) {
+        element.requestFullscreen().then(() => {
+          habilitarFocoKiosco();
+        }).catch(err => {
+          console.error("Error al iniciar pantalla completa:", err);
+        });
+      } else if (element.webkitRequestFullscreen) { // Safari/iOS
+        element.webkitRequestFullscreen();
+        habilitarFocoKiosco();
+      }
+    }
+
+    function habilitarFocoKiosco() {
+      kioskModeActive = true;
+      document.body.classList.add("kiosk-focus-active");
+      
+      const inputDni = document.getElementById("input-dni");
+      inputDni.focus();
+
+      // Forzar que el foco regrese al input ante cualquier clic en pantalla
+      document.addEventListener("click", reenfocarInputDni);
+      // Bloquear teclas no numéricas durante la digitación
+      inputDni.addEventListener("keydown", filtrarTeclasNoNumericas);
+    }
+
+    function deshabilitarFocoKiosco() {
+      kioskModeActive = false;
+      document.body.classList.remove("kiosk-focus-active");
+      
+      document.removeEventListener("click", reenfocarInputDni);
+      const inputDni = document.getElementById("input-dni");
+      if (inputDni) {
+        inputDni.removeEventListener("keydown", filtrarTeclasNoNumericas);
+      }
+    }
+
+    function reenfocarInputDni() {
+      if (kioskModeActive) {
+        const inputDni = document.getElementById("input-dni");
+        if (inputDni) inputDni.focus();
+      }
+    }
+
+    function filtrarTeclasNoNumericas(event) {
+      if (!kioskModeActive) return;
+
+      // Permitir teclas de control del sistema (Borrar, Tabular, Flechas, Enter)
+      const teclasPermitidas = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Enter"];
+      if (teclasPermitidas.includes(event.key)) {
+        return;
+      }
+
+      // Bloquear el evento de teclado si el caracter no es numérico del 0 al 9
+      if (!/^[0-9]$/.test(event.key)) {
+        event.preventDefault();
+      }
+    }
+
+    // Escuchar el evento nativo del navegador de cambio de pantalla completa (por ejemplo al presionar ESC)
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement) {
+        deshabilitarFocoKiosco();
+      }
+    });
+    // Safari / iOS
+    document.addEventListener("webkitfullscreenchange", () => {
+      if (!document.webkitFullscreenElement) {
+        deshabilitarFocoKiosco();
       }
     });
 
@@ -1387,7 +1480,7 @@
 
     // Formatea minutos totales en un texto legible "Xh Ymin" o "Ymin"
     function formatearTiempoDentro(minutosTotales) {
-      minutosTotales = minutesTotales || 0;
+      minutosTotales = minutosTotales || 0;
       const horas = Math.floor(minutosTotales / 60);
       const minutos = minutosTotales % 60;
       if (horas > 0) {
