@@ -228,20 +228,44 @@
   <main class="flex-grow flex items-center justify-center p-4 lg:p-6 relative">
     
     <!-- ================= VISTA DE REGISTRO (PANTALLA DE ESPERA) ================= -->
-    <section id="section-registro" class="w-full max-w-2xl flex flex-col items-center z-10 transition-all duration-500 relative py-12">
-      
-      <!-- GENERADORES DE ILUMINACIÓN DE FONDO DINÁMICOS (AURORAS DE NEÓN MÁS GRANDES Y EN MOVIMIENTO) -->
-      <div class="absolute top-1/2 left-1/2 w-[480px] h-[480px] bg-emerald-500/20 rounded-full pointer-events-none animate-pulse-slow"></div>
-      <div class="absolute top-1/2 left-1/2 w-[380px] h-[380px] bg-cyan-500/15 rounded-full pointer-events-none animate-pulse-fast"></div>
-      
-      <!-- Contenedor del Input de DNI (ESCALADO Y CON ANIMACIÓN DE LATIDO DE BORDE) -->
-      <div class="w-full bg-slate-900/60 border border-slate-800 p-16 rounded-[40px] text-center backdrop-blur-2xl relative z-10 overflow-hidden animate-border-pulse">
-        
-        <!-- Reflejo interior oblicuo (Glass shine) -->
-        <div class="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 pointer-events-none"></div>
+<section id="section-registro" class="w-full max-w-4xl flex flex-col items-center z-10 transition-all duration-500 relative py-12 overflow-hidden">
 
-        <!-- Logo estático (Escalado para mayor visualización) -->
-        <img id="form-logo" src="" alt="Gym Logo" class="h-44 mx-auto mb-12 object-contain relative z-10 hover:scale-105 transition duration-500">
+  <!-- AURORA VERDE -->
+  <div
+    class="absolute top-1/2 left-1/2
+           -translate-x-1/2 -translate-y-1/2
+           w-[900px] h-[900px]
+           rounded-full
+           bg-emerald-400/35
+           blur-[180px]
+           animate-pulse
+           pointer-events-none">
+  </div>
+
+  <!-- AURORA AZUL -->
+  <div
+    class="absolute top-[40%] left-[60%]
+           -translate-x-1/2 -translate-y-1/2
+           w-[700px] h-[700px]
+           rounded-full
+           bg-cyan-400/30
+           blur-[160px]
+           animate-pulse
+           pointer-events-none">
+  </div>
+
+  <!-- Contenedor principal -->
+  <div class="w-full bg-slate-900/45 border border-emerald-500/20 p-16 rounded-[40px] text-center backdrop-blur-3xl relative z-10 overflow-hidden">
+
+    <!-- Reflejo -->
+    <div class="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 pointer-events-none"></div>
+
+    <!-- Logo -->
+    <img
+      id="form-logo"
+      src=""
+      alt="Gym Logo"
+      class="h-44 mx-auto mb-12 object-contain relative z-10 hover:scale-105 transition duration-500">
         
         <!-- ENCABEZADO CON BOTÓN DE ENFOQUE Y FARO ACTIVO (BEACON) -->
         <div class="flex justify-between items-center mb-8 relative z-10">
