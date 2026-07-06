@@ -49,6 +49,45 @@
       from { opacity: 0; transform: scale(0.9); }
       to { opacity: 1; transform: scale(1); }
     }
+
+    /* NUEVO: Marco circular con luz neón verde parpadeante para la foto de "Dentro GYM" */
+    .neon-green-frame {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .neon-green-frame::before {
+      content: "";
+      position: absolute;
+      inset: -10px;
+      border-radius: 9999px;
+      background: radial-gradient(circle, rgba(16,185,129,0.55) 0%, rgba(16,185,129,0.15) 55%, rgba(16,185,129,0) 75%);
+      animation: neonPulseGreen 1.4s ease-in-out infinite;
+      z-index: 0;
+    }
+    .neon-green-frame img {
+      position: relative;
+      z-index: 1;
+      border-radius: 9999px;
+    }
+    @keyframes neonPulseGreen {
+      0%, 100% {
+        opacity: 0.55;
+        transform: scale(0.94);
+        filter: blur(2px);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.06);
+        filter: blur(6px);
+      }
+    }
+
+    /* Fila clickeable dentro del listado de personas en el gym */
+    .fila-persona-dentro:hover {
+      background-color: rgba(16, 185, 129, 0.08);
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between overflow-hidden">
@@ -189,7 +228,7 @@
               <h3 id="kpi-hoy" class="text-xl font-black text-white">...</h3>
             </div>
           </div>
-          <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner animate-pulse">
+          <div onclick="abrirModalDentroGym()" class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex items-center space-x-3 shadow-inner animate-pulse cursor-pointer hover:border-amber-500/50 transition" title="Ver quiénes están dentro del gym">
             <div class="p-3 bg-amber-500/10 text-amber-400 rounded-lg text-lg"><i class="fa-solid fa-person-running"></i></div>
             <div>
               <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Dentro GYM</p>
@@ -412,6 +451,39 @@
     </div>
   </div>
 
+  <!-- ================= NUEVO: MODAL LISTADO "DENTRO GYM" ================= -->
+  <div id="modal-dentro-gym" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[80vh]">
+      <div class="flex justify-between items-center border-b border-slate-800 px-6 py-4">
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider">
+          <i class="fa-solid fa-person-running text-amber-400 mr-2"></i>Personas Dentro del Gym
+        </h3>
+        <button onclick="cerrarModalDentroGym()" class="text-slate-500 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="lista-dentro-gym" class="overflow-y-auto px-4 py-3 space-y-2">
+        <!-- Dinámico -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= NUEVO: MODAL FOTO INDIVIDUAL CON MARCO NEÓN VERDE ================= -->
+  <div id="modal-foto-dentro" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur z-[60] flex items-center justify-center p-4">
+    <div class="relative flex flex-col items-center gap-6">
+      <button onclick="cerrarModalFotoDentro()" class="absolute -top-4 -right-4 md:top-0 md:-right-10 text-slate-400 hover:text-white text-2xl bg-slate-900 rounded-full w-10 h-10 flex items-center justify-center border border-slate-800">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="neon-green-frame w-64 h-64">
+        <img id="foto-dentro-img" src="" alt="Miembro" class="w-56 h-56 object-cover border-4 border-emerald-400/80" onerror="this.onerror=null; this.src=DEFAULT_AVATAR;">
+      </div>
+
+      <div class="text-center space-y-1">
+        <h4 id="foto-dentro-nombre" class="text-2xl font-black text-white capitalize"></h4>
+        <p id="foto-dentro-tiempo" class="text-sm font-bold text-emerald-400 uppercase tracking-wider"></p>
+      </div>
+    </div>
+  </div>
+
   <!-- CANVAS OCULTO PARA FOTOS DEL EDITOR -->
   <canvas id="hidden-editor-canvas" class="hidden" width="600" height="600"></canvas>
 
@@ -432,6 +504,7 @@
     let streamEditor = null;
     let fotoBase64Editor = "";
     let cachedChartsData = null; // Guardar datos para renderizado al vuelo
+    let listadoPersonasDentro = []; // NUEVO: personas actualmente dentro del gym (para el popup)
 
     // 1. Navegación entre pestañas principales
     function switchTab(tab) {
@@ -843,6 +916,7 @@
           // Guardar listado de clientes y gráficos en memoria
           listadoCompletoClientes = res.clientesList || [];
           cachedChartsData = res.charts; 
+          listadoPersonasDentro = res.personasDentroList || []; // NUEVO: guardar detalle de quiénes están dentro del gym
 
           // Cargar Tabla de últimos ingresos
           const recentBody = document.getElementById("table-recent-body");
@@ -1152,6 +1226,71 @@
         alert("Error de red al intentar actualizar el usuario.");
         console.error(err);
       });
+    }
+
+    // ================= NUEVO: MODAL "DENTRO GYM" (LISTADO + FOTO CON MARCO NEÓN) =================
+
+    // Formatea minutos totales en un texto legible "Xh Ymin" o "Ymin"
+    function formatearTiempoDentro(minutosTotales) {
+      minutosTotales = minutosTotales || 0;
+      const horas = Math.floor(minutosTotales / 60);
+      const minutos = minutosTotales % 60;
+      if (horas > 0) {
+        return `${horas}h ${minutos}min`;
+      }
+      return `${minutos} min`;
+    }
+
+    // Abre el popup con la relación de personal dentro del gym y su tiempo dentro
+    function abrirModalDentroGym() {
+      const contenedor = document.getElementById("lista-dentro-gym");
+      contenedor.innerHTML = "";
+
+      if (!listadoPersonasDentro || listadoPersonasDentro.length === 0) {
+        contenedor.innerHTML = `<p class="text-xs text-center text-slate-600 py-6 uppercase tracking-wider">No hay nadie dentro del gym en este momento.</p>`;
+      } else {
+        listadoPersonasDentro.forEach((persona, index) => {
+          const tiempoTexto = formatearTiempoDentro(persona.minutosDentro);
+          contenedor.innerHTML += `
+            <div onclick="mostrarFotoPersonaDentro(${index})" class="fila-persona-dentro flex justify-between items-center p-3 rounded-xl cursor-pointer transition border border-slate-800/60 bg-slate-950/60">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <i class="fa-solid fa-person"></i>
+                </div>
+                <div>
+                  <p class="text-sm font-extrabold text-white capitalize">${persona.nombre}</p>
+                  <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Ingresó: ${persona.horaIngreso || "--:--"}</p>
+                </div>
+              </div>
+              <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                ${tiempoTexto}
+              </span>
+            </div>
+          `;
+        });
+      }
+
+      document.getElementById("modal-dentro-gym").classList.remove("hidden");
+    }
+
+    function cerrarModalDentroGym() {
+      document.getElementById("modal-dentro-gym").classList.add("hidden");
+    }
+
+    // Muestra la foto de la persona seleccionada con marco redondo y luz neón verde parpadeante
+    function mostrarFotoPersonaDentro(index) {
+      const persona = listadoPersonasDentro[index];
+      if (!persona) return;
+
+      document.getElementById("foto-dentro-img").src = persona.foto || DEFAULT_AVATAR;
+      document.getElementById("foto-dentro-nombre").textContent = persona.nombre;
+      document.getElementById("foto-dentro-tiempo").textContent = "Dentro del gym: " + formatearTiempoDentro(persona.minutosDentro);
+
+      document.getElementById("modal-foto-dentro").classList.remove("hidden");
+    }
+
+    function cerrarModalFotoDentro() {
+      document.getElementById("modal-foto-dentro").classList.add("hidden");
     }
 
     // Reescritura limpia del switchTab para jalar datos reales al abrir admin
